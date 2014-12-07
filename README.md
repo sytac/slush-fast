@@ -26,7 +26,7 @@ Install the development tools you need for scaffolding, bear in mind these tools
 
 ```
 $ npm install -g slush
-$ npm install -g git+https://github.com/jpwesselink/slush-freak.git
+$ npm install -g git+https://github.com/jpwesselink/slush-fast.git
 
 ```
 
@@ -38,7 +38,7 @@ $ npm install -g git+https://github.com/jpwesselink/slush-freak.git
 mkdir yourproject
 cd yourproject
 git init
-slush freak
+slush fast
 ```
 
 You will be prompted for input on project name, angular application module for bootstrapping, user name, etc. Upon finishing the generator will create a project layout for you.
@@ -64,7 +64,7 @@ gulp dev
 Make sure you are in the project's `src/app` directory.
 
 ```
-$ slush freak:module {optional name}
+$ slush fast:module {optional name}
 ```
 
 This will create a module in `src/app/{name}` called `{name}.module.js`. If module name is not given as a command line parameter you will be prompted for one.
@@ -73,7 +73,7 @@ The namespace for this module is the same as the name: {name}
 For example, calling
 
 ```
-$ slush freak:module foo
+$ slush fast:module foo
 ```
 
 will create a directory `foo` containing a file `foo.module.js`. The module definition will look like this:
@@ -87,7 +87,7 @@ angular.module('foo', []);
 Inside a module directory `{module}` where a files exists named '{module}.module.js' you can create sub modules easily like so:
 
 ```
-$ slush freak:module {optional name}
+$ slush fast:module {optional name}
 ```
 
 
@@ -96,7 +96,7 @@ Again, the name is optional, you will be prompted for one if it is not given as 
 For example, calling the following inside `src/app/foo`
 
 ```
-$ slush freak:module bar
+$ slush fast:module bar
 ```
 
 will create a directory `src/app/foo/bar` containing a file `bar.module.js` and a file `bar.module.spec.js`.
@@ -116,7 +116,7 @@ This way you can easily scale features while mainting unique namespaces to preve
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:config
+$ slush fast:config
 ```
 
 This will create a new file with the same name as the module postfixed with `.config` along with a unit test spec file postfixed with '.config.spec';
@@ -124,7 +124,7 @@ This will create a new file with the same name as the module postfixed with `.co
 For example, calling this following inside `src/app/foo`
 
 ```
-$ slush freak:config
+$ slush fast:config
 ```
 
 will create a file `src/app/foo/foo.config.js` containing a definition like this:
@@ -142,7 +142,7 @@ and a file `src/app/foo/foo.config.spec.js`.
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:run
+$ slush fast:run
 ```
 
 This will create a new file with the same name as the module postfixed with `.run`;
@@ -150,7 +150,7 @@ This will create a new file with the same name as the module postfixed with `.ru
 For example, calling this following inside `src/app/foo`
 
 ```
-$ slush freak:run
+$ slush fast:run
 ```
 
 will create a file `src/app/foo/foo.run.js` containing a definition like this:
@@ -165,7 +165,7 @@ angular.module('foo')
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:controller {optional name}
+$ slush fast:controller {optional name}
 ```
 
 If you don't provide a name, you will be prompted for one.
@@ -174,7 +174,7 @@ This will create a new file with the same name as the module postfixed with `.co
 For example, calling this following inside `src/app/foo`
 
 ```
-$ slush freak:controller barbar
+$ slush fast:controller barbar
 ```
 
 will create a file `src/app/foo/foo.barbar.controller.js` containing a definition like this:
@@ -190,7 +190,7 @@ angular.module('foo')
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:directive {optional name}
+$ slush fast:directive {optional name}
 ```
 
 If you don't provide a name, you will be prompted for one.
@@ -200,7 +200,7 @@ directive `.html` file and directive spec file.
 For example, calling this following inside `src/app/foo`
 
 ```
-$ slush freak:directive blinken lights
+$ slush fast:directive blinken lights
 ```
 
 This will create the following files: `foo.blinken-lights.directive.js`, `foo.blinken-lights.directive.html` and `foo.blinken-lights.directive.spec.js`
@@ -217,7 +217,7 @@ angular.module('foo')
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:provider {optional name}
+$ slush fast:provider {optional name}
 ```
 
 If you don't provide a name, you will be prompted for one. You will also be prompted for one of the provider types: `service` or `factory`.
@@ -226,7 +226,7 @@ This will create a new file with the same name as the module postfixed with `.pr
 For example, calling this following inside `src/app/foo`
 
 ```
-$ slush freak:provider unf
+$ slush fast:provider unf
 ```
 
 This will create the following files: `foo.unf.provider.js` and `foo.unf.provider.spec.js`
@@ -241,26 +241,26 @@ angular.module('foo')
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:value {optional name}
+$ slush fast:value {optional name}
 ```
 #### Constant
 
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:constant {optional name}
+$ slush fast:constant {optional name}
 ```
 #### Service
 
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:service {optional name}
+$ slush fast:service {optional name}
 ```
 #### Factory
 
 Inside the current module directory you can run the following command:
 
 ```
-$ slush freak:factory {optional name}
+$ slush fast:factory {optional name}
 ```
