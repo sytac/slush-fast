@@ -49,8 +49,9 @@ You will be prompted for input on project name, angular application module for b
 
 In CI mode four local servers will be spawned:
 - [http://localhost:3001](http://localhost:3001) Development server with [BrowserSync](http://www.browsersync.io/)
+- [http://localhost:8887](http://localhost:8887) Development server
 - [http://localhost:8888](http://localhost:8888) Karma coverage report
-- [http://localhost:8888](http://localhost:8886) Jasmine report
+- [http://localhost:8886](http://localhost:8886) Jasmine report
 
 
 ```
