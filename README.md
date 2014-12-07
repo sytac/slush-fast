@@ -5,10 +5,11 @@ Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/
 # Features
 
 - Modelled on John Papa's styleguide
-- Scaffolding of angular modules, including all moving parts like
+- Scaffolding of angular modules, including all moving parts.
 - Ability to include statically served assets
 - Continuous integration server with reports like code coverage, [JSHint](http://www.jshint.com/) and [CSS Lint](http://csslint.net/)
-- Packaging for deployment, including source maps
+- TODO: Packaging for deployment, including source maps
+
 
 # Bugs
 
