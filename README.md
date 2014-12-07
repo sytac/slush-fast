@@ -1,4 +1,4 @@
-# Slush Freak Angular Tools
+# Slush Freak Angular Scaffolding Tools
 
 Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/), which is [gulp](http://gulpjs.com/) based streaming scaffolding system.
 
