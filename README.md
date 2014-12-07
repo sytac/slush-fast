@@ -7,7 +7,7 @@ Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/
 - Modelled on John Papa's styleguide
 - Scaffolding of angular modules, including all moving parts like
 - Ability to include statically served assets
-- Continuous integration server with reports like code coverage, jshint and csshint
+- Continuous integration server with reports like code coverage, [JSHint](http://www.jshint.com/) and [CSS Lint](http://csslint.net/)
 - Packaging for deployment, including source maps
 
 # Bugs
@@ -17,8 +17,9 @@ Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/
 
 ## Install prerequisites
 
-- [git](http://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [node and npm, its package manager](http://nodejs.org/)
+- [Git](http://git-scm.com/)
+- [Ruby Programming Language](https://www.ruby-lang.org/) and [Sass: Syntactically Awesome Style Sheets](http://sass-lang.com/)
+- [node.js and npm, its package manager](http://nodejs.org/)
 
 
 Install the development tools you need for scaffolding, bear in mind these tools need to be installed globally, for *nixy systems you might want to use `sudo` or take a [look here](http://howtonode.org/introduction-to-npm) for npm without sudo.

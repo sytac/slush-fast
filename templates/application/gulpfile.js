@@ -8,6 +8,7 @@
 
 var angularFilesort = require('gulp-angular-filesort'),
 	concat = require('gulp-concat'),
+	csslint = require('gulp-csslint'),
 	singleConnect = require('gulp-connect'),
 	bowerFiles = require('main-bower-files'),
 	browserSync = require('browser-sync'),
@@ -18,6 +19,7 @@ var angularFilesort = require('gulp-angular-filesort'),
 	gulp = require('gulp'),
 	file = require('gulp-file'),
 	inject = require('gulp-inject'),
+	jshint = require('gulp-jshint'),
 	karma = require('karma')
 	.server,
 	minifyHtml = require('gulp-minify-html'),
@@ -50,28 +52,7 @@ var afkl = {},
 	coverageServer = connect(),
 	jasmineServer = connect(),
 	bower = require('./bower.json');
-/*
-"afkl": {
-"appName": "Mooie mekker app",
-"appNameSlug": "mooie-mekker-app",
-"angular": {
-"bootstrapModule": "mekker"
-},
-"includes": {
-"fromUrl": {
-"js": {
-"requirejs": "//core.static-afkl.com/ams/frontend/require-afkl.js",
-"freak-core": "//www.klm.com/ams/frontend/js/g-core-v2.js",
-"freak-local": "//apps.static-afkl.com/travel/nl_en/static/js/local.js",
-"angular": "//www.klm.com/ams/frontend/js/angular/angular-afkl.js"
-},
-"css": {
-"core-en": "//www.klm.com/ams/frontend/css/core-en.css"
-}
-}
-}
-}
-*/
+
 if (bower && bower.afkl) {
 	afkl = bower.afkl;
 
@@ -95,8 +76,6 @@ if (bower && bower.afkl) {
 		};
 	}
 }
-
-
 
 // Paths
 var paths = {
@@ -255,6 +234,8 @@ gulp.task('create-phantom-coverage-symlink', function () {
 gulp.task('dev-js', function () {
 	return gulp.src(globs.js.src)
 		.pipe(ngAnnotate())
+		.pipe(jshint())
+		.pipe(jshint.reporter('jshint-stylish'))
 		.pipe(gulp.dest(paths.js.dev));
 });
 
@@ -306,7 +287,9 @@ gulp.task('dev-partials', function () {
 gulp.task('dev-scss', function () {
 	return gulp.src(globs.scss.src)
 		.pipe(sass())
-		.pipe(gulp.dest(paths.scss.dev));
+		.pipe(gulp.dest(paths.scss.dev))
+		.pipe(csslint())
+		.pipe(csslint.reporter());
 });
 
 
