@@ -162,7 +162,7 @@ gulp.task('dev', function (done) {
 			'dev-scss'
 		], [
 			'dev-js-template',
-			'dev-js-config-run-template',
+			'dev-js-config-run-template', 'dev-js-bootstrap-template',
 			'dev-bower-js-template',
 			'dev-bower-css-template',
 			'dev-css-template'
@@ -315,7 +315,7 @@ gulp.task('dev-js-template', function () {
 			src: true
 		})
 		.pipe(inject(
-			gulp.src('target/dev/**/!(*config|*run).js')
+			gulp.src('target/dev/**/!(*bootstrap|*config|*run).js')
 			.pipe(angularFilesort()), {
 				ignorePath: '/target/dev/',
 				whitelist: [
@@ -331,7 +331,22 @@ gulp.task('dev-js-config-run-template', function () {
 				src: true
 			})
 		.pipe(inject(
-			gulp.src(['target/dev/**/*config.js', 'target/dev/**/*run.js'])
+			gulp.src(['target/dev/**/*config.js', 'target/dev/**/*run.js']), {
+				ignorePath: '/target/dev/'
+			}
+		))
+		.pipe(gulp.dest('./.tmp'));
+});
+
+gulp.task('dev-js-bootstrap-template', function () {
+	return file('app.jsBootstrap.tmpl',
+			'<!-- inject:js --><!-- endinject -->', {
+				src: true
+			})
+		.pipe(inject(
+			gulp.src(['target/dev/**/*bootstrap.js']), {
+				ignorePath: '/target/dev/'
+			}
 		))
 		.pipe(gulp.dest('./.tmp'));
 });
@@ -402,7 +417,8 @@ gulp.task('assemble-index', function () {
 
 gulp.task('watch-js', function () {
 	watch([globs.js.src, './src/app/.freak/js'], function (files, done) {
-		seq('dev-js', 'dev-js-template', 'dev-js-config-run-template', 'karma',
+		seq('dev-js', 'dev-js-template', 'dev-js-config-run-template',
+			'dev-js-bootstrap-template', 'karma',
 			'create-phantom-coverage-symlink', done);
 	});
 });
@@ -415,6 +431,7 @@ gulp.task('watch-spec', function () {
 gulp.task('watch-bootstrap', function () {
 	watch(globs.bootstrap.src, function (files, done) {
 		seq('dev-bootstrap', 'dev-js-template', 'dev-js-config-run-template',
+			'dev-js-bootstrap-template',
 			done);
 	});
 });
@@ -423,7 +440,8 @@ gulp.task('watch-partials', function () {
 	watch([globs.templates.app.src, './src/app/.freak/partials'], function (
 		files,
 		done) {
-		seq('dev-partials', 'dev-js-template', 'dev-js-config-run-template', done);
+		seq('dev-partials', 'dev-js-template', 'dev-js-config-run-template',
+			'dev-js-bootstrap-template', done);
 	});
 });
 
