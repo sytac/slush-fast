@@ -45,9 +45,10 @@ You will be prompted for input on project name, angular application module for b
 
 ### Running in CI mode
 
-In CI mode two local servers will be spawned:
-- [http://localhost:8887](http://localhost:8887) Development server
+In CI mode four local servers will be spawned:
+- [http://localhost:3001](http://localhost:3001) Development server with [BrowserSync](http://www.browsersync.io/)
 - [http://localhost:8888](http://localhost:8888) Karma coverage report
+- [http://localhost:8888](http://localhost:8886) Jasmine report
 
 
 ```
@@ -234,7 +235,7 @@ The `src/app/foo/foo.unf.provider.js` file contains the following definition:
 
 ```
 angular.module('foo')
-        .provider('UnfProvider', .... )
+        .provider('unf', .... )
 ```
 #### Value
 
