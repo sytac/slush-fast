@@ -10,6 +10,11 @@ Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/
 - Continuous integration server with reports like code coverage, jshint and csshint
 - Packaging for deployment, including source maps
 
+# Bugs
+
+- Creating a new directive and its partial will not trigger the watcher to create a new templates file, restart `gulp dev`
+
+
 ## Install prerequisites
 
 - [git](http://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
