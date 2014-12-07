@@ -1,27 +1,33 @@
 <!doctype html>
 <html>
-    <head>
-        <title><%= appName %></title>
-        <!-- Server side css includes, defined in bower.json afkl section -->
-        <%= inject.fromUrl.css %>
+<head>
+  <title><%= appName %></title>
+  <!-- Server side css includes, defined in bower.json afkl section -->
+  <%= inject.fromUrl.css %>
 
-        <!-- Bower css includes -->
-        <%= inject.bower.css %>
+  <!-- Bower css includes -->
+  <%= inject.bower.css %>
 
-        <!-- Project css includes -->
-        <%= inject.app.css %>
+  <!-- Project css includes -->
+  <%= inject.app.css %>
 
-    </head>
-    <body>
-        <div id="<%= angular.bootstrapModule %>-app"></div>
+</head>
+<body>
+  <div id="<%= angular.bootstrapModule %>-app">
+    <div ng-controller="Mekker">
+      123 {{foo}} 123
 
-        <!-- Server side js includes, defined in bower.json afkl section -->
-        <%= inject.fromUrl.js %>
+    </div>
+  </div>
 
-        <!-- Bower js includes -->
-        <%= inject.bower.js %>
+  <!-- Server side js includes, defined in bower.json afkl section -->
+  <%= inject.fromUrl.js %>
 
-        <!-- Project js includes -->
-        <%= inject.app.js %>
-    </body>
+  <!-- Bower js includes -->
+  <%= inject.bower.js %>
+
+  <!-- Project js includes -->
+  <%= inject.app.js %>
+  <%= inject.app.jsConfigAndRun %>
+</body>
 </html>
