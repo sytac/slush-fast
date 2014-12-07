@@ -5,10 +5,13 @@
 		.factory('<%= factory.name %>', <%= factory.name %> );
 
 	function <%= factory.name %> () {
-		var factory = function () {
+		// values here
 
+		var factory = {
+			// member : function or value
 		};
 
+		// factory functions here
 		return factory;
 	}
 
