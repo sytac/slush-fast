@@ -31,10 +31,10 @@ module.exports = function (options) {
 			.then(scaffolding.moduleName)
 			.then(scaffolding.constantName)
 			.then(function (transport) {
-				gulp.src([templates + '/module/module.constant*.js'
-					])
+				gulp.src([templates + '/module/module.constant*.js'])
 					.pipe(rename(function (path) {
-						path.basename = path.basename.replace('module', transport.constant.slug);
+						path.basename = path.basename.replace('module', transport.module.name +
+							'.' + transport.constant.slug);
 					}))
 					.pipe(template(transport))
 					.pipe(prettify(options.prettify))

@@ -4,23 +4,16 @@ describe('<%= controller.upperCaseCamelized %> controller', function () {
 
 	var $scope;
 	var <%= controller.name %> ;
-	var spies = {
-
-	};
 
 	beforeEach(inject(function ($controller, $rootScope) {
 		$scope = $rootScope.$new();
 
-		// spies
-		// spyOn(injectable, 'function').andCallThrough();
-
 		// instantiate controller
 		<%= controller.name %> = $controller(
 			'<%= controller.upperCaseCamelized %>', {
-				// controller arguments go here
-
-				// $scope: $scope,
-				// injectable : injectable
+				// named controller arguments go here
+				// for example:
+				// $scope: $scope
 			});
 	}));
 

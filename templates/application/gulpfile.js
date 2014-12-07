@@ -156,15 +156,16 @@ var globs = {
 gulp.task('dev', function (done) {
 	seq(
 		'clean', [
-		'dev-bootstrap',
-		'dev-js',
-		'dev-partials',
-		'dev-scss'
+			'dev-bootstrap',
+			'dev-js',
+			'dev-partials',
+			'dev-scss'
 		], [
-		'dev-js-template',
-		'dev-bower-js-template',
-		'dev-bower-css-template',
-		'dev-css-template'
+			'dev-js-template',
+			'dev-js-config-run-template',
+			'dev-bower-js-template',
+			'dev-bower-css-template',
+			'dev-css-template'
 		],
 		'dev-include-scripts',
 		'assemble-index',
@@ -174,12 +175,12 @@ gulp.task('dev', function (done) {
 		'dev-browsersync',
 		'dev-coverage-server',
 		'dev-jasmine-server', [
-		'watch-bootstrap',
-		'watch-js',
-		'watch-spec',
-		'watch-partials',
-		'watch-scss',
-		'watch-index-parts'
+			'watch-bootstrap',
+			'watch-js',
+			'watch-spec',
+			'watch-partials',
+			'watch-scss',
+			'watch-index-parts'
 		]
 	)(done);
 });
@@ -314,12 +315,27 @@ gulp.task('dev-js-template', function () {
 			src: true
 		})
 		.pipe(inject(
-			gulp.src('target/dev/**/*.js')
+			gulp.src('target/dev/**/!(*config|*run).js')
 			.pipe(angularFilesort()), {
-				ignorePath: '/target/dev/'
+				ignorePath: '/target/dev/',
+				whitelist: [
+					'./src/**/!(*config|*run).js'
+				]
 			}))
 		.pipe(gulp.dest('./.tmp'));
 });
+
+gulp.task('dev-js-config-run-template', function () {
+	return file('app.jsConfigAndRun.tmpl',
+			'<!-- inject:js --><!-- endinject -->', {
+				src: true
+			})
+		.pipe(inject(
+			gulp.src(['target/dev/**/*config.js', 'target/dev/**/*run.js'])
+		))
+		.pipe(gulp.dest('./.tmp'));
+});
+
 
 gulp.task('dev-css-template', function () {
 	return file('app.css.tmpl', '<!-- inject:css --><!-- endinject -->', {
@@ -386,7 +402,7 @@ gulp.task('assemble-index', function () {
 
 gulp.task('watch-js', function () {
 	watch([globs.js.src, './src/app/.freak/js'], function (files, done) {
-		seq('dev-js', 'dev-js-template', 'karma',
+		seq('dev-js', 'dev-js-template', 'dev-js-config-run-template', 'karma',
 			'create-phantom-coverage-symlink', done);
 	});
 });
@@ -398,7 +414,8 @@ gulp.task('watch-spec', function () {
 });
 gulp.task('watch-bootstrap', function () {
 	watch(globs.bootstrap.src, function (files, done) {
-		seq('dev-bootstrap', 'dev-js-template', done);
+		seq('dev-bootstrap', 'dev-js-template', 'dev-js-config-run-template',
+			done);
 	});
 });
 
@@ -406,7 +423,7 @@ gulp.task('watch-partials', function () {
 	watch([globs.templates.app.src, './src/app/.freak/partials'], function (
 		files,
 		done) {
-		seq('dev-partials', 'dev-js-template', done);
+		seq('dev-partials', 'dev-js-template', 'dev-js-config-run-template', done);
 	});
 });
 

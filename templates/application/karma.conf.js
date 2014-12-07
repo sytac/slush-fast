@@ -29,12 +29,15 @@ module.exports = function (config) {
 
 	var files = fromUrlJs.concat(bowerFiles)
 		.concat(['./src/**/*.js', './target/dev/app/**/*templates.js',
-		'./src/**/*spec.js', '!./src/**/*scenario.js']);
+			'./src/**/*config.js', './src/**/*run.js',
+			'./src/**/*spec.js', '!./src/**/*scenario.js'
+		]);
 	config.set({
 		files: files,
 
 		exclude: ['**/angular.js', '**/bootstrap.js',
-			'**/*scenario.js'],
+			'**/*scenario.js'
+		],
 
 		basePath: './',
 
@@ -53,14 +56,14 @@ module.exports = function (config) {
 			'karma-junit-reporter',
 			'karma-coverage',
 			'karma-html-reporter'
-			],
+		],
 
 		reporters: ['dots', 'coverage', 'junit', 'html'],
 
 		angularFilesort: {
 			whitelist: [
-				'./src/**/!(*bootstrap).js'
-				]
+				'./src/**/!(*bootstrap|*config|*run).js'
+			]
 		},
 
 		// exclude specs
