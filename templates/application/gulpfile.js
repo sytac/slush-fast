@@ -23,6 +23,7 @@ var angularFilesort = require('gulp-angular-filesort'),
 	karma = require('karma')
 	.server,
 	minifyHtml = require('gulp-minify-html'),
+	minimist = require('minimist'),
 	ngAnnotate = require('gulp-ng-annotate'),
 	rename = require('gulp-rename'),
 	rimraf = require('rimraf'),
@@ -41,9 +42,18 @@ var angularFilesort = require('gulp-angular-filesort'),
 	uglify = require('gulp-uglify'),
 	watch = require('gulp-watch');
 
+// pass arguments
+var knownOptions = {
+	string: ['host'],
+	default: {
+		host: 'localhost'
+	}
+};
 var settings = {
 	uglify: {}
 };
+
+var settings = extend(settings, minimist(process.argv.slice(2), knownOptions));
 
 var afkl = {},
 	appName = '',
@@ -449,30 +459,34 @@ gulp.task('dev-server', devServer.server({
 
 gulp.task('dev-browsersync', function () {
 	browserSync({
+		host: settings.host,
 		port: 3000,
 		files: 'target/dev/**',
-		proxy: 'localhost:8887',
+		proxy: settings.host + ':8887',
 		open: false
 	});
 });
 
 gulp.task('dev-coverage-server', coverageServer.server({
 	root: ['target/reports/karma-coverage/phantom/lcov-report'],
+	host: settings.host,
 	port: 8888,
 	livereload: false
 }));
 
 gulp.task('dev-jasmine-server', jasmineServer.server({
 	root: ['target/reports/jasmine'],
+	host: settings.host,
 	port: 8886,
 	livereload: false
 }));
 
 gulp.task('dev-coverage-browsersync', function () {
 	browserSync({
+		host: settings.host,
 		port: 3001,
 		files: 'target/reports/karma-coverage/phantom/lcov-report/**/*',
-		proxy: 'localhost:8888',
+		proxy: settings.host + ':8888',
 		reloadDelay: 2000,
 		open: false
 	});
