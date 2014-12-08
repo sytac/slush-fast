@@ -1,6 +1,6 @@
 # Slush Freak Angular Scaffolding Tools
 
-Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/), which is [gulp](http://gulpjs.com/) based streaming scaffolding system.
+Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/), which is a [gulp](http://gulpjs.com/) based streaming scaffolding system.
 
 # Features
 
@@ -55,7 +55,13 @@ In CI mode four local servers will be spawned:
 
 
 ```
-gulp dev
+npm run dev
+```
+
+Since this command will run gulp from the node_modules directory you can also start this task directly like so:
+
+```
+node_modules/gulp/bin/gulp.js dev
 ```
 
 

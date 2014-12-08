@@ -17,15 +17,10 @@ npm run dev
 npm run package
 ```
 
-The following packaged files can be found in `./target/dist/`:
+# Command line options
 
-- `app.js`
-- `app.map.js`
-- `app.min.js`
-- `app.min.map.js`
-- `bootstrap.js`
-- `bootstrap.min.js`
-- `bootstrapped-app.js`
-- `bootstrapped-app.min.js`
-- `vendor.js`
-- `vendor.min.js`
+For now the following options are available given that you use gulp directly. This will require you to have gulp installed.
+
+Use `gulp dev` in lieu of `npm run dev`
+
+- Host - `--host yourhost.local`
