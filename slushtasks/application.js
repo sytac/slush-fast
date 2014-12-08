@@ -87,19 +87,21 @@ module.exports = function (options) {
 				name: 'appName',
 				message: 'What is the name of your project?',
 				default: defaults.appName
-			}, {
-				name: 'appPrefix',
-				message: 'What is the prefix of your project? (for example: tif., ltc. or prds.)',
-				default: defaults.appPrefix,
-				validate: function (value) {
-					var done = this.async();
-					if (!value) {
-						done('Please provider a namespace');
-					} else {
-						done(true);
-					}
-				}
-			}, {
+			},
+			/* {
+							name: 'appPrefix',
+							message: 'What is the prefix of your project? (for example: tif., ltc. or prds.)',
+							default: defaults.appPrefix,
+							validate: function (value) {
+								var done = this.async();
+								if (!value) {
+									done('Please provider a namespace');
+								} else {
+									done(true);
+								}
+							}
+						} , */
+			{
 				name: 'appNs',
 				message: 'What is the bootstrap module of your project? (for example: app, example, toolbar, world-domination)',
 				default: defaults.appNs,
@@ -208,8 +210,7 @@ module.exports = function (options) {
 
 									scaffolding.moduleName(transport)
 										.then(function (transport) {
-											gulp.src([templates + '/module/module.js'
-												])
+											gulp.src([templates + '/module/module.js'])
 												.pipe(rename(function (path) {
 													path.basename = path.basename.replace('module',
 														transport.module
