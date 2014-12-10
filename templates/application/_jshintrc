@@ -4,7 +4,7 @@
   "curly": true,
   "forin": true,
   "immed": true,
-  "latedef": false,
+  "latedef": "nofunc",
   "white": true,
   "undef": true,
   "unused": true,
