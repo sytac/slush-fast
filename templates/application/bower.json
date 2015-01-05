@@ -1,5 +1,5 @@
 {
-	"name": "<%= appNameSlug %>",
+	"name": "the-slugged-application-name",
 	"version": "0.0.0",
 	"description": "",
 	"main": "./dist/module.js",
@@ -18,9 +18,8 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "<%= appRepository %>"
+		"url": "http://github.com/something.git"
 	},
-	"repository": "",
 	"dependencies": {},
 	"devDependencies": {
 		"angular-mocks": "~1.2.x"
@@ -31,8 +30,8 @@
 		}
 	},
 	"afkl": {
-		"appName": "<%= appName %>",
-		"appNameSlug": "<%= appNameSlug %>",
+		"appName": "The name of the app",
+		"appNameSlug": "the-name-of-the-app",
 		"includes": {
 			"fromUrl": {
 				"js": {

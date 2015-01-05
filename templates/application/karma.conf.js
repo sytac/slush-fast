@@ -32,6 +32,7 @@ module.exports = function (config) {
 			'./src/**/*config.js', './src/**/*run.js',
 			'./src/**/*spec.js', '!./src/**/*scenario.js'
 		]);
+
 	config.set({
 		files: files,
 
@@ -72,7 +73,21 @@ module.exports = function (config) {
 		},
 
 		coverageReporter: {
-			type: 'lcov',
+			reporters: [{
+				type: 'html',
+				subdir: 'report-html'
+			}, {
+				type: 'lcov',
+				subdir: '.'
+			}, {
+				type: 'text',
+				subdir: '.',
+				file: 'text.txt'
+			}, {
+				type: 'text-summary',
+				subdir: '.',
+				file: 'text-summary.txt'
+			}],
 			dir: 'target/reports/karma-coverage',
 			subdir: function (browser) {
 				if (browser.toLowerCase()

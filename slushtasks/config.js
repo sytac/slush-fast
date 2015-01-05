@@ -5,7 +5,7 @@ var gutil = require('gulp-util'),
 	template = require('gulp-template');
 
 module.exports = function (options) {
-
+	var bower = options.bower;
 	var src = options.src;
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
@@ -16,14 +16,14 @@ module.exports = function (options) {
 		// transport will be handed along all thennables
 		var transport = {
 			module: {
+				prefix: bower.afkl.angular.prefix,
 				ns: scaffolding.ns('.')
 					.join('.')
 			}
 		};
 		scaffolding.moduleName(transport)
 			.then(function (transport) {
-				gulp.src([templates + '/module/module.config*.js'
-					])
+				gulp.src([templates + '/module/**/module.config*.js'])
 					.pipe(rename(function (path) {
 						path.basename = path.basename.replace('module', transport.module.name);
 					}))

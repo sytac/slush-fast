@@ -2,6 +2,8 @@
 
 Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/), which is a [gulp](http://gulpjs.com/) based streaming scaffolding system.
 
+<%= readme.features %>
+
 # Features
 
 - Modelled on John Papa's styleguide

@@ -1,16 +1,16 @@
 (function () {
 	'use strict';
 
-	angular.module('<%= module.name %>')
-		.provider('<%= provider.name %>', <%= provider.camelizedPartName %> );
+	angular.module('<%= module.prefixedFullNs %>')
+		.provider('<%= provider.fullNsName %>', <%= provider.camelizedPartName %> );
 
 	function <%= provider.camelizedPartName %> () {
 
-		// Returns <%= provider.name %>
+		// Returns <%= provider.fullNsName %>
 		/* @ngInject */
 		this.$get = function () { <%
 			if (provider.partName === 'service') { %>
-				return function <%= provider.name %> () {
+				return function <%= provider.fullNsName %> () {
 
 				}; <%
 			} else { %>

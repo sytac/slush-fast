@@ -1,10 +1,19 @@
-var path = require('path'),
+var fs = require('fs'),
+	iniparser = require('iniparser'),
+	path = require('path'),
 	_s = require('underscore.string'),
 	wrap = require('./q-utils')
 	.wrap;
 
 var scaffolding = {
+	getHomeDir: getHomeDir,
+	getWorkingDirName: getWorkingDirName,
+	getGitUser: getGitUser,
+	getGitRepositoryUrl: getGitRepositoryUrl,
 	ns: ns,
+	findBower: findBower,
+	findNpm: findNpm,
+	prefixName: _prefixName,
 	moduleName: wrap(_moduleName),
 	controllerName: wrap(_partNameFactory('controller', 'Controller')),
 	providerName: wrap(_partNameFactory('provider', 'Provider')),
@@ -16,6 +25,50 @@ var scaffolding = {
 };
 
 module.exports = scaffolding;
+
+function getHomeDir() {
+	return process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
+}
+
+function getWorkingDirName() {
+	return process.cwd()
+		.split('/')
+		.pop()
+		.split('\\')
+		.pop();
+}
+
+function getGitUser() {
+	var gitUser;
+	var homeDir = getHomeDir();
+
+	if (homeDir) {
+		var configFile = homeDir + '/.gitconfig';
+
+
+		if (fs.existsSync(configFile)) {
+			var config = iniparser.parseSync(configFile);
+			if (config && config.user) {
+				gitUser = config.user;
+			}
+		}
+	}
+	return gitUser;
+}
+
+function getGitRepositoryUrl(remoteKey) {
+	var repositoryUrl;
+	var configFile = './.git/config';
+	remoteKey = remoteKey || 'remote "origin"';
+
+	if (fs.existsSync(configFile)) {
+		var config = iniparser.parseSync(configFile);
+		if (config && config[remoteKey] && config[remoteKey].url) {
+			repositoryUrl = config[remoteKey].url;
+		}
+	}
+	return repositoryUrl;
+}
 
 function ns(dir) {
 	var modulePrefix = '';
@@ -31,13 +84,56 @@ function ns(dir) {
 	}
 }
 
+function findBower(dir) {
+	var bowerConfig = 'bower.json';
+
+	var currentDir = path.resolve(dir);
+	var pathParts = currentDir.split('/');
+	var bower = {};
+	while (pathParts.length && !bower.name) {
+		var bowerConfigAbsolute = pathParts.join('/') + '/' + bowerConfig;
+		if (fs.existsSync(bowerConfigAbsolute)) {
+			bower = require(bowerConfigAbsolute);
+		}
+		pathParts.pop();
+	}
+	return bower;
+}
+
+function findNpm(dir) {
+	var npmConfig = 'package.json';
+
+	var currentDir = path.resolve(dir);
+	var pathParts = currentDir.split('/');
+	var npm = {};
+	while (pathParts.length && !npm) {
+		var npmConfigAbsolute = pathParts.join('/') + '/' + npmConfig;
+		if (fs.existsSync(npmConfigAbsolute)) {
+			npm = require(npmConfigAbsolute);
+		}
+		pathParts.pop();
+	}
+	return npm;
+}
+
+function _prefixName(prefix) {
+	return _s.trim(prefix.toLowerCase()
+			.replace(/[^a-zA-Z0-9]/g, ' ')
+			.replace(/\s+/g, ' '))
+		.split(' ')
+		.join('.');
+}
+
 function _moduleName(transport) {
 
 	var module = transport.module;
 	if (!module) {
 		throw new Error('transport.module missing');
 	} else {
-		module.prefix = module.prefix ? module.prefix + '.' : '';
+		module.prefixWithDot = module.prefix ? module.prefix + '.' : '';
+		module.camelCasedPrefix = _s.camelize(module.prefix.split('.')
+			.join('-'));
+
 		var ns = module.ns;
 		if (!ns) {
 			// new root module, expect module.newNs
@@ -62,6 +158,11 @@ function _moduleName(transport) {
 			}
 		}
 
+		module.prefixedFullNs = module.prefixWithDot + module.fullNs;
+		module.camelCasePrefixedFullNs = _s.camelize(module.prefixedFullNs.split('.')
+			.join('-'));
+		console.log('module.prefixedFullNs', module.prefixedFullNs);
+		console.log('module.camelCasePrefixedFullNs', module.camelCasePrefixedFullNs);
 		module.path = 'app/' + module.fullNs.split('.')
 			.join('/');
 
@@ -86,16 +187,20 @@ function _partNameFactory(partName, partPostfix) {
 			throw new Error('Expected transport.' + partName);
 		}
 
-		part.slug = _s.slugify(part.newName);
+		part.slug = _s.trim(_s.dasherize(part.newName), '-');
 		part.partPostfix = partPostfix;
 		part.upperCaseCamelizedPartSubName = part.partSubName ? _ucfirst(part.partSubName) :
 			part.partSubName = part.partSubName ? part.partSubName : '';
 		'';
-		part.name = _s.camelize(part.slug);
+		part.name = _s.camelize(part.newName);
 		part.upperCaseCamelized = _ucfirst(part.name);
+		part.lowerCaseCamelized = _lcfirst(part.name);
 		part.camelizedPartName = part.name + partPostfix;
 		part.upperCaseCamelizedPartName = _ucfirst(part.camelizedPartName);
-		part.fullNsName = transport.module.fullNsCamelized + _ucfirst(part.name);
+		part.fullNsName = transport.module.camelCasePrefixedFullNs + _ucfirst(part.name);
+		part.fullNsNamePartName = transport.module.camelCasePrefixedFullNs + part.upperCaseCamelizedPartName;
+		part.fullNsNameSlug = _s.dasherize(part.fullNsName);
+		console.log('part', part);
 		return transport;
 	}
 }
@@ -104,4 +209,9 @@ function _partNameFactory(partName, partPostfix) {
 function _ucfirst(str) {
 	return str.substring(0, 1)
 		.toUpperCase() + str.substring(1);
+}
+
+function _lcfirst(str) {
+	return str.substring(0, 1)
+		.toLowerCase() + str.substring(1);
 }

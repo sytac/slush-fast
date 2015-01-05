@@ -1,93 +1,68 @@
-// Caveat emptor
+// // Caveat emptor
 // =============
 //
 // This file has been generated, and can be overwritten.
 // If you thing something's wrong with this file, please
-// visit slush.repositoryUrl and submit a pull
+// visit bower.repositoryUrl and submit a pull
 // request, contact the maintainer or file a bug.
+'use strict';
 
 var angularFilesort = require('gulp-angular-filesort'),
 	concat = require('gulp-concat'),
 	csslint = require('gulp-csslint'),
+	del = require('del'),
+	download = require('gulp-download'),
 	singleConnect = require('gulp-connect'),
 	bowerFiles = require('main-bower-files'),
 	browserSync = require('browser-sync'),
 	connect = require('gulp-connect-multi'),
 	extend = require('extend'),
 	fs = require('fs'),
+	ghelp = require('gulp-showhelp'),
 	globule = require('globule'),
 	gulp = require('gulp'),
+	gutil = require('gulp-util'),
 	file = require('gulp-file'),
 	inject = require('gulp-inject'),
 	jshint = require('gulp-jshint'),
-	karma = require('karma')
-	.server,
+	karma = require('gulp-karma'),
 	minifyHtml = require('gulp-minify-html'),
 	minimist = require('minimist'),
 	ngAnnotate = require('gulp-ng-annotate'),
-	rename = require('gulp-rename'),
 	rimraf = require('rimraf'),
 	path = require('path'),
+	plumber = require('gulp-plumber'),
 	prettify = require('gulp-jsbeautifier'),
 	protractor = require('gulp-protractor')
 	.protractor,
 	sass = require('gulp-sass'),
-	symlink = require('gulp-symlink'),
 	seq = require('gulp-sequence')
 	.use(gulp),
-	tap = require('gulp-tap'),
+	symlink = require('gulp-symlink'),
 	template = require('gulp-template'),
 	templateCache = require('gulp-angular-templatecache'),
-	ucfirst = require('ucfirst'),
 	uglify = require('gulp-uglify'),
 	watch = require('gulp-watch');
 
-// pass arguments
-var knownOptions = {
-	string: ['host'],
-	default: {
-		host: 'localhost'
-	}
-};
+
+/**
+ * [settings Settings]
+ * @type {Object}
+ */
 var settings = {
-	uglify: {}
+	staticAssetTypes: ['js', 'css'],
+	uglify: {},
+	ngAnnotate: {
+		add: true,
+		remove: true,
+		single_quotes: true
+	}
 };
 
-var settings = extend(settings, minimist(process.argv.slice(2), knownOptions));
-
-var afkl = {},
-	appName = '',
-	appNameSlug = '',
-	devServer = connect(),
-	coverageServer = connect(),
-	jasmineServer = connect(),
-	bower = require('./bower.json');
-
-if (bower && bower.afkl) {
-	afkl = bower.afkl;
-
-	if (!afkl.angular) {
-		throw new Error('afkl.angular entry in bower.json missing');
-	}
-
-	if (!afkl.appName) {
-		throw new Error('afkl.appName entry in bower.json missing');
-	}
-	if (!afkl.appNameSlug) {
-		throw new Error('afkl.appNameSlug entry in bower.json missing');
-	}
-	if (!afkl.angular.bootstrapModule) {
-		throw new Error('afkl.angular.bootstrapModule entry in bower.json missing');
-	}
-
-	if (!afkl.angular.includes) {
-		afkl.angular.includes = {
-			fromUrl: {}
-		};
-	}
-}
-
-// Paths
+/**
+ * [paths Directory mappings]
+ * @type {Object}
+ */
 var paths = {
 	js: {
 		src: 'src/app',
@@ -115,6 +90,10 @@ var paths = {
 };
 
 // Globs
+/**
+ * [globs Glob mappings]
+ * @type {Object}
+ */
 var globs = {
 	js: {
 		src: paths.js.src + '/**/!(*spec|*scenario).js',
@@ -139,62 +118,130 @@ var globs = {
 	}
 };
 
+
+// pass arguments
+var cliOptions = {
+	string: ['host', 'skip-downloads'],
+	default: {
+		host: 'localhost',
+		'skip-downloads': false
+	}
+};
+
+// Spike 'em with argv
+settings = extend(settings, minimist(process.argv.slice(2), cliOptions));
+
+var afkl = {},
+	devServer = connect(),
+	coverageServer = connect(),
+	jasmineServer = connect(),
+	bower = require('./bower.json');
+
+if (bower && bower.afkl) {
+	afkl = bower.afkl;
+
+	if (!afkl.angular) {
+		throw new Error('afkl.angular entry in bower.json missing');
+	}
+
+	if (!afkl.appName) {
+		throw new Error('afkl.appName entry in bower.json missing');
+	}
+	if (!afkl.appNameSlug) {
+		throw new Error('afkl.appNameSlug entry in bower.json missing');
+	}
+	if (!afkl.angular.bootstrapModule) {
+		throw new Error('afkl.angular.bootstrapModule entry in bower.json missing');
+	}
+
+	if (!afkl.includes) {
+		afkl.includes = {};
+	}
+	if (!afkl.includes.fromUrl) {
+		afkl.includes.fromUrl = {};
+	}
+
+	if (!afkl.includes.fromUrl.css) {
+		afkl.includes.fromUrl.css = {};
+	}
+	if (!afkl.includes.fromUrl.js) {
+		afkl.includes.fromUrl.js = {};
+	}
+}
+
+
+gulp.task('help', function () {
+		ghelp.show();
+	})
+	.help = 'shows this help message.';
+
 // kicks off local coverage and dev servers
 // will both open in new browser window
 
 gulp.task('dev', function (done) {
-	seq(
-		'clean', [
-			'dev-bootstrap',
-			'dev-js',
-			'dev-partials',
-			'dev-scss'
-		], [
-			'dev-js-template',
-			'dev-js-config-run-template', 'dev-js-bootstrap-template',
-			'dev-bower-js-template',
-			'dev-bower-css-template',
-			'dev-css-template'
-		],
-		'dev-include-scripts',
-		'assemble-index',
-		'karma',
-		'create-phantom-coverage-symlink',
-		'dev-server',
-		'dev-browsersync',
-		'dev-coverage-server',
-		'dev-jasmine-server', [
-			'watch-bootstrap',
-			'watch-js',
-			'watch-spec',
-			'watch-partials',
-			'watch-scss',
-			'watch-index-parts'
-		]
-	)(done);
-});
+		seq(
+			'clean', 'clean-caches', [
+				'dev-bootstrap',
+				'dev-jshint',
+				'dev-js',
+				'dev-partials',
+				'dev-scss'
+			], [
+				'download-assets',
+				'dev-js-template',
+				'dev-js-config-run-template', 'dev-js-bootstrap-template',
+				'dev-bower-js-template',
+				'dev-bower-css-template',
+				'dev-css-template'
+			],
+			'dev-include-scripts',
+			'assemble-index',
+			'karma',
+			'create-phantom-coverage-symlink',
+			'dev-server',
+			'dev-browsersync',
+			'dev-coverage-server',
+			'dev-jasmine-server', [
+				'watch-bootstrap',
+				'watch-js',
+				'watch-spec',
+				'watch-partials',
+				'watch-scss',
+				'watch-index-parts'
+			]
+		)(done);
+	})
+	.help = {
+		'': 'Run the CI environment',
+		'--host=localhost': 'Set host domain for local servers, defaults to localhost',
+		'--skip-downloads': 'Skip download of static assets, prevents clearing of static download cache'
+	};
 
 gulp.task('package', function (done) {
-	// clean dist
-	// include bootstrap?
-	seq('dist-templates', 'dist-js', 'dist-bootstrap', 'dist-js-with-bootstrap',
-		done);
-});
+		// clean dist
+		// include bootstrap?
+		seq('dist-templates', 'dist-js', 'dist-bootstrap', 'dist-js-with-bootstrap',
+			done);
+	})
+	.help = 'Package for production';
 
-gulp.task('dev-protractor', ['dev-protractor-server'], function (cb) {
-	gulp.src('src/**/*scenario.js')
-		.pipe(protractor({
-			configFile: 'protractor.conf.js',
-			args: []
-		}))
-		.on('error', function (err) {
-			throw err;
-		})
-		.on('end', function () {
-			singleConnect.serverClose();
-			cb();
-		});
-});
+gulp.task('dev-protractor', [
+		'dev-protractor-server'
+	], function (cb) {
+		gulp.src('src/**/*scenario.js')
+			.pipe(protractor({
+				configFile: 'protractor.conf.js',
+				args: []
+			}))
+			.on('error', function (err) {
+				throw err;
+			})
+			.on('end', function () {
+				singleConnect.serverClose();
+				cb();
+			});
+	})
+	.help = 'Run e2e tests with protractor';
 
 gulp.task('dev-protractor-server', function () {
 	singleConnect.server({
@@ -205,48 +252,134 @@ gulp.task('dev-protractor-server', function () {
 
 // runs tests and copies reports for usage in bamboo
 gulp.task('test', function (done) {
-	seq('clean-reports', 'karma', 'create-phantom-coverage-symlink', done);
-});
+		seq('clean-reports', 'karma', 'create-phantom-coverage-symlink', done);
+	})
+	.help = 'Run tests with karma';
 
 // housekeeping
 gulp.task('clean', function (done) {
-	rimraf('./target', function () {
-		rimraf('./.tmp', function () {
-			done();
+		rimraf('./target', function () {
+			rimraf('./.tmp', function () {
+				done();
+			});
 		});
-	});
-});
+	})
+	.help = 'Clean ./target directory';
+
+gulp.task('clean-caches', function (done) {
+		if (settings['skip-downloads'] === false) {
+			rimraf('./.cache', function () {
+				done();
+			});
+		} else {
+			gutil.log('Skipping cleaning of .cache directory.');
+			done();
+		}
+	})
+	.help = 'Clean caches';
 
 gulp.task('clean-reports', function (done) {
-	rimraf('./target/reports', function () {
-		done();
-	});
-});
+		rimraf('./target/reports', function () {
+			done();
+		});
+	})
+	.help = 'Clean reports';
+
+
+gulp.task('clean-jshint', function (done) {
+		del('./target/jshint*', function () {
+			done();
+		});
+	})
+	.help = 'Clean jshint';
+
+gulp.task('download-assets', function () {
+		if (settings['skip-downloads'] === false) {
+			var assets = downloadAssets();
+			return download(assets)
+				.pipe(gulp.dest('./.cache/static/'));
+		} else {
+			gutil.log('Skipping asset download');
+		}
+	})
+	.help = 'Download static assets';
 
 // Testing
-
 gulp.task('karma', function (done) {
-	karma.start({
-		configFile: __dirname + '/karma.conf.js'
-	}, function () {
-		done();
-	});
-});
+
+		var wiredep = require('wiredep');
+		var bowerDependencies = wiredep({
+				devDependencies: true
+			})
+			.packages;
+		var bowerFiles = []
+			.concat.apply([], Object.keys(bowerDependencies)
+				.map(function (packageName) {
+					return bowerDependencies[packageName].main;
+				})
+			);
+
+
+		var fromUrlJs = fetchedAssets('js')
+			.map(function (uri) {
+				return './.cache/static/' + uri.split('/')
+					.pop();
+			});
+
+		var files = fromUrlJs.concat(bowerFiles)
+			.concat(['./src/**/*.js', './target/dev/app/**/*templates.js',
+				'./src/**/*config.js', './src/**/*run.js',
+				'./src/**/*spec.js', '!./src/**/*scenario.js'
+			]);
+
+
+		gulp.src(files)
+			.pipe(karma({
+				configFile: __dirname + '/karma.conf.js',
+				action: 'run'
+			}))
+			.on('error', function () {
+				// Make sure failed tests cause gulp to exit non-zero
+				done();
+			})
+			.on('end', function () {
+				done();
+			});
+
+	})
+	.help = 'Run karma';
 
 gulp.task('create-phantom-coverage-symlink', function () {
-	return gulp.src('*phantom*.info', {
-			cwd: 'target'
-		})
-		.pipe(symlink('target/reports/karma-coverage/sonar/lcov.info'));
-});
+		return gulp.src('*phantom*.info', {
+				cwd: 'target'
+			})
+			.pipe(symlink('target/reports/karma-coverage/sonar/lcov.info'));
+	})
+	.help = 'Create lcov symlink for Sonar';
 
 
 gulp.task('dev-js', function () {
 	return gulp.src(globs.js.src)
-		.pipe(ngAnnotate())
-		.pipe(jshint())
-		.pipe(jshint.reporter('jshint-stylish'))
+		.pipe(plumber())
+		.pipe(ngAnnotate(settings.ngAnnotate))
 		.pipe(gulp.dest(paths.js.dev));
+});
+
+
+gulp.task('dev-jshint', function () {
+	return gulp.src(globs.js.src)
+		.pipe(plumber())
+		.pipe(jshint())
+		.pipe(jshint.reporter('jshint-summary', {
+			verbose: true,
+			reasonCol: 'cyan,bold'
+		}))
+		.pipe(jshint.reporter('gulp-jshint-file-reporter', {
+			filename: './target/jshint-output.log'
+		}))
+		.pipe(jshint.reporter('gulp-jshint-html-reporter', {
+			filename: './target/jshint-output.html'
+		}));
 });
 
 gulp.task('dev-bootstrap', function () {
@@ -344,7 +477,6 @@ gulp.task('dev-js-bootstrap-template', function () {
 		.pipe(gulp.dest('./.tmp'));
 });
 
-
 gulp.task('dev-css-template', function () {
 	return file('app.css.tmpl', '<!-- inject:css --><!-- endinject -->', {
 			src: true
@@ -354,24 +486,6 @@ gulp.task('dev-css-template', function () {
 		}))
 		.pipe(gulp.dest('./.tmp'));
 });
-
-function includeScripts(type) {
-	var templates = {
-		'js': '<% Object.keys(includes.fromUrl.js).forEach(function(include){ %><!-- <%= include %> -->\n<script src="<%= includes.fromUrl.js[include] %>"></script>\n<% }); %>\n',
-		'css': '<% Object.keys(includes.fromUrl.css).forEach(function(include){ %><!-- <%= include %> -->\n<link rel="stylesheet" href="<%= includes.fromUrl.css[include] %>">\n<% }); %>\n'
-	};
-
-	if (!templates.js) {
-		throw new Error('Couldn\'t find template for type ' + type);
-	}
-
-	return file('fromUrl.' + type + '.tmpl',
-			templates[type], {
-				src: true
-			})
-		.pipe(template(afkl))
-		.pipe(gulp.dest('./.tmp'));
-}
 
 gulp.task('dev-include-scripts-js', function () {
 	return includeScripts('js');
@@ -409,10 +523,17 @@ gulp.task('assemble-index', function () {
 });
 
 gulp.task('watch-js', function () {
-	watch([globs.js.src, './src/app/.freak/js'], function (files, done) {
-		seq('dev-js', 'dev-js-template', 'dev-js-config-run-template',
+	watch([globs.js.src, './src/app/.freak/js'], {
+		debounceDelay: 1000
+	}, function (files, done) {
+		seq('clean-jshint', 'dev-jshint', 'dev-js', 'dev-js-template',
+			'dev-js-config-run-template',
 			'dev-js-bootstrap-template', 'karma',
-			'create-phantom-coverage-symlink', done);
+			'create-phantom-coverage-symlink',
+			function (err) {
+				console.log('error', err);
+				done();
+			});
 	});
 });
 
@@ -421,6 +542,7 @@ gulp.task('watch-spec', function () {
 		seq('karma', 'create-phantom-coverage-symlink', done);
 	});
 });
+
 gulp.task('watch-bootstrap', function () {
 	watch(globs.bootstrap.src, function (files, done) {
 		seq('dev-bootstrap', 'dev-js-template', 'dev-js-config-run-template',
@@ -433,8 +555,7 @@ gulp.task('watch-partials', function () {
 	watch([globs.templates.app.src, './src/app/.freak/partials'], function (
 		files,
 		done) {
-		seq('dev-partials', 'dev-js-template', 'dev-js-config-run-template',
-			'dev-js-bootstrap-template', done);
+		seq('dev-partials', 'dev-js-template', done);
 	});
 });
 
@@ -452,7 +573,7 @@ gulp.task('watch-index-parts', function () {
 });
 
 gulp.task('dev-server', devServer.server({
-	root: ['target/dev', 'bower_components', 'test/mock/'],
+	root: ['target/dev', 'bower_components', 'test/mock/', '.cache'],
 	port: 8887,
 	livereload: false
 }));
@@ -468,7 +589,7 @@ gulp.task('dev-browsersync', function () {
 });
 
 gulp.task('dev-coverage-server', coverageServer.server({
-	root: ['target/reports/karma-coverage/phantom/lcov-report'],
+	root: ['target/reports/karma-coverage/lcov-report'],
 	host: settings.host,
 	port: 8888,
 	livereload: false
@@ -485,7 +606,7 @@ gulp.task('dev-coverage-browsersync', function () {
 	browserSync({
 		host: settings.host,
 		port: 3001,
-		files: 'target/reports/karma-coverage/phantom/lcov-report/**/*',
+		files: 'target/reports/karma-coverage/lcov-report/**/*',
 		proxy: settings.host + ':8888',
 		reloadDelay: 2000,
 		open: false
@@ -508,7 +629,7 @@ gulp.task('dist-templates', function () {
 
 gulp.task('dist-js', function () {
 	return gulp.src(globs.js.src)
-		.pipe(ngAnnotate())
+		.pipe(ngAnnotate(settings.ngAnnotate))
 		.pipe(angularFilesort())
 		.pipe(uglify(settings.uglify))
 		.pipe(concat(afkl.angular.bootstrapModule + '.js'))
@@ -523,9 +644,62 @@ gulp.task('dist-bootstrap', function () {
 
 gulp.task('dist-js-with-bootstrap', function () {
 	return gulp.src([globs.js.src, globs.bootstrap.src])
-		.pipe(ngAnnotate())
+		.pipe(ngAnnotate(settings.ngAnnotate))
 		.pipe(angularFilesort())
 		.pipe(uglify(settings.uglify))
 		.pipe(concat('app.js'))
 		.pipe(gulp.dest(paths.js.dist));
 });
+
+
+///////////////////////
+///
+
+function includeScripts(type) {
+	var templates = {
+		'js': '<% Object.keys(includes.fromUrl.js).forEach(function(include){ %><!-- <%= include %> from <%= includes.fromUrl.js[include] %> -->\n<script src="static/<%= includes.fromUrl.js[include].split(\'/\').pop() %>"></script>\n<% }); %>\n',
+		'css': '<% Object.keys(includes.fromUrl.css).forEach(function(include){ %><!-- <%= include %> from <%= includes.fromUrl.css[include] %> -->\n<link rel="stylesheet" href="static/<%= includes.fromUrl.css[include].split(\'/\').pop() %>">\n<% }); %>\n'
+	};
+
+	if (!templates.js) {
+		throw new Error('Couldn\'t find template for type ' + type);
+	}
+
+	return file('fromUrl.' + type + '.tmpl',
+			templates[type], {
+				src: true
+			})
+		.pipe(template(afkl))
+		.pipe(gulp.dest('./.tmp'));
+}
+
+function downloadAssets() {
+
+	var assets = [];
+
+	settings.staticAssetTypes.map(function (type) {
+		assets = assets.concat([], Object.keys(bower.afkl.includes.fromUrl[
+				type])
+			.map(function (name) {
+				var uri = bower.afkl.includes.fromUrl[type][name];
+				uri = uri.indexOf('http') === -1 ? 'https:' + uri : uri;
+				return uri;
+			}));
+	});
+
+	return assets;
+}
+
+function fetchedAssets(type) {
+
+	var fetchAssetsByType = [];
+
+	if (settings.staticAssetTypes.indexOf(type) !== -1) {
+		fetchAssetsByType = Object.keys(bower.afkl.includes.fromUrl[type])
+			.map(function (name) {
+				return bower.afkl.includes.fromUrl[type][name];
+			});
+	}
+
+	return fetchAssetsByType;
+}

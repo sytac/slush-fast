@@ -1,10 +1,10 @@
 (function () {
 	'use strict';
 
-	angular.module('<%= module.fullNs %>')
-		.factory('<%= factory.name %>', <%= factory.name %> );
+	angular.module('<%= module.prefixedFullNs %>')
+		.factory('<%= factory.fullNsName %>', <%= factory.fullNsName %> );
 
-	function <%= factory.name %> () {
+	function <%= factory.fullNsName %> () {
 		// values here
 
 		var factory = {

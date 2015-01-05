@@ -10,7 +10,7 @@ var _s = require('underscore.string'),
 	template = require('gulp-template');
 
 module.exports = function (options) {
-
+	var bower = options.bower;
 	var src = options.src;
 	var templates = options.templates;
 	var utils = require(src + '/utils');
@@ -21,14 +21,12 @@ module.exports = function (options) {
 
 	var gulp = options.gulp;
 
-	gulp.task('ff', function () {
-		console.log('common', common);
-	});
 
 	gulp.task('module', function (done) {
 		var ns = scaffolding.ns('.');
 		var transport = {
 			module: {
+				prefix: bower.afkl.angular.prefix,
 				ns: ns.join('.')
 			}
 		};
@@ -40,12 +38,12 @@ module.exports = function (options) {
 		prompts.moduleName(transport)
 			.then(scaffolding.moduleName)
 			.then(function (transport) {
-				gulp.src([templates + '/module/module.js', templates +
-						'/module/module.spec.js', templates +
-						'/module/module.scenario.js'
+				gulp.src([
+						templates + '/module/module.js'
+						/*, templates + '/module/module.scenario.js' */
 					])
 					.pipe(rename(function (path) {
-						path.basename = path.basename.replace('module', transport.module.name);
+						path.basename = transport.module.name + '.' + path.basename;
 					}))
 					.pipe(template(transport))
 					.pipe(prettify(options.prettify))

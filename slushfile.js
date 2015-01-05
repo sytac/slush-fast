@@ -1,7 +1,10 @@
 var globule = require('globule'),
 	figlet = require('figlet'),
+	fs = require('fs'),
 	gulp = require('gulp'),
-	gutil = require('gulp-util');
+	gutil = require('gulp-util'),
+	scaffolding = require('./src/scaffolding'),
+	sh = require('shelljs');
 
 // add gulp release tasks
 require('gulp-release-tasks')(gulp);
@@ -15,14 +18,24 @@ gutil.log('\n' + ('TIF Angular Generator'.split(' ')
 	.join('\n')));
  */
 
+var bower = scaffolding.findBower('.');
+console.log('bower', bower);
+var slushNpm = scaffolding.findNpm(__dirname + '/.');
+
 // Settings
 var settings = {
 	gulp: gulp,
+	bower: bower,
+	slush: {
+		npm: slushNpm
+	},
+	slushNpm: slushNpm,
 	src: __dirname + '/src',
 	slushtasks: __dirname + '/slushtasks',
 	applications: './src/applications',
 	modules: './src/modules',
 	templates: __dirname + '/templates',
+	docs: __dirname + '/docs',
 	prettify: {
 		js: {
 			braceStyle: "collapse",

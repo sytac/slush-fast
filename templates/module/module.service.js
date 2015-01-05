@@ -1,10 +1,10 @@
 (function () {
 	'use strict';
 
-	angular.module('<%= module.fullNs %>')
-		.service('<%= service.name %>', <%= service.name %> );
+	angular.module('<%= module.prefixedFullNs %>')
+		.service('<%= service.fullNsName %>', <%= service.fullNsName %> );
 
-	function <%= service.name %> () {
+	function <%= service.fullNsName %> () {
 		// values here
 
 		// this.foo = function or value

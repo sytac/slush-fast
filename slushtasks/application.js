@@ -8,16 +8,23 @@
 
 'use strict';
 /* global require,process,console,__dirname */
-var _ = require('underscore.string'),
+var _ = require('lodash'),
+	_s = require('underscore.string'),
 	async = require('async'),
+	concat = require('gulp-concat'),
+	extend = require('extend'),
+	globule = require('globule'),
 	gulp = require('gulp'),
 	conflict = require('gulp-conflict'),
 	fs = require('fs'),
 	inquirer = require('inquirer'),
 	install = require('gulp-install'),
+	jeditor = require('gulp-json-editor'),
 	multipipe = require('multipipe'),
 	rename = require('gulp-rename'),
+	path = require('path'),
 	prettify = require('gulp-jsbeautifier'),
+	Q = require('Q'),
 	sh = require('shelljs'),
 	template = require('gulp-template'),
 	tap = require('gulp-tap'),
@@ -28,136 +35,259 @@ module.exports = function (options) {
 	var src = options.src;
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
+	var prompts = require(src + '/prompts');
 
 	var gulp = options.gulp;
-	gulp.task('init', function (done) {
-		var defaults = (function () {
-			var homeDir = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
-				workingDirName = process.cwd()
-				.split('/')
-				.pop()
-				.split('\\')
-				.pop(),
-				osUserName = homeDir && homeDir.split('/')
-				.pop() || 'root',
-				configFile = homeDir + '/.gitconfig',
-				user = {};
+	var seq = require('gulp-sequence')
+		.use(gulp);
 
-			if (fs.existsSync(configFile)) {
-				var existingUser = require('iniparser')
-					.parseSync(configFile)
-					.user;
-				if (existingUser) {
-					user = existingUser;
+	var globs = {
+		bootstrap: {
+			src: options.templates + '/application/*/bootstrap.js'
+		},
+		index: {
+			src: options.templates + '/application/*/index.html'
+		},
+		gulpfile: {
+			src: options.templates + '/application/gulpfile.js'
+		},
+		npm: {
+			src: options.templates + '/application/package.json'
+		},
+		bower: {
+			src: options.templates + '/application/bower.json',
+			target: './bower.json'
+		},
+		docs: {
+			readme: {
+				includes: {
+					src: options.docs + '/**/*.md'
+				},
+				project: {
+					src: options.docs + '/README.project.md',
+					dest: './README.md'
+				},
+				generator: {
+					src: options.docs + '/README.generator.md',
+					dest: './README.md'
 				}
 			}
+		}
+	};
 
-			var bower = getBowerConfig();
-			var npm = getNpmConfig();
-			var bootstrapModule = '';
-			var appPrefix = '';
-			if (bower.afkl && bower.afkl.angular && bower.afkl.angular.bootstrapModule) {
-				bootstrapModule = bower.afkl.angular.bootstrapModule;
-				appPrefix = bower.afkl.angular.appPrefix;
+	var bower = scaffolding.findBower('./');
+	var npm = scaffolding.findNpm('./');
+
+	var defaults = (function () {
+
+		var homeDir = scaffolding.getHomeDir();
+		var osUserName = homeDir && homeDir.split('/')
+			.pop() || 'root';
+
+		// throw error when root?
+
+		var workingDirName = scaffolding.getWorkingDirName();
+		var repositoryUrl = scaffolding.getGitRepositoryUrl();
+		console.log('repositoryUrl', repositoryUrl);
+		var gitUser = scaffolding.getGitUser();
+		console.log('gitUser', gitUser);
+		console.log('bower', bower);
+		var configFile = homeDir + '/.gitconfig';
+		gitUser = gitUser || {};
+
+
+		var bootstrapModule = '';
+
+		var appPrefix = '';
+
+		if (bower.afkl && bower.afkl.angular) {
+			appPrefix = bower.afkl.angular.prefix;
+			var bootstrap = bower.afkl.angular.bootstrap;
+			if (bootstrap) {
+				bootstrapModule = bootstrap.module;
+				if (appPrefix && bootstrapModule.indexOf(appPrefix + '.') === 0) {
+					bootstrapModule = bootstrapModule.substr(appPrefix.length + 1);
+				}
 			}
+		}
 
-			var defaultValues = {
-				appName: bower.name || workingDirName,
-				appDescription: bower.description || '',
-				appVersion: bower.version || '0.0.0',
-				userName: format(user.name) || osUserName,
-				authorEmail: user.email || '',
-				mainFile: bower.main || '',
-				appRepository: bower.repository ? bower.repository.url : '',
-				appNs: bootstrapModule,
-				appPrefix: appPrefix
-			};
+		var defaultValues = {
+			appName: bower.name || workingDirName,
+			appDescription: bower.description || '',
+			appVersion: bower.version || '0.0.0',
+			userName: format(gitUser.name) || osUserName,
+			authorEmail: gitUser.email || '',
+			mainFile: bower.main || '',
+			appRepository: repositoryUrl ? repositoryUrl : '',
+			bootstrapModule: bootstrapModule,
+			appPrefix: appPrefix,
+			bower: bower,
+			slush: options.slush,
+			slushNpm: options.slushNpm
+		};
 
-			if (typeof bower.author === 'object') {
-				defaultValues.authorName = bower.author.name;
-				if (bower.author.email) defaultValues.authorEmail = bower.author.email;
-			} else {
-				defaultValues.authorName = bower.author;
+		if (gitUser) {
+			if (gitUser.name) {
+				defaultValues.authorName = gitUser.name;
 			}
+			if (gitUser.email) {
+				defaultValues.authorEmail = gitUser.email;
+			}
+		}
 
-			return defaultValues;
-		})();
+		return defaultValues;
+	})();
 
-		var prompts = [{
-				name: 'appName',
-				message: 'What is the name of your project?',
-				default: defaults.appName
+
+
+	var answers;
+
+	gulp.task('readme', function (done) {
+
+		var readme = extend({}, defaults, {
+				slushNpm: options.slushNpm
 			},
-			/* {
-							name: 'appPrefix',
-							message: 'What is the prefix of your project? (for example: tif., ltc. or prds.)',
-							default: defaults.appPrefix,
-							validate: function (value) {
-								var done = this.async();
-								if (!value) {
-									done('Please provider a namespace');
-								} else {
-									done(true);
-								}
-							}
-						} , */
-			{
-				name: 'appNs',
-				message: 'What is the bootstrap module of your project? (for example: app, example, toolbar, world-domination)',
-				default: defaults.appNs,
-				validate: function (value) {
-					var done = this.async();
-					if (!value) {
-						done('Please provider a namespace');
+			bower);
+		util.log('Preparing README files', readme);
+		prepareReadme(readme, function () {
+			gulp.src(globs.docs.readme.project.src)
+				.pipe(template(readme))
+				.pipe(concat(globs.docs.readme.project.dest))
+				.pipe(conflict(globs.docs.readme.project.dest))
+				.pipe(gulp.dest('./'))
+				.on('end', function (err) {
+					if (err) {
+						util.log(util.colors.red('Failed to copy files'));
 					} else {
-						done(true);
+						util.log('Files copied');
 					}
-				}
-			}, {
-				name: 'appDescription',
-				message: 'What is the description?',
-				default: defaults.appDescription
-			}, {
-				name: 'appVersion',
-				message: 'What is the version of your project?',
-				default: defaults.appVersion
-			}, {
-				name: 'authorName',
-				message: 'What is the author name?',
-				default: defaults.authorName
-			}, {
-				name: 'authorEmail',
-				message: 'What is the author email?',
-				default: defaults.authorEmail
-			}, {
-				name: 'userName',
-				message: 'What is the github username?',
-				default: defaults.userName
-			}, {
-				name: 'appRepository',
-				message: 'Repository URL',
-				default: defaults.appRepository
-			}, {
-				type: 'confirm',
-				name: 'private',
-				message: 'Mark as a private package?'
-			},
 
-			{
-				type: 'confirm',
-				name: 'install',
-				message: 'Install npm dependencies?'
-			},
+					done(err, true);
+				});
+		});
+	});
 
-			{
-				type: 'confirm',
-				name: 'moveon',
-				message: 'Continue?'
-			}
-		];
+	gulp.task('do', function (done) {
+		// prompt for app specific values
+		prompts.application(defaults)
+			.then(function (answers) {
+				// this only returns answers, nothing else
+				// So we have to extend our defaults
+				_.extend(defaults, answers, {
+					appNameSlug: _s.slugify(answers.appName),
+					module: {
+						prefix: scaffolding.prefixName(answers.appPrefix),
+						ns: '',
+						newNs: answers.bootstrapModule
+					}
+				});
+				return Q.resolve(defaults);
+			})
+			.then(scaffolding.moduleName)
+			.then(function (transport) {
+				console.log('transport', transport);
+				seq([
+						'create-bower-json',
+						'update-bower-json',
+						'create-package-json',
+						'update-package-json'
+					], [
+						'copy-files',
+						'copy-special-files'
+					], [
+						'create-module',
+						'create-readme'
+					],
+					'install-npm-modules', done);
+			});
+	});
+
+	gulp.task('copy-files', function (done) {
+		// references defaults
+		done();
+	});
+	gulp.task('copy-special-files', function (done) {
+		// references defaults
+		done();
+	});
+	gulp.task('create-module', function (done) {
+		// references defaults
+		done();
+	});
+	gulp.task('create-readme', function (done) {
+		// references defaults
+		done();
+	});
+
+	gulp.task('create-bower-json', function (done) {
+		if (!fs.existsSync(globs.bower.target)) {
+			gulp.src(globs.bower.src)
+				.pipe(gulp.dest('./'))
+				.on('finish', function () {
+					done();
+				});
+		} else {
+			done();
+		}
+	});
+
+
+	gulp.task('update-bower-json', function () {
+		return gulp.src(globs.bower.target)
+			.pipe(jeditor(function (json) {
+				extend(json, {
+					name: defaults.app.nameSlug, // string
+					description: defaults.app.description, // string
+					version: defaults.app.version, // string
+					authors: defaults.app.authors, // array or object, in our case an array
+					repository: defaults.app.repository // object
+				});
+				var bootstrapModuleName = defaults.module.prefix + '.' + defaults.module
+					.fullNs;
+				extend(json.afkl, {
+					angular: {
+						prefix: defaults.module.prefix,
+						bootstrap: {
+							module: bootstrapModuleName,
+							element: _s.slugify(bootstrapModuleName.split('.')
+								.join('-')) + '-app'
+						}
+					}
+				})
+				return json;
+			}))
+			.pipe(gulp.dest('./'));
+	});
+
+	// package.json
+	gulp.task('create-package-json', function (done) {
+		if (!fs.existsSync(globs.npm.target)) {
+			gulp.src(globs.npm.src)
+				.pipe(gulp.dest('./'))
+				.on('finish', function () {
+					done();
+				});
+		} else {
+			done();
+		}
+	});
+
+	gulp.task('update-package-json', function (done) {
+		// references defaults
+		done();
+	});
+	gulp.task('install-npm-modules', function (done) {
+		// references defaults
+		done();
+	});
+
+
+	gulp.task('init', function (done) {
+
+		var newApplicationPrompts = prompts.application(defaults);
 
 		function askAndExecuteTasks() {
-			inquirer.prompt(prompts,
+			inquirer.prompt(newApplicationPrompts,
 				function (answers) {
 					if (!answers.moveon) {
 						Object.keys(answers)
@@ -166,22 +296,17 @@ module.exports = function (options) {
 									defaults[key] = answers[key];
 								}
 							});
-
 						console.log('\n');
-
 						return askAndExecuteTasks();
 					}
 
-					answers.appNameSlug = _.slugify(answers.appName);
-					answers.slush = {
-						repositoryUrl: 'http://'
-					};
+					answers.appNameSlug = _s.slugify(answers.appName);
 
 					var transport = {
 						module: {
-							prefix: answers.appPrefix,
+							prefix: scaffolding.prefixName(answers.appPrefix),
 							ns: '',
-							newNs: answers.appNs
+							newNs: answers.bootstrapModule
 						}
 					};
 
@@ -190,9 +315,13 @@ module.exports = function (options) {
 							answers.module = transport.module;
 							async.series([
 
+
 								function (callback) {
-									util.log('Copying files');
-									copyFiles(answers, callback);
+									var readme = extend({}, answers, bower, {
+										slushNpm: slushNpm
+									});
+									util.log('Parsing and copying files');
+									copyFiles(readme, callback);
 								},
 
 								function (callback) {
@@ -204,22 +333,25 @@ module.exports = function (options) {
 									var transport = {
 										module: {
 											ns: '',
-											newNs: answers.appNs
+											prefix: answers.appPrefix,
+											newNs: answers.bootstrapModule
 										}
 									};
 
 									scaffolding.moduleName(transport)
 										.then(function (transport) {
-											gulp.src([templates + '/module/module.js'])
+											gulp.src([
+													templates + '/module/module.js'
+													/*, templates + '/module/module.scenario.js' */
+												])
 												.pipe(rename(function (path) {
-													path.basename = path.basename.replace('module',
-														transport.module
-														.name);
+													path.basename = transport.module.name + '.' + path.basename;
 												}))
 												.pipe(template(transport))
 												.pipe(prettify(options.prettify))
 												.pipe(conflict('./src/app/' + transport.module.name + '/'))
-												.pipe(gulp.dest('./src/app/' + transport.module.name + '/'))
+												.pipe(gulp.dest('./src/app/' + transport.module.name +
+													'/'))
 												.on('finish', function () {
 													callback();
 												});
@@ -231,7 +363,13 @@ module.exports = function (options) {
 									util.log('Creating manifest files');
 									createPackageFiles(answers, callback);
 								},
-
+								function (callback) {
+									util.log('Preparing README files');
+									var readme = extend({}, answers, {
+										slushNpm: slushNpm
+									}, bower);
+									prepareReadme(readme, callback);
+								},
 								function (callback) {
 									if (answers.install) {
 										util.log('Installing NPM modules');
@@ -251,25 +389,7 @@ module.exports = function (options) {
 				});
 		}
 
-		function getBowerConfig() {
-			var bower = {};
-			var bowerConfig = 'bower.json';
-			if (fs.existsSync('./' + bowerConfig)) {
-				bower = require(sh.pwd() + '/' + bowerConfig);
-			}
 
-			return bower;
-		}
-
-		function getNpmConfig() {
-			var npm = {};
-			var npmConfig = 'package.json';
-			if (fs.existsSync('./' + npmConfig)) {
-				npm = require(sh.pwd() + '/' + npmConfig);
-			}
-
-			return npm;
-		}
 
 		function createPackageFiles(answers, callback) {
 			var bower = getBowerConfig(),
@@ -302,8 +422,14 @@ module.exports = function (options) {
 			bower.main = './dist/module.js';
 			npm.main = './dist/index.js';
 			bower.afkl.angular = {
-				bootstrapModule: answers.module.fullNs
+				prefix: answers.module.prefix,
+				bootstrapModule: answers.module.prefix + '.' + answers.module.fullNs
 			};
+
+			bower.afkl.angular.bootstrapElement = _s.slugify(bower.afkl.angular.bootstrapModule
+					.split('.')
+					.join('-')) +
+				'-app';
 
 			fs.writeFileSync('./bower.json', JSON.stringify(bower, null, '\t'));
 			fs.writeFileSync('./package.json', JSON.stringify(npm, null, '\t'));
@@ -311,17 +437,6 @@ module.exports = function (options) {
 			callback(null, true);
 		}
 
-		var globs = {
-			bootstrap: {
-				src: options.templates + '/application/*/bootstrap.js'
-			},
-			index: {
-				src: options.templates + '/application/*/index.html'
-			},
-			gulpfile: {
-				src: options.templates + '/application/gulpfile.js'
-			}
-		};
 
 
 		function copyFiles(answers, callback) {
@@ -384,23 +499,25 @@ module.exports = function (options) {
 			});
 		}
 
-		function format(string) {
-			if (string) {
 
-				var username = string.toLowerCase();
-				return username.replace(/\s/g, '');
-			}
-		}
-
-		function readJSON(path) {
-			return JSON.parse(fs.readFileSync(path) + '');
-		}
 
 		askAndExecuteTasks();
 
 	});
-};
 
+	function prepareReadme(answers, callback) {
+		answers.readme = {};
+
+		globule.find(globs.docs.readme.includes.src)
+			.map(function (file) {
+				console.log('file', file);
+				var value = fs.readFileSync(file, 'utf8');
+				var key = path.basename(file, '.md');
+				answers.readme[key] = _.template(value)(answers);
+			});
+		callback();
+	}
+};
 
 function installNpmModules(callback) {
 	var pipe = multipipe(gulp.src('./package.json'), install());
@@ -415,4 +532,36 @@ function installNpmModules(callback) {
 	});
 
 	pipe.on('error', callback);
+}
+
+function getBowerConfig() {
+	var bower = {};
+	var bowerConfig = 'bower.json';
+	if (fs.existsSync('./' + bowerConfig)) {
+		bower = require(sh.pwd() + '/' + bowerConfig);
+	}
+
+	return bower;
+}
+
+function getNpmConfig() {
+	var npm = {};
+	var npmConfig = 'package.json';
+	if (fs.existsSync('./' + npmConfig)) {
+		npm = require(sh.pwd() + '/' + npmConfig);
+	}
+
+	return npm;
+}
+
+function format(string) {
+	if (string) {
+
+		var username = string.toLowerCase();
+		return username.replace(/\s/g, '');
+	}
+}
+
+function readJSON(path) {
+	return JSON.parse(fs.readFileSync(path) + '');
 }

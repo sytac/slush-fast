@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	angular.module('<%= module.fullNs %>')
+	angular.module('<%= module.prefixedFullNs %>')
 		.run(run);
 
 	function run() {

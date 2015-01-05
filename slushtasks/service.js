@@ -5,7 +5,7 @@ var gutil = require('gulp-util'),
 	template = require('gulp-template');
 
 module.exports = function (options) {
-
+	var bower = options.bower;
 	var src = options.src;
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
@@ -17,6 +17,7 @@ module.exports = function (options) {
 
 		var transport = {
 			module: {
+				prefix: bower.afkl.angular.prefix,
 				ns: scaffolding.ns('.')
 					.join('.')
 			},
@@ -31,11 +32,9 @@ module.exports = function (options) {
 			.then(scaffolding.moduleName)
 			.then(scaffolding.serviceName)
 			.then(function (transport) {
-				gulp.src([templates + '/module/module.service*.js'
-					])
+				gulp.src([templates + '/module/**/module.service*.js'])
 					.pipe(rename(function (path) {
-						path.basename = path.basename.replace('module', transport.module.name +
-							'.' + transport.service.slug);
+						path.basename = path.basename.replace('module', transport.service.slug);
 					}))
 					.pipe(template(transport))
 					.pipe(prettify(options.prettify))
