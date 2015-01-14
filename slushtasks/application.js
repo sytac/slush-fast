@@ -209,6 +209,7 @@ module.exports = function (options) {
 
 
 	});
+
 	gulp.task('create-readme', function (done) {
 		// references defaults
 		done();
@@ -226,7 +227,6 @@ module.exports = function (options) {
 		}
 	});
 
-
 	gulp.task('update-bower-json', function () {
 		return gulp.src(globs.bower.target)
 			.pipe(jeditor(function (json) {
@@ -242,9 +242,6 @@ module.exports = function (options) {
 						includes: defaults.project.includes
 					}
 				});
-
-				//extend(json.project.name, {}, defaults.project.name);
-				//extend(json.project.angular, defaults.project.angular);
 
 				return json;
 			}))
@@ -289,7 +286,6 @@ module.exports = function (options) {
 		}
 	});
 
-
 	function prepareReadme(answers, callback) {
 		answers.readme = {};
 
@@ -320,22 +316,6 @@ module.exports = function (options) {
 			full: workingDirName,
 			slug: _s.slugify(workingDirName)
 		});
-		/*{
-			name: {
-				full: workingDirName,
-				slug: _s.slugify(workingDirName)
-			},
-			angular: {
-				prefix: '',
-				bootstrap: {
-					module: bootstrapModule,
-					element: _s.slugify(bootstrapModule.split('.')
-						.join('-')) + '-app'
-				}
-			}
-		};
-
-		*/
 
 		var defaults = {
 			authors: bower.authors,
@@ -367,41 +347,6 @@ module.exports = function (options) {
 	}
 };
 
-function installNpmModules(callback) {
-	var pipe = multipipe(gulp.src('./package.json'), install());
-
-	pipe.on('end', function () {
-		util.log('Modules installed');
-		callback(null, true);
-	});
-
-	pipe.on('data', function (data) {
-		return data;
-	});
-
-	pipe.on('error', callback);
-}
-
-function getBowerConfig() {
-	var bower = {};
-	var bowerConfig = 'bower.json';
-	if (fs.existsSync('./' + bowerConfig)) {
-		bower = require(sh.pwd() + '/' + bowerConfig);
-	}
-
-	return bower;
-}
-
-function getNpmConfig() {
-	var npm = {};
-	var npmConfig = 'package.json';
-	if (fs.existsSync('./' + npmConfig)) {
-		npm = require(sh.pwd() + '/' + npmConfig);
-	}
-
-	return npm;
-}
-
 function format(string) {
 	if (string) {
 
@@ -409,88 +354,3 @@ function format(string) {
 		return username.replace(/\s/g, '');
 	}
 }
-
-function readJSON(path) {
-		return JSON.parse(fs.readFileSync(path) + '');
-	}
-	// new shit
-
-
-
-/// old shit
-/*
-var defaults = (function () {
-
-var homeDir = scaffolding.getHomeDir();
-var osUserName = homeDir && homeDir.split('/')
-.pop() || 'root';
-
-// throw error when root?
-
-var workingDirName = scaffolding.getWorkingDirName();
-var repositoryUrl = scaffolding.getGitRepositoryUrl();
-// console.log('repositoryUrl', repositoryUrl);
-var gitUser = scaffolding.getGitUser();
-// console.log('gitUser', gitUser);
-// console.log('bower', bower);
-gitUser = gitUser || {};
-
-
-var bootstrapModule = 'unspecified';
-
-var appPrefix = '';
-var appName;
-if (bower.project) {
-
-appPrefix = bower.project.angular.prefix;
-var bootstrap = bower.project.angular.bootstrap;
-if (bootstrap) {
-bootstrapModule = bootstrap.module.substr(appPrefix.length + 1);
-}
-}
-
-var project = bower.project || {
-name: {
-full: workingDirName,
-slug: _s.slugify(workingDirName)
-},
-angular: {
-prefix: appPrefix,
-bootstrap: {
-module: bootstrapModule,
-element: _s.slugify(bootstrapModule.split('.')
-.join('-')) + '-app'
-}
-}
-};
-
-
-var defaultValues = {
-authors: bower.authors,
-appName: appName,
-description: bower.description || '',
-version: bower.version || '0.0.0',
-userName: format(gitUser.name) || osUserName,
-authorEmail: gitUser.email || '',
-mainFile: bower.main || '',
-appRepository: repositoryUrl ? repositoryUrl : '',
-bootstrapModule: bootstrapModule,
-appPrefix: appPrefix,
-bower: bower,
-slush: options.slush,
-slushNpm: options.slushNpm,
-project: project
-};
-
-if (gitUser) {
-if (gitUser.name) {
-defaultValues.authorName = gitUser.name;
-}
-if (gitUser.email) {
-defaultValues.authorEmail = gitUser.email;
-}
-}
-
-return defaultValues;
-})();
- */
