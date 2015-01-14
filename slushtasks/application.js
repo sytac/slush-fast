@@ -80,7 +80,7 @@ module.exports = function (options) {
 				slushNpm: options.slushNpm
 			},
 			defaults.bower);
-		util.log('Preparing README files', readme);
+		util.log('Preparing README files');
 		prepareReadme(readme, function () {
 			gulp.src(globs.docs.readme.project.src)
 				.pipe(template(readme))
@@ -206,8 +206,6 @@ module.exports = function (options) {
 				'/'))
 			.pipe(gulp.dest('./src/app/' + defaults.module.name +
 				'/'));
-
-
 	});
 
 	gulp.task('create-readme', function (done) {
