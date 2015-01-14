@@ -7,6 +7,7 @@
 	function <%= provider.camelizedPartName %> () {
 
 		// Returns <%= provider.fullNsName %>
+		/*jshint validthis: true */
 		/* @ngInject */
 		this.$get = function () { <%
 			if (provider.partName === 'service') { %>

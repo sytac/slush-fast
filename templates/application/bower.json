@@ -29,9 +29,19 @@
 			"ignore": true
 		}
 	},
-	"afkl": {
-		"appName": "The name of the app",
-		"appNameSlug": "the-name-of-the-app",
+
+	"project": {
+		"name": {
+			"full": "Your project",
+			"slug": "your-project"
+		},
+		"angular": {
+			"prefix": "afkl",
+			"bootstrap": {
+				"module": "afkl.your-module",
+				"element": "afkl-your-module-app"
+			}
+		},
 		"includes": {
 			"fromUrl": {
 				"js": {

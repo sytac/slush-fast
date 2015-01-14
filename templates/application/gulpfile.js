@@ -131,41 +131,49 @@ var cliOptions = {
 // Spike 'em with argv
 settings = extend(settings, minimist(process.argv.slice(2), cliOptions));
 
-var afkl = {},
+var project = {},
 	devServer = connect(),
 	coverageServer = connect(),
 	jasmineServer = connect(),
 	bower = require('./bower.json');
 
-if (bower && bower.afkl) {
-	afkl = bower.afkl;
+if (bower && bower.project) {
+	project = bower.project;
 
-	if (!afkl.angular) {
-		throw new Error('afkl.angular entry in bower.json missing');
-	}
-
-	if (!afkl.appName) {
-		throw new Error('afkl.appName entry in bower.json missing');
-	}
-	if (!afkl.appNameSlug) {
-		throw new Error('afkl.appNameSlug entry in bower.json missing');
-	}
-	if (!afkl.angular.bootstrapModule) {
-		throw new Error('afkl.angular.bootstrapModule entry in bower.json missing');
+	if (!project.angular) {
+		throw new Error('project.angular entry in bower.json missing');
 	}
 
-	if (!afkl.includes) {
-		afkl.includes = {};
-	}
-	if (!afkl.includes.fromUrl) {
-		afkl.includes.fromUrl = {};
+	if (!project.name) {
+		throw new Error('project.name entry in bower.json missing');
 	}
 
-	if (!afkl.includes.fromUrl.css) {
-		afkl.includes.fromUrl.css = {};
+	if (!project.name.full) {
+		throw new Error('project.name.full entry in bower.json missing');
 	}
-	if (!afkl.includes.fromUrl.js) {
-		afkl.includes.fromUrl.js = {};
+	if (!project.name.slug) {
+		throw new Error('project.name.slug entry in bower.json missing');
+	}
+	if (!project.angular.bootstrap) {
+		throw new Error('project.angular.bootstrap entry in bower.json missing');
+	}
+	if (!project.angular.bootstrap.module) {
+		throw new Error(
+			'project.angular.bootstrap.module entry in bower.json missing');
+	}
+
+	if (!project.includes) {
+		project.includes = {};
+	}
+	if (!project.includes.fromUrl) {
+		project.includes.fromUrl = {};
+	}
+
+	if (!project.includes.fromUrl.css) {
+		project.includes.fromUrl.css = {};
+	}
+	if (!project.includes.fromUrl.js) {
+		project.includes.fromUrl.js = {};
 	}
 }
 
@@ -296,8 +304,13 @@ gulp.task('clean-jshint', function (done) {
 gulp.task('download-assets', function () {
 		if (settings['skip-downloads'] === false) {
 			var assets = downloadAssets();
-			return download(assets)
-				.pipe(gulp.dest('./.cache/static/'));
+			if (!assets.length) {
+				gutil.log('No assets to be downloaded');
+			} else {
+
+				return download(assets)
+					.pipe(gulp.dest('./.cache/static/'));
+			}
 		} else {
 			gutil.log('Skipping asset download');
 		}
@@ -309,15 +322,18 @@ gulp.task('karma', function (done) {
 
 		var wiredep = require('wiredep');
 		var bowerDependencies = wiredep({
-				devDependencies: true
-			})
-			.packages;
+			devDependencies: true
+		});
+		var bowerFiles = bowerDependencies.js;
+		/*
+
 		var bowerFiles = []
-			.concat.apply([], Object.keys(bowerDependencies)
-				.map(function (packageName) {
-					return bowerDependencies[packageName].main;
-				})
-			);
+		.concat.apply([], Object.keys(bowerDependencies)
+		.map(function (packageName) {
+		return bowerDependencies[packageName].main;
+	})
+);
+*/
 
 
 		var fromUrlJs = fetchedAssets('js')
@@ -326,12 +342,14 @@ gulp.task('karma', function (done) {
 					.pop();
 			});
 
+		// Why first exclude conf and run files and later include em?
+		// Because it affects the loading order of files for the karma preprocessor
 		var files = fromUrlJs.concat(bowerFiles)
-			.concat(['./src/**/*.js', './target/dev/app/**/*templates.js',
+			.concat(['./src/**/!(*bootstrap|config|run|scenario).js',
+				'./target/dev/app/**/*templates.js',
 				'./src/**/*config.js', './src/**/*run.js',
-				'./src/**/*spec.js', '!./src/**/*scenario.js'
+				'./src/**/*spec.js'
 			]);
-
 
 		gulp.src(files)
 			.pipe(karma({
@@ -384,7 +402,7 @@ gulp.task('dev-jshint', function () {
 
 gulp.task('dev-bootstrap', function () {
 	return gulp.src(globs.bootstrap.src)
-		.pipe(template(afkl))
+		.pipe(template(project))
 		.pipe(gulp.dest(paths.bootstrap.dev));
 });
 
@@ -421,10 +439,10 @@ gulp.task('dev-partials', function () {
 			quotes: true,
 			loose: true
 		}))
-		.pipe(templateCache(afkl.angular.bootstrapModule + '.templates.js', {
-			module: afkl.angular.bootstrapModule
+		.pipe(templateCache(project.angular.bootstrap.module + '.templates.js', {
+			module: project.angular.bootstrap.module
 		}))
-		.pipe(gulp.dest('./target/dev/app/' + afkl.angular.bootstrapModule));
+		.pipe(gulp.dest('./target/dev/app/' + project.angular.bootstrap.module));
 });
 
 gulp.task('dev-scss', function () {
@@ -499,7 +517,7 @@ gulp.task('dev-include-scripts', function (done) {
 });
 
 gulp.task('assemble-index', function () {
-	var data = extend({}, afkl, {
+	var data = extend({}, project, {
 		inject: {}
 	});
 	globule.find('./.tmp/*.tmpl')
@@ -531,7 +549,6 @@ gulp.task('watch-js', function () {
 			'dev-js-bootstrap-template', 'karma',
 			'create-phantom-coverage-symlink',
 			function (err) {
-				console.log('error', err);
 				done();
 			});
 	});
@@ -568,7 +585,8 @@ gulp.task('watch-scss', function () {
 gulp.task('watch-index-parts', function () {
 	watch(['bower.json', 'src/index.html', './.tmp/*.tmpl'], function (files,
 		done) {
-		seq('dev-include-scripts', 'assemble-index', done);
+		seq('dev-include-scripts', 'dev-bower-js-template',
+			'dev-bower-css-template', 'assemble-index', done);
 	});
 });
 
@@ -621,8 +639,8 @@ gulp.task('dist-templates', function () {
 			quotes: true,
 			loose: true
 		}))
-		.pipe(templateCache(afkl.angular.bootstrapModule + '.templates.js', {
-			module: afkl.angular.bootstrapModule
+		.pipe(templateCache(project.angular.bootstrap.module + '.templates.js', {
+			module: project.angular.bootstrap.module
 		}))
 		.pipe(gulp.dest(paths.templates.app.dist));
 });
@@ -632,7 +650,7 @@ gulp.task('dist-js', function () {
 		.pipe(ngAnnotate(settings.ngAnnotate))
 		.pipe(angularFilesort())
 		.pipe(uglify(settings.uglify))
-		.pipe(concat(afkl.angular.bootstrapModule + '.js'))
+		.pipe(concat(project.angular.bootstrap.module + '.js'))
 		.pipe(gulp.dest(paths.js.dist));
 });
 
@@ -669,7 +687,7 @@ function includeScripts(type) {
 			templates[type], {
 				src: true
 			})
-		.pipe(template(afkl))
+		.pipe(template(project))
 		.pipe(gulp.dest('./.tmp'));
 }
 
@@ -678,10 +696,10 @@ function downloadAssets() {
 	var assets = [];
 
 	settings.staticAssetTypes.map(function (type) {
-		assets = assets.concat([], Object.keys(bower.afkl.includes.fromUrl[
+		assets = assets.concat([], Object.keys(bower.project.includes.fromUrl[
 				type])
 			.map(function (name) {
-				var uri = bower.afkl.includes.fromUrl[type][name];
+				var uri = bower.project.includes.fromUrl[type][name];
 				uri = uri.indexOf('http') === -1 ? 'https:' + uri : uri;
 				return uri;
 			}));
@@ -695,9 +713,9 @@ function fetchedAssets(type) {
 	var fetchAssetsByType = [];
 
 	if (settings.staticAssetTypes.indexOf(type) !== -1) {
-		fetchAssetsByType = Object.keys(bower.afkl.includes.fromUrl[type])
+		fetchAssetsByType = Object.keys(bower.project.includes.fromUrl[type])
 			.map(function (name) {
-				return bower.afkl.includes.fromUrl[type][name];
+				return bower.project.includes.fromUrl[type][name];
 			});
 	}
 

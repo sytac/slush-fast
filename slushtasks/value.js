@@ -18,7 +18,7 @@ module.exports = function (options) {
 
 		var transport = {
 			module: {
-				prefix: bower.afkl.angular.prefix,
+				prefix: bower.project.angular.prefix,
 				ns: scaffolding.ns('.')
 					.join('.')
 			},

@@ -45,7 +45,7 @@ function parse(dir, cb) {
 
 							var components = globule.find([dir + file + '/' + file + '.js']);
 							if (components.length === 1) {
-								console.log('has component: ' + file);
+								// console.log('has component: ' + file);
 							}
 						}
 					}
@@ -86,7 +86,6 @@ function handleFiles(dir, files, cb) {
 							handleFiles(dir, files, cb);
 					});
 				else if (stats.isFile()) {
-					console.log(p);
 					handleFiles(dir, files, cb);
 				}
 			}
@@ -300,7 +299,6 @@ function _generateDirectiveNames(transport) {
 }
 
 function _generateProviderNames(transport) {
-	console.log(transport);
 	var partSuffix = 'Service';
 	if (transport.provider && transport.provider.partName) {
 		var partName = transport.provider.partName;

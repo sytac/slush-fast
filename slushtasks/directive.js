@@ -18,7 +18,7 @@ module.exports = function (options) {
 		var ns = scaffolding.ns('.');
 		var transport = {
 			module: {
-				prefix: bower.afkl.angular.prefix,
+				prefix: bower.project.angular.prefix,
 				ns: ns
 					.join('.')
 			},
@@ -28,8 +28,6 @@ module.exports = function (options) {
 		if (gulp.args.length) {
 			transport.directive.newName = gulp.args.join(' ');
 		}
-
-		console.log('ns', ns, ns.length);
 
 		prompts.directiveName(transport)
 			.then(scaffolding.moduleName)
@@ -52,7 +50,7 @@ module.exports = function (options) {
 					});
 			})
 			.catch(function (err) {
-				console.log(err);
+				gutil.log(err);
 			});
 	});
 };

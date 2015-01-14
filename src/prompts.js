@@ -2,6 +2,7 @@ var _s = require('underscore.string'),
 	extend = require('extend'),
 	inquirer = require('inquirer'),
 	Q = require('q'),
+	scaffolding = require('./scaffolding'),
 	wrap = require('./q-utils')
 	.wrap;
 
@@ -28,11 +29,11 @@ function application(defaults) {
 	var prompts = [{
 		name: 'appName',
 		message: 'What is the name of your project?',
-		default: defaults.appName
+		default: defaults.project.name.full
 	}, {
 		name: 'appPrefix',
 		message: 'What is the prefix of your project? (for example: tif., ltc. or prds.)',
-		default: defaults.appPrefix,
+		default: defaults.project.angular.prefix,
 		validate: function (value) {
 			var done = this.async();
 			if (!value) {
@@ -40,11 +41,18 @@ function application(defaults) {
 			} else {
 				done(true);
 			}
-		}
+		},
+		filter: scaffolding.prefixName
 	}, {
 		name: 'bootstrapModule',
-		message: 'What is the bootstrap module of your project? (for example: example, toolbar, world-domination)',
-		default: defaults.bootstrapModule,
+		message: function (answers) {
+			return 'What is the bootstrap module of your project? (for example: ' +
+				answers.appPrefix + '.example, ' + answers.appPrefix +
+				'.toolbar). The \'' + answers.appPrefix +
+				'\' prefix will be added automatically.';
+		},
+		default: defaults.project.angular.bootstrap.module.substring(defaults.project
+			.angular.prefix.length + 1),
 		validate: function (value) {
 			var done = this.async();
 			if (!value) {
@@ -52,15 +60,16 @@ function application(defaults) {
 			} else {
 				done(true);
 			}
-		}
+		},
+		filter: scaffolding.formatModuleName
 	}, {
 		name: 'appDescription',
 		message: 'What is the description?',
-		default: defaults.appDescription
+		default: defaults.description
 	}, {
 		name: 'appVersion',
 		message: 'What is the version of your project?',
-		default: defaults.appVersion
+		default: defaults.version
 	}, {
 		name: 'authorName',
 		message: 'What is the author name?',
@@ -95,27 +104,9 @@ function application(defaults) {
 
 	inquirer.prompt(prompts,
 		function (answers) {
-			console.log('answers', answers);
 			if (!answers.proceed) {
 				deferred.reject('Cancelled');
 			} else {
-				extend(answers, {
-					app: {
-						name: answers.appName,
-						nameSlug: _s.slugify(answers.appName),
-						description: answers.appDescription,
-						prefix: answers.appPrefix,
-						version: answers.appVersion,
-						authors: [{
-							name: answers.authorName,
-							email: answers.authorEmail
-						}],
-						repository: {
-							type: 'git',
-							url: answers.appRepository
-						}
-					}
-				})
 				deferred.resolve(answers);
 			}
 		});

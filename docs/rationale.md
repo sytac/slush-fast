@@ -13,18 +13,22 @@ Appendices
 bower.json addendum
 -------------------
 ```
-"afkl": {
-	"appName": "Application name",
-	"appNameSlug": "application-name",
+"project": {
+	"name" : {
+		"long": "Application name",
+		"slug": "application-name",
+	}
 	"angular": {
 ```
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"afkl": {
-    "appName": "Application name",
-    "appNameSlug": "application-name",
+"project": {
+    ...
     "angular": {
-        "bootstrapModule": "bootstrap-module"
+        "bootstrap": {
+					"module": "bootstrap-module",
+					"element": "bootstrap-module-app"
+				}
     },
     "includes": {
         "fromUrl": {

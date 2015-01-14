@@ -15,6 +15,7 @@ var scaffolding = {
 	findNpm: findNpm,
 	prefixName: _prefixName,
 	moduleName: wrap(_moduleName),
+	formatModuleName: _formatModuleName,
 	controllerName: wrap(_partNameFactory('controller', 'Controller')),
 	providerName: wrap(_partNameFactory('provider', 'Provider')),
 	directiveName: wrap(_partNameFactory('directive', 'Directive')),
@@ -106,7 +107,7 @@ function findNpm(dir) {
 	var currentDir = path.resolve(dir);
 	var pathParts = currentDir.split('/');
 	var npm = {};
-	while (pathParts.length && !npm) {
+	while (pathParts.length && !npm.name) {
 		var npmConfigAbsolute = pathParts.join('/') + '/' + npmConfig;
 		if (fs.existsSync(npmConfigAbsolute)) {
 			npm = require(npmConfigAbsolute);
@@ -161,8 +162,8 @@ function _moduleName(transport) {
 		module.prefixedFullNs = module.prefixWithDot + module.fullNs;
 		module.camelCasePrefixedFullNs = _s.camelize(module.prefixedFullNs.split('.')
 			.join('-'));
-		console.log('module.prefixedFullNs', module.prefixedFullNs);
-		console.log('module.camelCasePrefixedFullNs', module.camelCasePrefixedFullNs);
+		//	console.log('module.prefixedFullNs', module.prefixedFullNs);
+		//	console.log('module.camelCasePrefixedFullNs', module.camelCasePrefixedFullNs);
 		module.path = 'app/' + module.fullNs.split('.')
 			.join('/');
 
@@ -200,7 +201,6 @@ function _partNameFactory(partName, partPostfix) {
 		part.fullNsName = transport.module.camelCasePrefixedFullNs + _ucfirst(part.name);
 		part.fullNsNamePartName = transport.module.camelCasePrefixedFullNs + part.upperCaseCamelizedPartName;
 		part.fullNsNameSlug = _s.dasherize(part.fullNsName);
-		console.log('part', part);
 		return transport;
 	}
 }

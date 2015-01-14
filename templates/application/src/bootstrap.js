@@ -5,8 +5,8 @@
 	angular.element(document)
 		.ready(function () {
 			angular.bootstrap(document.getElementById(
-				'<%= angular.bootstrapElement %>'), [
-				'<%= angular.bootstrapModule %>'
+				'<%= angular.bootstrap.element %>'), [
+				'<%= angular.bootstrap.module %>'
 			]);
 		});
 

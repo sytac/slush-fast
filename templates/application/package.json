@@ -67,10 +67,6 @@
 		"webdriver-manager": "^1.0.0",
 		"wiredep": "^2.0.1"
 	},
-	"author": {
-		"name": "John Doe",
-		"email": "john@doedoe.com"
-	},
 	"main": "./dist/index.js",
 	"afkl": {
 		"appName": "The application name",

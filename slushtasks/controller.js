@@ -17,7 +17,7 @@ module.exports = function (options) {
 
 		var transport = {
 			module: {
-				prefix: bower.afkl.angular.prefix,
+				prefix: bower.project.angular.prefix,
 				ns: scaffolding.ns('.')
 					.join('.')
 			},
@@ -46,7 +46,7 @@ module.exports = function (options) {
 					});
 			})
 			.catch(function (err) {
-				console.log(err);
+				gutil.log(err);
 			});
 	});
 };

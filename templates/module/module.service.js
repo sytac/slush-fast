@@ -7,6 +7,7 @@
 	function <%= service.fullNsName %> () {
 		// values here
 
+		/*jshint validthis: true */
 		// this.foo = function or value
 
 		// functions here

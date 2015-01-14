@@ -19,11 +19,11 @@ gutil.log('\n' + ('TIF Angular Generator'.split(' ')
  */
 
 var bower = scaffolding.findBower('.');
-console.log('bower', bower);
-var slushNpm = scaffolding.findNpm(__dirname + '/.');
+var slushNpm = scaffolding.findNpm(__dirname + '/templates/application/');
 
 // Settings
 var settings = {
+
 	gulp: gulp,
 	bower: bower,
 	slush: {

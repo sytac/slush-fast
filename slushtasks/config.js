@@ -16,7 +16,7 @@ module.exports = function (options) {
 		// transport will be handed along all thennables
 		var transport = {
 			module: {
-				prefix: bower.afkl.angular.prefix,
+				prefix: bower.project.angular.prefix,
 				ns: scaffolding.ns('.')
 					.join('.')
 			}
