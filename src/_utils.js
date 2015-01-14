@@ -252,8 +252,6 @@ function addModule(transport) {
 		moduleName = module.existingNamespace + '.' + module.name;
 	}
 
-
-
 	var deferred = Q.defer();
 	_readConfig()
 		.then(function (config) {

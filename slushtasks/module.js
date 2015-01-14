@@ -13,7 +13,6 @@ module.exports = function (options) {
 	var bower = options.bower;
 	var src = options.src;
 	var templates = options.templates;
-	var utils = require(src + '/utils');
 	var prompts = require(src + '/prompts');
 
 	var scaffolding = require(src + '/scaffolding');
