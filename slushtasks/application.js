@@ -104,6 +104,7 @@ module.exports = function (options) {
 		prompts.application(defaults)
 			.then(function (answers) {
 				extend(defaults, {
+					install: answers.install,
 					description: answers.appDescription,
 					version: answers.appVersion,
 					authors: [{
@@ -280,8 +281,12 @@ module.exports = function (options) {
 	});
 
 	gulp.task('install-npm-modules', function (done) {
-		return gulp.src('./package.json')
-			.pipe(install());
+		if (!defaults.install) {
+			done();
+		} else {
+			return gulp.src('./package.json')
+				.pipe(install());
+		}
 	});
 
 
