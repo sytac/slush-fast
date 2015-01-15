@@ -1,16 +1,16 @@
-var gutil = require('gulp-util'),
-	conflict = require('gulp-conflict'),
-	prettify = require('gulp-jsbeautifier'),
-	rename = require('gulp-rename'),
-	template = require('gulp-template');
-
 module.exports = function (options) {
-	var bower = options.bower;
+	var bower = options.configs.bower;
 	var src = options.src;
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
 
-	var gulp = options.gulp;
+	var conflict = options.conflict,
+		gulp = options.gulp,
+		gutil = options.gutil,
+		prettify = options.prettify,
+		rename = options.rename,
+		template = options.template;
+
 
 	gulp.task('config', function (done) {
 		// transport will be handed along all thennables

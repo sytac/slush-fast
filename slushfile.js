@@ -1,9 +1,14 @@
-var globule = require('globule'),
+var conflict = require('gulp-conflict'),
+	globule = require('globule'),
 	figlet = require('figlet'),
 	fs = require('fs'),
 	gulp = require('gulp'),
 	gutil = require('gulp-util'),
-	scaffolding = require('./src/scaffolding'),
+	prettify = require('gulp-jsbeautifier'),
+	rename = require('gulp-rename'),
+	template = require('gulp-template');
+scaffolding = require('./src/scaffolding');
+
 
 // add gulp release tasks
 require('gulp-release-tasks')(gulp);
@@ -22,10 +27,15 @@ var slushNpm = scaffolding.findNpm(__dirname + '/.');
 
 // Settings
 var settings = {
-
+	configs: {
+		bower: bower
+	},
 	gulp: gulp,
-	bower: bower,
 	gutil: gutil,
+	conflict: conflict,
+	prettify: prettify,
+	rename: rename,
+	template: template,
 	slush: {
 		npm: slushNpm
 	},

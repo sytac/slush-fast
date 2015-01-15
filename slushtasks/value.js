@@ -6,7 +6,7 @@ var gutil = require('gulp-util'),
 
 module.exports = function (options) {
 
-	var bower = options.bower;
+	var bower = options.configs.bower;
 	var src = options.src;
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');

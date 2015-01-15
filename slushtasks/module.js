@@ -10,7 +10,7 @@ var _s = require('underscore.string'),
 	template = require('gulp-template');
 
 module.exports = function (options) {
-	var bower = options.bower;
+	var bower = options.configs.bower;
 	var src = options.src;
 	var templates = options.templates;
 	var prompts = require(src + '/prompts');

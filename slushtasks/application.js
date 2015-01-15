@@ -63,12 +63,12 @@ module.exports = function (options) {
 		}
 	};
 	var defaults = createDefaults();
-	var util = options.gutil;
+	var gutil = options.gutil;
 
 	gulp.task('readme', function (done) {
 
 		var readme = extend({}, defaults, defaults.bower);
-		util.log('Preparing README files');
+		gutil.log('Preparing README files');
 		prepareReadme(readme, function () {
 			gulp.src(globs.docs.readme.project.src)
 				.pipe(template(readme))
@@ -77,9 +77,9 @@ module.exports = function (options) {
 				.pipe(gulp.dest('./'))
 				.on('end', function (err) {
 					if (err) {
-						util.log(util.colors.red('Failed to create project readme.'));
+						gutil.log(gutil.colors.red('Failed to create project readme.'));
 					} else {
-						util.log('Project readme created.');
+						gutil.log('Project readme created.');
 					}
 
 					done(err, true);
@@ -274,7 +274,7 @@ module.exports = function (options) {
 	});
 
 	gulp.task('show-help', function () {
-		util.log(util.colors.bgYellow(util.colors.green(
+		gutil.log(gutil.colors.bgYellow(gutil.colors.green(
 				'Your project has been generated, type gulp help for usage information.'
 			))
 
@@ -295,7 +295,8 @@ module.exports = function (options) {
 
 	function createDefaults() {
 
-		var bower = scaffolding.findBower('./');
+		var bower = options.configs.bower;
+
 		var templateBower = scaffolding.findBower(options.templates +
 			'/application/');
 		var npm = scaffolding.findNpm('./');
