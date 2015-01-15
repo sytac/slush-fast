@@ -279,6 +279,14 @@ module.exports = function (options) {
 		}
 	});
 
+	gulp.task('show-help', function () {
+		util.log(util.colors.bgYellow(util.colors.green(
+				'Your project has been generated, type gulp help for usage information.'
+			))
+
+		);
+	});
+
 	function prepareReadme(answers, callback) {
 		answers.readme = {};
 
