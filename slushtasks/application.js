@@ -16,8 +16,7 @@ var _ = require('lodash'),
 	prettify = require('gulp-jsbeautifier'),
 	Q = require('Q'),
 	template = require('gulp-template'),
-	tap = require('gulp-tap'),
-	util = require('gulp-util');
+	tap = require('gulp-tap');
 
 module.exports = function (options) {
 
@@ -64,6 +63,7 @@ module.exports = function (options) {
 		}
 	};
 	var defaults = createDefaults();
+	var util = options.gutil;
 
 	gulp.task('readme', function (done) {
 

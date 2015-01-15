@@ -26,6 +26,7 @@ var settings = {
 
 	gulp: gulp,
 	bower: bower,
+	gutil: gutil,
 	slush: {
 		npm: slushNpm
 	},
