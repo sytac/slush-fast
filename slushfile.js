@@ -8,15 +8,15 @@ var globule = require('globule'),
 
 // add gulp release tasks
 require('gulp-release-tasks')(gulp);
-/*
-gutil.log('\n' + ('TIF Angular Generator'.split(' ')
+
+gutil.log('\nFreak Angular Scaffolding Tool\n' + ('FAST'.split(' ')
 	.map(function (word) {
 		return figlet.textSync(word, {
 			font: 'colossal'
 		});
 	})
 	.join('\n')));
- */
+
 
 var bower = scaffolding.findBower('.');
 var slushNpm = scaffolding.findNpm(__dirname + '/templates/application/');
