@@ -4,7 +4,6 @@ var globule = require('globule'),
 	gulp = require('gulp'),
 	gutil = require('gulp-util'),
 	scaffolding = require('./src/scaffolding'),
-	sh = require('shelljs');
 
 // add gulp release tasks
 require('gulp-release-tasks')(gulp);
