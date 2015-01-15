@@ -4,7 +4,7 @@ var _s = require('underscore.string'),
 
 module.exports = function (options) {
 
-	var gulp = options.gulp;
+	var gulp = options.require.gulp;
 
 	var common = {
 		writeTempFile: writeTempFile

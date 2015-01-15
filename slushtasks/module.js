@@ -18,7 +18,7 @@ module.exports = function (options) {
 	var scaffolding = require(src + '/scaffolding');
 	var common = require(src + '/common')(options);
 
-	var gulp = options.gulp;
+	var gulp = options.require.gulp;
 
 
 	gulp.task('module', function (done) {
@@ -45,7 +45,7 @@ module.exports = function (options) {
 						path.basename = transport.module.name + '.' + path.basename;
 					}))
 					.pipe(template(transport))
-					.pipe(prettify(options.prettify))
+					.pipe(prettify(options.settings.prettify))
 					.pipe(conflict(transport.module.name + '/'))
 					.pipe(gulp.dest(transport.module.name + '/'))
 					.on('finish', function () {

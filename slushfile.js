@@ -30,12 +30,15 @@ var settings = {
 	configs: {
 		bower: bower
 	},
-	gulp: gulp,
-	gutil: gutil,
-	conflict: conflict,
-	prettify: prettify,
-	rename: rename,
-	template: template,
+	require: {
+		gulp: gulp,
+		gutil: gutil,
+		conflict: conflict,
+		prettify: prettify,
+		rename: rename,
+		template: template
+	},
+
 	slush: {
 		npm: slushNpm
 	},
@@ -45,25 +48,27 @@ var settings = {
 	modules: './src/modules',
 	templates: __dirname + '/templates',
 	docs: __dirname + '/docs',
-	prettify: {
-		js: {
-			braceStyle: "collapse",
-			breakChainedMethods: true,
-			e4x: false,
-			evalCode: false,
-			indentChar: " ",
-			indentLevel: 0,
-			indentSize: 4,
-			indentWithTabs: false,
-			jslintHappy: false,
-			keepArrayIndentation: true,
-			keepFunctionIndentation: true,
-			maxPreserveNewlines: 10,
-			preserveNewlines: true,
-			spaceBeforeConditional: true,
-			spaceInParen: false,
-			unescapeStrings: false,
-			wrapLineLength: 0
+	settings: {
+		prettify: {
+			js: {
+				braceStyle: "collapse",
+				breakChainedMethods: true,
+				e4x: false,
+				evalCode: false,
+				indentChar: " ",
+				indentLevel: 0,
+				indentSize: 4,
+				indentWithTabs: false,
+				jslintHappy: false,
+				keepArrayIndentation: true,
+				keepFunctionIndentation: true,
+				maxPreserveNewlines: 10,
+				preserveNewlines: true,
+				spaceBeforeConditional: true,
+				spaceInParen: false,
+				unescapeStrings: false,
+				wrapLineLength: 0
+			}
 		}
 	},
 	fixmyjs: {
@@ -95,6 +100,5 @@ globule.find(__dirname + '/slushtasks/*')
 	.map(function (file) {
 		require(file)(settings);
 	});
-
 
 gulp.task('default', ['init']);

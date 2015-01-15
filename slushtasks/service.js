@@ -11,7 +11,7 @@ module.exports = function (options) {
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
 
-	var gulp = options.gulp;
+	var gulp = options.require.gulp;
 
 	gulp.task('service', function (done) {
 
@@ -37,7 +37,7 @@ module.exports = function (options) {
 						path.basename = path.basename.replace('module', transport.service.slug);
 					}))
 					.pipe(template(transport))
-					.pipe(prettify(options.prettify))
+					.pipe(prettify(options.settings.prettify))
 					.pipe(conflict('./'))
 					.pipe(gulp.dest('./'))
 					.on('finish', function () {

@@ -10,7 +10,7 @@ module.exports = function (options) {
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
 
-	var gulp = options.gulp;
+	var gulp = options.require.gulp;
 
 	gulp.task('run', function (done) {
 		// transport will be handed along all thennables
@@ -28,7 +28,7 @@ module.exports = function (options) {
 						path.basename = path.basename.replace('module', transport.module.name);
 					}))
 					.pipe(template(transport))
-					.pipe(prettify(options.prettify))
+					.pipe(prettify(options.settings.prettify))
 					.pipe(conflict('./'))
 					.pipe(gulp.dest('./'))
 					.on('finish', function () {

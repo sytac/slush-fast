@@ -4,10 +4,10 @@ module.exports = function (options) {
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
 
-	var conflict = options.conflict,
-		gulp = options.gulp,
-		gutil = options.gutil,
-		prettify = options.prettify,
+	var conflict = options.require.conflict,
+		gulp = options.require.gulp,
+		gutil = options.require.gutil,
+		prettify = options.require.prettify,
 		rename = options.rename,
 		template = options.template;
 
@@ -28,7 +28,7 @@ module.exports = function (options) {
 						path.basename = path.basename.replace('module', transport.module.name);
 					}))
 					.pipe(template(transport))
-					.pipe(prettify(options.prettify))
+					.pipe(prettify(options.settings.prettify))
 					.pipe(conflict('./'))
 					.pipe(gulp.dest('./'))
 					.on('finish', function () {

@@ -63,7 +63,7 @@ module.exports = function (options) {
 		}
 	};
 	var defaults = createDefaults();
-	var gutil = options.gutil;
+	var gutil = options.require.gutil;
 
 	gulp.task('readme', function (done) {
 
