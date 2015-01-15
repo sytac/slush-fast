@@ -31,6 +31,10 @@ function application(defaults) {
 		message: 'What is the name of your project?',
 		default: defaults.project.name.full
 	}, {
+		name: 'appDescription',
+		message: 'What is the description?',
+		default: defaults.description
+	}, {
 		name: 'appPrefix',
 		message: 'What is the prefix of your project? (for example: tif., ltc. or prds.)',
 		default: defaults.project.angular.prefix,
@@ -62,10 +66,13 @@ function application(defaults) {
 			}
 		},
 		filter: scaffolding.formatModuleName
-	}, {
-		name: 'appDescription',
-		message: 'What is the description?',
-		default: defaults.description
+
+		/*
+		}, {
+		type: 'confirm',
+		name: 'install',
+		message: '?'	
+		 */
 	}, {
 		name: 'appVersion',
 		message: 'What is the version of your project?',

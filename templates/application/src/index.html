@@ -2,8 +2,6 @@
 <html>
 <head>
   <title><%= name.full %></title>
-  <!-- Server side css includes, defined in bower.json project section -->
-  <%= inject.fromUrl.css %>
 
   <!-- Bower css includes -->
   <%= inject.bower.css %>
@@ -15,9 +13,6 @@
 <body>
   <div id="<%= angular.bootstrap.element %>">
   </div>
-
-  <!-- Server side js includes, defined in bower.json project section -->
-  <%= inject.fromUrl.js %>
 
   <!-- Bower js includes -->
   <%= inject.bower.js %>

@@ -28,15 +28,10 @@ module.exports = function (options) {
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
-
 	var gulp = options.gulp;
 	var seq = require('gulp-sequence')
 		.use(gulp);
-
-
 	var answers;
-
-
 	var globs = {
 		bootstrap: {
 			src: options.templates + '/application/*/bootstrap.js'
@@ -71,7 +66,6 @@ module.exports = function (options) {
 			}
 		}
 	};
-
 	var defaults = createDefaults();
 
 	gulp.task('readme', function (done) {
@@ -160,6 +154,7 @@ module.exports = function (options) {
 						'create-readme'
 					],
 					'install-npm-modules',
+					'help',
 					done);
 			});
 	});

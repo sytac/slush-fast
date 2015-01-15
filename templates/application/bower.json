@@ -20,16 +20,22 @@
 		"type": "git",
 		"url": "http://github.com/something.git"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"angular": "http://www.klm.com/ams/frontend/js/angular/angular-afkl.js",
+		"core-en": "http://www.klm.com/ams/frontend/css/core-en.css",
+		"requirejs": "http://core.static-afkl.com/ams/frontend/require-afkl.js",
+		"freak-core": "http://www.klm.com/ams/frontend/js/g-core-v2.js",
+		"freak-local": "http://apps.static-afkl.com/travel/nl_en/static/js/local.js"
+	},
 	"devDependencies": {
 		"angular-mocks": "~1.2.x"
 	},
 	"overrides": {
-		"angular": {
-			"ignore": true
-		}
-	},
 
+	},
+	"resolutions": {
+		"angular": "e-tag:4b90a9c-2"
+	},
 	"project": {
 		"name": {
 			"full": "Your project",
@@ -40,19 +46,6 @@
 			"bootstrap": {
 				"module": "afkl.your-module",
 				"element": "afkl-your-module-app"
-			}
-		},
-		"includes": {
-			"fromUrl": {
-				"js": {
-					"requirejs": "http://core.static-afkl.com/ams/frontend/require-afkl.js",
-					"freak-core": "http://www.klm.com/ams/frontend/js/g-core-v2.js",
-					"freak-local": "http://apps.static-afkl.com/travel/nl_en/static/js/local.js",
-					"angular": "http://www.klm.com/ams/frontend/js/angular/angular-afkl.js"
-				},
-				"css": {
-					"core-en": "http://www.klm.com/ams/frontend/css/core-en.css"
-				}
 			}
 		}
 	}

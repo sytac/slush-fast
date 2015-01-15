@@ -11,7 +11,6 @@ var angularFilesort = require('gulp-angular-filesort'),
 	concat = require('gulp-concat'),
 	csslint = require('gulp-csslint'),
 	del = require('del'),
-	download = require('gulp-download'),
 	singleConnect = require('gulp-connect'),
 	bowerFiles = require('main-bower-files'),
 	browserSync = require('browser-sync'),
@@ -195,14 +194,12 @@ gulp.task('dev', function (done) {
 				'dev-partials',
 				'dev-scss'
 			], [
-				'download-assets',
 				'dev-js-template',
 				'dev-js-config-run-template', 'dev-js-bootstrap-template',
 				'dev-bower-js-template',
 				'dev-bower-css-template',
 				'dev-css-template'
 			],
-			'dev-include-scripts',
 			'assemble-index',
 			'karma',
 			'create-phantom-coverage-symlink',
@@ -301,22 +298,6 @@ gulp.task('clean-jshint', function (done) {
 	})
 	.help = 'Clean jshint';
 
-gulp.task('download-assets', function () {
-		if (settings['skip-downloads'] === false) {
-			var assets = downloadAssets();
-			if (!assets.length) {
-				gutil.log('No assets to be downloaded');
-			} else {
-
-				return download(assets)
-					.pipe(gulp.dest('./.cache/static/'));
-			}
-		} else {
-			gutil.log('Skipping asset download');
-		}
-	})
-	.help = 'Download static assets';
-
 // Testing
 gulp.task('karma', function (done) {
 
@@ -336,15 +317,9 @@ gulp.task('karma', function (done) {
 */
 
 
-		var fromUrlJs = fetchedAssets('js')
-			.map(function (uri) {
-				return './.cache/static/' + uri.split('/')
-					.pop();
-			});
-
 		// Why first exclude conf and run files and later include em?
 		// Because it affects the loading order of files for the karma preprocessor
-		var files = fromUrlJs.concat(bowerFiles)
+		var files = bowerFiles
 			.concat(['./src/**/!(*bootstrap|config|run|scenario).js',
 				'./target/dev/app/**/*templates.js',
 				'./src/**/*config.js', './src/**/*run.js',
@@ -505,17 +480,6 @@ gulp.task('dev-css-template', function () {
 		.pipe(gulp.dest('./.tmp'));
 });
 
-gulp.task('dev-include-scripts-js', function () {
-	return includeScripts('js');
-});
-gulp.task('dev-include-scripts-css', function () {
-	return includeScripts('css');
-});
-
-gulp.task('dev-include-scripts', function (done) {
-	seq('dev-include-scripts-js', 'dev-include-scripts-css', done);
-});
-
 gulp.task('assemble-index', function () {
 	var data = extend({}, project, {
 		inject: {}
@@ -548,7 +512,7 @@ gulp.task('watch-js', function () {
 			'dev-js-config-run-template',
 			'dev-js-bootstrap-template', 'karma',
 			'create-phantom-coverage-symlink',
-			function (err) {
+			function () {
 				done();
 			});
 	});
@@ -585,7 +549,7 @@ gulp.task('watch-scss', function () {
 gulp.task('watch-index-parts', function () {
 	watch(['bower.json', 'src/index.html', './.tmp/*.tmpl'], function (files,
 		done) {
-		seq('dev-include-scripts', 'dev-bower-js-template',
+		seq('dev-bower-js-template',
 			'dev-bower-css-template', 'assemble-index', done);
 	});
 });
@@ -672,52 +636,3 @@ gulp.task('dist-js-with-bootstrap', function () {
 
 ///////////////////////
 ///
-
-function includeScripts(type) {
-	var templates = {
-		'js': '<% Object.keys(includes.fromUrl.js).forEach(function(include){ %><!-- <%= include %> from <%= includes.fromUrl.js[include] %> -->\n<script src="static/<%= includes.fromUrl.js[include].split(\'/\').pop() %>"></script>\n<% }); %>\n',
-		'css': '<% Object.keys(includes.fromUrl.css).forEach(function(include){ %><!-- <%= include %> from <%= includes.fromUrl.css[include] %> -->\n<link rel="stylesheet" href="static/<%= includes.fromUrl.css[include].split(\'/\').pop() %>">\n<% }); %>\n'
-	};
-
-	if (!templates.js) {
-		throw new Error('Couldn\'t find template for type ' + type);
-	}
-
-	return file('fromUrl.' + type + '.tmpl',
-			templates[type], {
-				src: true
-			})
-		.pipe(template(project))
-		.pipe(gulp.dest('./.tmp'));
-}
-
-function downloadAssets() {
-
-	var assets = [];
-
-	settings.staticAssetTypes.map(function (type) {
-		assets = assets.concat([], Object.keys(bower.project.includes.fromUrl[
-				type])
-			.map(function (name) {
-				var uri = bower.project.includes.fromUrl[type][name];
-				uri = uri.indexOf('http') === -1 ? 'https:' + uri : uri;
-				return uri;
-			}));
-	});
-
-	return assets;
-}
-
-function fetchedAssets(type) {
-
-	var fetchAssetsByType = [];
-
-	if (settings.staticAssetTypes.indexOf(type) !== -1) {
-		fetchAssetsByType = Object.keys(bower.project.includes.fromUrl[type])
-			.map(function (name) {
-				return bower.project.includes.fromUrl[type][name];
-			});
-	}
-
-	return fetchAssetsByType;
-}
