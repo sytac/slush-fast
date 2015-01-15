@@ -2,7 +2,6 @@
 /* global require,process,console,__dirname */
 var _ = require('lodash'),
 	_s = require('underscore.string'),
-	async = require('async'),
 	concat = require('gulp-concat'),
 	extend = require('extend'),
 	globule = require('globule'),
