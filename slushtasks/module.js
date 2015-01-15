@@ -12,7 +12,7 @@ var _s = require('underscore.string'),
 module.exports = function (options) {
 	var bower = options.configs.bower;
 	var src = options.src;
-	var templates = options.templates;
+	var templates = options.paths.templates;
 	var prompts = require(src + '/prompts');
 
 	var scaffolding = require(src + '/scaffolding');

@@ -42,8 +42,10 @@ var settings = {
 	slushtasks: __dirname + '/slushtasks',
 	applications: './src/applications',
 	modules: './src/modules',
-	templates: __dirname + '/templates',
 	docs: __dirname + '/docs',
+	paths: {
+		templates: __dirname + '/templates'
+	},
 	settings: {
 		prettify: {
 			js: {

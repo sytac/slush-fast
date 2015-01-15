@@ -1,7 +1,7 @@
 module.exports = function (options) {
 	var bower = options.configs.bower;
 	var src = options.src;
-	var templates = options.templates;
+	var templates = options.paths.templates;
 	var scaffolding = require(src + '/scaffolding');
 
 	var conflict = options.require.conflict,

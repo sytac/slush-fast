@@ -21,7 +21,7 @@ var _ = require('lodash'),
 module.exports = function (options) {
 
 	var src = options.src;
-	var templates = options.templates;
+	var templates = options.paths.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
 	var gulp = options.require.gulp;
@@ -30,20 +30,20 @@ module.exports = function (options) {
 	var answers;
 	var globs = {
 		bootstrap: {
-			src: options.templates + '/application/*/bootstrap.js'
+			src: options.paths.templates + '/application/*/bootstrap.js'
 		},
 		index: {
-			src: options.templates + '/application/*/index.html'
+			src: options.paths.templates + '/application/*/index.html'
 		},
 		gulpfile: {
-			src: options.templates + '/application/gulpfile.js'
+			src: options.paths.templates + '/application/gulpfile.js'
 		},
 		npm: {
-			src: options.templates + '/application/package.json',
+			src: options.paths.templates + '/application/package.json',
 			target: './package.json'
 		},
 		bower: {
-			src: options.templates + '/application/bower.json',
+			src: options.paths.templates + '/application/bower.json',
 			target: './bower.json'
 		},
 		docs: {
@@ -162,7 +162,7 @@ module.exports = function (options) {
 					return '!' + glob;
 				});
 
-		return gulp.src([options.templates + '/application/**/*'].concat(butNot))
+		return gulp.src([options.paths.templates + '/application/**/*'].concat(butNot))
 			.pipe(template(defaults))
 			.pipe(rename(function (file) {
 				if (file.basename[0] === '_') {
@@ -183,7 +183,7 @@ module.exports = function (options) {
 	gulp.task('create-module', function (done) {
 
 		return gulp.src([
-				options.templates + '/module/module.js'
+				options.paths.templates + '/module/module.js'
 				/*, templates + '/module/module.scenario.js' */
 			])
 			.pipe(rename(function (path) {
@@ -297,7 +297,7 @@ module.exports = function (options) {
 
 		var bower = options.configs.bower;
 
-		var templateBower = scaffolding.findBower(options.templates +
+		var templateBower = scaffolding.findBower(options.paths.templates +
 			'/application/');
 		var npm = scaffolding.findNpm('./');
 
