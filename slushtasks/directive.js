@@ -5,14 +5,14 @@ var gutil = require('gulp-util'),
 	template = require('gulp-template');
 
 module.exports = function (options) {
-	var bower = options.bower;
+	var bower = options.configs.bower;
 	var src = options.src;
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
 	var common = require(src + '/common')(options);
 
-	var gulp = options.gulp;
+	var gulp = options.require.gulp;
 
 	gulp.task('directive', function (done) {
 		var ns = scaffolding.ns('.');

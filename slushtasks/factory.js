@@ -5,13 +5,13 @@ var gutil = require('gulp-util'),
 	template = require('gulp-template');
 
 module.exports = function (options) {
-	var bower = options.bower;
+	var bower = options.configs.bower;
 	var src = options.src;
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
 
-	var gulp = options.gulp;
+	var gulp = options.require.gulp;
 
 	gulp.task('factory', function (done) {
 

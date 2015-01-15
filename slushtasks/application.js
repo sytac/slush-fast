@@ -24,7 +24,7 @@ module.exports = function (options) {
 	var templates = options.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
-	var gulp = options.gulp;
+	var gulp = options.require.gulp;
 	var seq = require('gulp-sequence')
 		.use(gulp);
 	var answers;
