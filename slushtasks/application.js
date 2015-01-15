@@ -153,7 +153,8 @@ module.exports = function (options) {
 						'create-module',
 						'create-readme'
 					],
-					'install-npm-modules'
+					'install-npm-modules',
+					'show-help',
 					done);
 			});
 	});
