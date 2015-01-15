@@ -41,7 +41,6 @@ var settings = {
 	src: __dirname + '/src',
 	slushtasks: __dirname + '/slushtasks',
 	applications: './src/applications',
-	modules: './src/modules',
 	docs: __dirname + '/docs',
 	paths: {
 		templates: __dirname + '/templates'
