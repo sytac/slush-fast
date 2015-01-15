@@ -70,10 +70,7 @@ module.exports = function (options) {
 
 	gulp.task('readme', function (done) {
 
-		var readme = extend({}, defaults, {
-				slushNpm: options.slushNpm
-			},
-			defaults.bower);
+		var readme = extend({}, defaults, defaults.bower);
 		util.log('Preparing README files');
 		prepareReadme(readme, function () {
 			gulp.src(globs.docs.readme.project.src)
@@ -331,7 +328,6 @@ module.exports = function (options) {
 			appPrefix: project.angular.prefix,
 			bower: bower,
 			slush: options.slush,
-			slushNpm: options.slushNpm,
 			project: project
 		};
 

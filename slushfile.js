@@ -19,7 +19,7 @@ gutil.log('\nFreak Angular Scaffolding Tool\n' + ('FAST'.split(' ')
 
 
 var bower = scaffolding.findBower('.');
-var slushNpm = scaffolding.findNpm(__dirname + '/templates/application/');
+var slushNpm = scaffolding.findNpm(__dirname + '/.');
 
 // Settings
 var settings = {
@@ -29,7 +29,6 @@ var settings = {
 	slush: {
 		npm: slushNpm
 	},
-	slushNpm: slushNpm,
 	src: __dirname + '/src',
 	slushtasks: __dirname + '/slushtasks',
 	applications: './src/applications',
