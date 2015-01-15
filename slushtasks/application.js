@@ -77,9 +77,9 @@ module.exports = function (options) {
 				.pipe(gulp.dest('./'))
 				.on('end', function (err) {
 					if (err) {
-						util.log(util.colors.red('Failed to copy files'));
+						util.log(util.colors.red('Failed to create project readme.'));
 					} else {
-						util.log('Files copied');
+						util.log('Project readme created.');
 					}
 
 					done(err, true);
