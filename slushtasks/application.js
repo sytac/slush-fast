@@ -17,7 +17,6 @@ var _ = require('lodash'),
 	path = require('path'),
 	prettify = require('gulp-jsbeautifier'),
 	Q = require('Q'),
-	sh = require('shelljs'),
 	template = require('gulp-template'),
 	tap = require('gulp-tap'),
 	util = require('gulp-util');
