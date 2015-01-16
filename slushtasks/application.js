@@ -49,14 +49,14 @@ module.exports = function (options) {
 		docs: {
 			readme: {
 				includes: {
-					src: options.docs + '/**/*.md'
+					src: options.paths.docs + '/**/*.md'
 				},
 				project: {
-					src: options.docs + '/README.project.md',
+					src: options.paths.docs + '/README.project.md',
 					dest: './README.md'
 				},
 				generator: {
-					src: options.docs + '/README.generator.md',
+					src: options.paths.docs + '/README.generator.md',
 					dest: './README.md'
 				}
 			}
