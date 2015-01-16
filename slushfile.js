@@ -40,7 +40,6 @@ var settings = {
 	},
 	src: __dirname + '/src',
 	slushtasks: __dirname + '/slushtasks',
-	applications: './src/applications',
 	paths: {
 		docs: __dirname + '/docs',
 		templates: __dirname + '/templates'
