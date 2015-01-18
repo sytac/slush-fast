@@ -9,8 +9,8 @@ module.exports = function (options) {
 		gulp = options.require.gulp,
 		gutil = options.require.gutil,
 		prettify = options.require.prettify,
-		rename = options.rename,
-		template = options.template;
+		rename = options.require.rename,
+		template = options.require.template;
 
 	gulp.task('provider', function (done) {
 

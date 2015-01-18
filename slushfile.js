@@ -21,8 +21,8 @@ gutil.log('\nFreak Angular Scaffolding Tool\n' + ('FAST'.split(' ')
 	})
 	.join('\n')));
 
-// Settings
-var settings = {
+// Options
+var options = {
 	configs: {
 		bower: scaffolding.findBower('.')
 	},
@@ -72,7 +72,7 @@ var settings = {
 // Load all task files
 globule.find(options.paths.slushtasks + '/*')
 	.map(function (file) {
-		require(file)(settings);
+		require(file)(options);
 	});
 
 gulp.task('default', ['init']);
