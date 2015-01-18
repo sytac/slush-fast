@@ -1,12 +1,8 @@
 var _s = require('underscore.string'),
 	file = require('gulp-file'),
-
 	path = require('path'),
-	prettify = require('gulp-jsbeautifier'),
 	randomString = require('random-string'),
-	rename = require('gulp-rename'),
-	tap = require('gulp-tap'),
-	template = require('gulp-template');
+	tap = require('gulp-tap');
 
 module.exports = function (options) {
 	var bower = options.configs.bower;
@@ -19,7 +15,10 @@ module.exports = function (options) {
 
 	var conflict = options.require.conflict,
 		gulp = options.require.gulp,
-		gutil = options.require.gutil;
+		gutil = options.require.gutil,
+		prettify = options.require.prettify,
+		rename = options.rename,
+		template = options.template;
 
 
 	gulp.task('module', function (done) {

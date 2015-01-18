@@ -1,7 +1,3 @@
-var prettify = require('gulp-jsbeautifier'),
-	rename = require('gulp-rename'),
-	template = require('gulp-template');
-
 module.exports = function (options) {
 	var bower = options.configs.bower;
 	var src = options.paths.src;
@@ -11,7 +7,10 @@ module.exports = function (options) {
 
 	var conflict = options.require.conflict,
 		gulp = options.require.gulp,
-		gutil = options.require.gutil;
+		gutil = options.require.gutil,
+		prettify = options.require.prettify,
+		rename = options.rename,
+		template = options.template;
 
 	gulp.task('constant', function (done) {
 

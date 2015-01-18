@@ -5,16 +5,12 @@ var _ = require('lodash'),
 	concat = require('gulp-concat'),
 	extend = require('extend'),
 	globule = require('globule'),
-	gulp = require('gulp'),
 	fs = require('fs'),
 	inquirer = require('inquirer'),
 	install = require('gulp-install'),
 	jeditor = require('gulp-json-editor'),
-	rename = require('gulp-rename'),
 	path = require('path'),
-	prettify = require('gulp-jsbeautifier'),
 	Q = require('Q'),
-	template = require('gulp-template'),
 	tap = require('gulp-tap');
 
 module.exports = function (options) {
@@ -24,7 +20,11 @@ module.exports = function (options) {
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
 	var conflict = options.require.conflict,
-		gulp = options.require.gulp;
+		gulp = options.require.gulp,
+		gutil = options.require.gutil,
+		prettify = options.require.prettify,
+		rename = options.rename,
+		template = options.template;
 	var seq = require('gulp-sequence')
 		.use(gulp);
 	var answers;
