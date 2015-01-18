@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
 	iniparser = require('iniparser'),
 	path = require('path'),
@@ -72,7 +74,6 @@ function getGitRepositoryUrl(remoteKey) {
 }
 
 function ns(dir) {
-	var modulePrefix = '';
 	var srcAppDir = 'src' + path.sep + 'app';
 
 	var currentDir = path.resolve(dir);
@@ -192,7 +193,7 @@ function _partNameFactory(partName, partPostfix) {
 		part.partPostfix = partPostfix;
 		part.upperCaseCamelizedPartSubName = part.partSubName ? _ucfirst(part.partSubName) :
 			part.partSubName = part.partSubName ? part.partSubName : '';
-		'';
+
 		part.name = _s.camelize(part.newName);
 		part.upperCaseCamelized = _ucfirst(part.name);
 		part.lowerCaseCamelized = _lcfirst(part.name);
@@ -202,7 +203,7 @@ function _partNameFactory(partName, partPostfix) {
 		part.fullNsNamePartName = transport.module.camelCasePrefixedFullNs + part.upperCaseCamelizedPartName;
 		part.fullNsNameSlug = _s.dasherize(part.fullNsName);
 		return transport;
-	}
+	};
 }
 
 

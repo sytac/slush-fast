@@ -1,3 +1,5 @@
+'use strict';
+
 var _s = require('underscore.string'),
 	file = require('gulp-file'),
 	randomString = require('random-string');

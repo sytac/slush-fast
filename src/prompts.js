@@ -1,6 +1,6 @@
-var _s = require('underscore.string'),
-	extend = require('extend'),
-	inquirer = require('inquirer'),
+'use strict';
+
+var inquirer = require('inquirer'),
 	Q = require('q'),
 	scaffolding = require('./scaffolding'),
 	wrap = require('./q-utils')
@@ -71,7 +71,7 @@ function application(defaults) {
 		}, {
 		type: 'confirm',
 		name: 'install',
-		message: '?'	
+		message: '?'
 		 */
 	}, {
 		name: 'appVersion',
@@ -212,7 +212,6 @@ function promptForControllerName(transport) {
 }
 
 function providerName(transport) {
-	var current = transport.provider;
 	// existingNamespace
 	var deferred = Q.defer();
 
