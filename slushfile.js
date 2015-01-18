@@ -66,28 +66,6 @@ var settings = {
 				wrapLineLength: 0
 			}
 		}
-	},
-	fixmyjs: {
-		'asi': true,
-		'boss': true,
-		'curly': true,
-		'eqeqeq': false,
-		'eqnull': true,
-		'esnext': true,
-		'expr': true,
-		'forin': true,
-		'immed': true,
-		'laxbreak': true,
-		'newcap': false,
-		'noarg': true,
-		'node': true,
-		'nonew': true,
-		'plusplus': true,
-		'quotmark': 'single',
-		'strict': false,
-		'undef': true,
-		'unused': true,
-		'white': true
 	}
 };
 
