@@ -39,7 +39,7 @@ var options = {
 		npm: scaffolding.findNpm(__dirname + '/.')
 	},
 	paths: {
-		slushtasks: __dirname + '/slushtasks',
+		slushtasks: __dirname + '/src/slushtasks',
 		src: __dirname + '/src',
 		docs: __dirname + '/docs',
 		templates: __dirname + '/templates'
