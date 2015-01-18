@@ -6,8 +6,8 @@ var conflict = require('gulp-conflict'),
 	gutil = require('gulp-util'),
 	prettify = require('gulp-jsbeautifier'),
 	rename = require('gulp-rename'),
-	template = require('gulp-template');
-scaffolding = require('./src/scaffolding');
+	template = require('gulp-template'),
+	scaffolding = require('./src/scaffolding');
 
 
 // add gulp release tasks
@@ -27,6 +27,7 @@ var options = {
 		bower: scaffolding.findBower('.')
 	},
 	require: {
+		globule: globule,
 		gulp: gulp,
 		gutil: gutil,
 		conflict: conflict,
