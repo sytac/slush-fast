@@ -39,6 +39,7 @@ var settings = {
 		npm: scaffolding.findNpm(__dirname + '/.')
 	},
 	paths: {
+		slushtasks: __dirname + '/slushtasks',
 		src: __dirname + '/src',
 		docs: __dirname + '/docs',
 		templates: __dirname + '/templates'
@@ -91,7 +92,7 @@ var settings = {
 };
 
 // Load all task files
-globule.find(__dirname + '/slushtasks/*')
+globule.find(options.paths.slushtasks + '/*')
 	.map(function (file) {
 		require(file)(settings);
 	});
