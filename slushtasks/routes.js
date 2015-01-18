@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function (options) {
 	var bower = options.configs.bower;
 	var src = options.paths.src;
@@ -6,7 +8,6 @@ module.exports = function (options) {
 
 	var conflict = options.require.conflict,
 		gulp = options.require.gulp,
-		gutil = options.require.gutil,
 		prettify = options.require.prettify,
 		rename = options.require.rename,
 		template = options.require.template;
