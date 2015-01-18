@@ -11,7 +11,7 @@ var _s = require('underscore.string'),
 
 module.exports = function (options) {
 	var bower = options.configs.bower;
-	var src = options.src;
+	var src = options.paths.src;
 	var templates = options.paths.templates;
 	var prompts = require(src + '/prompts');
 

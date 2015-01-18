@@ -20,7 +20,7 @@ var _ = require('lodash'),
 
 module.exports = function (options) {
 
-	var src = options.src;
+	var src = options.paths.src;
 	var templates = options.paths.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
@@ -162,7 +162,8 @@ module.exports = function (options) {
 					return '!' + glob;
 				});
 
-		return gulp.src([options.paths.templates + '/application/**/*'].concat(butNot))
+		return gulp.src([options.paths.templates + '/application/**/*'].concat(
+				butNot))
 			.pipe(template(defaults))
 			.pipe(rename(function (file) {
 				if (file.basename[0] === '_') {

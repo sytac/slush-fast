@@ -38,9 +38,8 @@ var settings = {
 	slush: {
 		npm: scaffolding.findNpm(__dirname + '/.')
 	},
-	src: __dirname + '/src',
-	slushtasks: __dirname + '/slushtasks',
 	paths: {
+		src: __dirname + '/src',
 		docs: __dirname + '/docs',
 		templates: __dirname + '/templates'
 	},
