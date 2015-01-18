@@ -1,22 +1,18 @@
 'use strict';
-/* global require,process,console,__dirname */
 var _ = require('lodash'),
 	_s = require('underscore.string'),
 	concat = require('gulp-concat'),
 	extend = require('extend'),
 	globule = require('globule'),
 	fs = require('fs'),
-	inquirer = require('inquirer'),
 	install = require('gulp-install'),
 	jeditor = require('gulp-json-editor'),
 	path = require('path'),
-	Q = require('Q'),
-	tap = require('gulp-tap');
+	Q = require('Q');
 
 module.exports = function (options) {
 
 	var src = options.paths.src;
-	var templates = options.paths.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
 	var conflict = options.require.conflict,
@@ -27,7 +23,7 @@ module.exports = function (options) {
 		template = options.require.template;
 	var seq = require('gulp-sequence')
 		.use(gulp);
-	var answers;
+
 	var globs = {
 		bootstrap: {
 			src: options.paths.templates + '/application/*/bootstrap.js'
@@ -63,7 +59,6 @@ module.exports = function (options) {
 		}
 	};
 	var defaults = createDefaults();
-	var gutil = options.require.gutil;
 
 	gulp.task('readme', function (done) {
 
@@ -171,17 +166,17 @@ module.exports = function (options) {
 				}
 			}))
 			.pipe(conflict('./'))
-			.pipe(gulp.dest('./'))
+			.pipe(gulp.dest('./'));
 	});
 
-	gulp.task('copy-special-files', function (done) {
+	gulp.task('copy-special-files', function () {
 
 		return gulp.src([globs.bootstrap.src, globs.index.src, globs.gulpfile.src])
 			.pipe(conflict('./'))
 			.pipe(gulp.dest('./'));
 	});
 
-	gulp.task('create-module', function (done) {
+	gulp.task('create-module', function () {
 
 		return gulp.src([
 				options.paths.templates + '/module/module.js'
@@ -249,7 +244,7 @@ module.exports = function (options) {
 		}
 	});
 
-	gulp.task('update-package-json', function (done) {
+	gulp.task('update-package-json', function () {
 		return gulp.src(globs.npm.target)
 			.pipe(jeditor(function (json) {
 				extend(json, {
@@ -300,7 +295,6 @@ module.exports = function (options) {
 
 		var templateBower = scaffolding.findBower(options.paths.templates +
 			'/application/');
-		var npm = scaffolding.findNpm('./');
 
 		var workingDirName = scaffolding.getWorkingDirName();
 		var repositoryUrl = scaffolding.getGitRepositoryUrl();
@@ -319,7 +313,7 @@ module.exports = function (options) {
 			appName: project.name.slug,
 			description: bower.description || '',
 			version: bower.version || '0.0.0',
-			userName: format(gitUser.name) || osUserName,
+			userName: format(gitUser.name), // TODO: where did this come from? -> || osUserName,
 			authorEmail: gitUser.email || '',
 			mainFile: bower.main || '',
 			appRepository: repositoryUrl ? repositoryUrl : '',
