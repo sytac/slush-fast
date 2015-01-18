@@ -1,5 +1,4 @@
-var conflict = require('gulp-conflict'),
-	prettify = require('gulp-jsbeautifier'),
+var prettify = require('gulp-jsbeautifier'),
 	rename = require('gulp-rename'),
 	template = require('gulp-template');
 
@@ -11,7 +10,8 @@ module.exports = function (options) {
 	var prompts = require(src + '/prompts');
 	var common = require(src + '/common')(options);
 
-	var gulp = options.require.gulp,
+	var conflict = options.require.conflict,
+		gulp = options.require.gulp,
 		gutil = options.require.gutil;
 
 	gulp.task('directive', function (done) {

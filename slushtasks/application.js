@@ -6,7 +6,6 @@ var _ = require('lodash'),
 	extend = require('extend'),
 	globule = require('globule'),
 	gulp = require('gulp'),
-	conflict = require('gulp-conflict'),
 	fs = require('fs'),
 	inquirer = require('inquirer'),
 	install = require('gulp-install'),
@@ -24,7 +23,8 @@ module.exports = function (options) {
 	var templates = options.paths.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
-	var gulp = options.require.gulp;
+	var conflict = options.require.conflict,
+		gulp = options.require.gulp;
 	var seq = require('gulp-sequence')
 		.use(gulp);
 	var answers;

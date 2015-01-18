@@ -1,7 +1,6 @@
 var _s = require('underscore.string'),
 	file = require('gulp-file'),
 
-	conflict = require('gulp-conflict'),
 	path = require('path'),
 	prettify = require('gulp-jsbeautifier'),
 	randomString = require('random-string'),
@@ -18,7 +17,8 @@ module.exports = function (options) {
 	var scaffolding = require(src + '/scaffolding');
 	var common = require(src + '/common')(options);
 
-	var gulp = options.require.gulp,
+	var conflict = options.require.conflict,
+		gulp = options.require.gulp,
 		gutil = options.require.gutil;
 
 
