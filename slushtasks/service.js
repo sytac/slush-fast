@@ -1,5 +1,4 @@
-var gutil = require('gulp-util'),
-	conflict = require('gulp-conflict'),
+var conflict = require('gulp-conflict'),
 	prettify = require('gulp-jsbeautifier'),
 	rename = require('gulp-rename'),
 	template = require('gulp-template');
@@ -11,7 +10,8 @@ module.exports = function (options) {
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
 
-	var gulp = options.require.gulp;
+	var gulp = options.require.gulp,
+		gutil = options.require.gutil;
 
 	gulp.task('service', function (done) {
 

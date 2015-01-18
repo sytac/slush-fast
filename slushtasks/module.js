@@ -1,6 +1,6 @@
 var _s = require('underscore.string'),
 	file = require('gulp-file'),
-	gutil = require('gulp-util'),
+
 	conflict = require('gulp-conflict'),
 	path = require('path'),
 	prettify = require('gulp-jsbeautifier'),
@@ -18,7 +18,8 @@ module.exports = function (options) {
 	var scaffolding = require(src + '/scaffolding');
 	var common = require(src + '/common')(options);
 
-	var gulp = options.require.gulp;
+	var gulp = options.require.gulp,
+		gutil = options.require.gutil;
 
 
 	gulp.task('module', function (done) {
