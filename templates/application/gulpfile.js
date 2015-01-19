@@ -505,7 +505,7 @@ gulp.task('assemble-index', function () {
 });
 
 gulp.task('watch-js', function () {
-	watch([globs.js.src, './src/app/.freak/js'], {
+	watch([globs.js.src, globs.spec.src, './src/app/.freak/js'], {
 		debounceDelay: 1000
 	}, function (files, done) {
 		seq('clean-jshint', 'dev-jshint', 'dev-js', 'dev-js-template',
