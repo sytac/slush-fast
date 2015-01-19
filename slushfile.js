@@ -27,6 +27,7 @@ var options = {
 		bower: scaffolding.findBower('.')
 	},
 	require: {
+		fs: fs,
 		globule: globule,
 		gulp: gulp,
 		gutil: gutil,
