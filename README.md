@@ -41,7 +41,6 @@ $ npm install -g git+https://github.com/jpwesselink/slush-fast.git
 ```
 mkdir yourproject
 cd yourproject
-git init
 slush fast
 ```
 

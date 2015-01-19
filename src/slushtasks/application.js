@@ -4,6 +4,7 @@ var _ = require('lodash'),
 	_s = require('underscore.string'),
 	concat = require('gulp-concat'),
 	extend = require('extend'),
+	git = require('gulp-git'),
 	install = require('gulp-install'),
 	jeditor = require('gulp-json-editor'),
 	path = require('path'),
@@ -52,7 +53,14 @@ module.exports = function (options) {
 		});
 	});
 
-	gulp.task('init', function (done) {
+
+	gulp.task('git-init', function (done) {
+		git.init(function (err) {
+			done(err, true);
+		});
+	});
+
+	gulp.task('init', ['git-init'], function (done) {
 		// prompt for app specific values
 		prompts.application(defaults)
 			.then(function (answers) {
