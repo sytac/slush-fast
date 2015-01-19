@@ -24,4 +24,4 @@ globule.find(defaults.paths.slushtasks + '/*')
 		require(file)(defaults);
 	});
 
-gulp.task('default', ['init']);
+gulp.task('default', ['create-project']);

@@ -60,7 +60,7 @@ module.exports = function (options) {
 		});
 	});
 
-	gulp.task('init', ['git-init'], function (done) {
+	gulp.task('create-project', ['git-init'], function (done) {
 		// prompt for app specific values
 		prompts.application(defaults)
 			.then(function (answers) {
