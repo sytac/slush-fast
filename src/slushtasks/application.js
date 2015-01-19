@@ -26,40 +26,8 @@ module.exports = function (options) {
 	var seq = require('gulp-sequence')
 		.use(gulp);
 
-	var globs = {
-		bootstrap: {
-			src: options.paths.templates + '/application/*/bootstrap.js'
-		},
-		index: {
-			src: options.paths.templates + '/application/*/index.html'
-		},
-		gulpfile: {
-			src: options.paths.templates + '/application/gulpfile.js'
-		},
-		npm: {
-			src: options.paths.templates + '/application/package.json',
-			target: './package.json'
-		},
-		bower: {
-			src: options.paths.templates + '/application/bower.json',
-			target: './bower.json'
-		},
-		docs: {
-			readme: {
-				includes: {
-					src: options.paths.docs + '/**/*.md'
-				},
-				project: {
-					src: options.paths.docs + '/README.project.md',
-					dest: './README.md'
-				},
-				generator: {
-					src: options.paths.docs + '/README.generator.md',
-					dest: './README.md'
-				}
-			}
-		}
-	};
+	var globs = options.globs;
+
 	var defaults = createDefaults();
 
 	gulp.task('readme', function (done) {

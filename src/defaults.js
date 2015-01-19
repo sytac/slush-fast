@@ -58,4 +58,39 @@ var defaults = {
 	}
 };
 
+defaults.globs = {
+	bootstrap: {
+		src: defaults.paths.templates + '/application/*/bootstrap.js'
+	},
+	index: {
+		src: defaults.paths.templates + '/application/*/index.html'
+	},
+	gulpfile: {
+		src: defaults.paths.templates + '/application/gulpfile.js'
+	},
+	npm: {
+		src: defaults.paths.templates + '/application/package.json',
+		target: './package.json'
+	},
+	bower: {
+		src: defaults.paths.templates + '/application/bower.json',
+		target: './bower.json'
+	},
+	docs: {
+		readme: {
+			includes: {
+				src: defaults.paths.docs + '/**/*.md'
+			},
+			project: {
+				src: defaults.paths.docs + '/README.project.md',
+				dest: './README.md'
+			},
+			generator: {
+				src: defaults.paths.docs + '/README.generator.md',
+				dest: './README.md'
+			}
+		}
+	}
+};
+
 module.exports = defaults;
