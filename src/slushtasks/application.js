@@ -10,6 +10,7 @@ var _ = require('lodash'),
 	Q = require('Q');
 
 module.exports = function (options) {
+	options = options || require('../defaults');
 
 	var src = options.paths.src;
 	var scaffolding = require(src + '/scaffolding');

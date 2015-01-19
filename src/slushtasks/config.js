@@ -1,6 +1,9 @@
 'use strict';
 
 module.exports = function (options) {
+	options = options || require('../defaults');
+
+
 	var bower = options.configs.bower;
 	var src = options.paths.src;
 	var templates = options.paths.templates;
