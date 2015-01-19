@@ -13,6 +13,7 @@ var conflict = require('gulp-conflict'),
 // add gulp release tasks
 require('gulp-release-tasks')(gulp);
 
+// Display idiotic imagery
 gutil.log('\nFreak Angular Scaffolding Tool\n' + ('FAST'.split(' ')
 	.map(function (word) {
 		return figlet.textSync(word, {
