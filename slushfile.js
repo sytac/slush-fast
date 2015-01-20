@@ -1,7 +1,7 @@
 'use strict';
+var defaults = require('./src/defaults');
 
-var defaults = require('./src/defaults'),
-	figlet = require('figlet'),
+var figlet = require('figlet'),
 	globule = require('globule'),
 	gulp = require('gulp'),
 	gutil = require('gulp-util');

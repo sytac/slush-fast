@@ -7,11 +7,11 @@ var _ = require('lodash'),
 	git = require('gulp-git'),
 	install = require('gulp-install'),
 	jeditor = require('gulp-json-editor'),
+	path = require('path'),
 	Q = require('Q');
 
 module.exports = function (options) {
 	options = options || require('../defaults');
-	var common = require('./common')(options);
 
 	var src = options.paths.src;
 	var scaffolding = require(src + '/scaffolding');
@@ -19,6 +19,7 @@ module.exports = function (options) {
 	var conflict = options.require.conflict,
 		fs = options.require.fs,
 		gulp = options.require.gulp,
+		globule = options.require.globule,
 		gutil = options.require.gutil,
 		prettify = options.require.prettify,
 		rename = options.require.rename,
@@ -34,7 +35,7 @@ module.exports = function (options) {
 
 		var readme = extend({}, defaults, defaults.bower);
 		gutil.log('Preparing README files');
-		common.prepareReadme(readme, function () {
+		prepareReadme(readme, function () {
 			gulp.src(globs.docs.readme.project.src)
 				.pipe(template(readme))
 				.pipe(concat(globs.docs.readme.project.dest))
@@ -51,6 +52,7 @@ module.exports = function (options) {
 				});
 		});
 	});
+
 
 	gulp.task('git-init', function (done) {
 		git.init(function (err) {
@@ -169,6 +171,11 @@ module.exports = function (options) {
 				'/'));
 	});
 
+	gulp.task('create-readme', function (done) {
+		// references defaults
+		done();
+	});
+
 	gulp.task('create-bower-json', function (done) {
 		if (!fs.existsSync(globs.bower.target)) {
 			gulp.src(globs.bower.src)
@@ -248,7 +255,17 @@ module.exports = function (options) {
 		);
 	});
 
+	function prepareReadme(answers, callback) {
+		answers.readme = {};
 
+		globule.find(globs.docs.readme.includes.src)
+			.map(function (file) {
+				var value = fs.readFileSync(file, 'utf8');
+				var key = path.basename(file, '.md');
+				answers.readme[key] = _.template(value)(answers);
+			});
+		callback();
+	}
 
 	function createDefaults() {
 

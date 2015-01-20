@@ -1,18 +1,48 @@
 'use strict';
 
-var _s = require('underscore.string'),
+var _ = require('lodash'),
+	_s = require('underscore.string'),
 	file = require('gulp-file'),
+	path = require('path'),
 	randomString = require('random-string');
 
 module.exports = function (options) {
-
-	var gulp = options.require.gulp;
+	console.log('d', options);
+	options = options || require('./defaults');
+	var fs = options.require.fs,
+		globs = options.globs,
+		globule = options.require.globule,
+		gulp = options.require.gulp;
 
 	var common = {
-		writeTempFile: writeTempFile
+		writeTempFile: writeTempFile,
+		prepareReadme: prepareReadme
 	};
 
 	return common;
+
+	function prepareReadme(answers, callback) {
+		if (!answers) {
+			answers = {};
+		}
+		answers.readme = {};
+
+		globule.find(globs.docs.readme.includes.src)
+			.map(function (file) {
+				var value = fs.readFileSync(file, 'utf8');
+				var key = path.basename(file, '.md');
+				try {
+					answers.readme[key] = _.template(value)(answers);
+				} catch (err) {
+					console.log('---', err);
+				}
+			});
+
+		if (callback) {
+			callback();
+		}
+		return answers;
+	}
 
 	function writeTempFile(name, depth) {
 		return file(name,
