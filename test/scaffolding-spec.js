@@ -1,6 +1,5 @@
 'use strict';
 var gulp = require('gulp');
-var s = require('slush');
 var sinon = require('sinon');
 require('jasmine-sinon');
 
@@ -8,7 +7,6 @@ var scaffolding = require('../src/scaffolding');
 
 describe('Scaffolding module', function () {
 	it('should exist', function () {
-		console.log('slush', s);
 		expect(scaffolding)
 			.toBeDefined();
 		expect(scaffolding)

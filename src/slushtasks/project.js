@@ -11,9 +11,9 @@ var _ = require('lodash'),
 
 module.exports = function (options) {
 	options = options || require('../defaults');
-	var common = require('./common')(options);
-
 	var src = options.paths.src;
+	var common = require(src + '/common')(options);
+
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
 	var conflict = options.require.conflict,
@@ -34,27 +34,36 @@ module.exports = function (options) {
 
 		var readme = extend({}, defaults, defaults.bower);
 		gutil.log('Preparing README files');
-		common.prepareReadme(readme, function () {
-			gulp.src(globs.docs.readme.project.src)
-				.pipe(template(readme))
-				.pipe(concat(globs.docs.readme.project.dest))
-				.pipe(conflict(globs.docs.readme.project.dest))
-				.pipe(gulp.dest('./'))
-				.on('end', function (err) {
-					if (err) {
-						gutil.log(gutil.colors.red('Failed to create project readme.'));
-					} else {
-						gutil.log('Project readme created.');
-					}
+		common.prepareReadme(globs.docs.readme.includes.src, readme,
+			function () {
+				gulp.src(globs.docs.readme.project.src)
+					.pipe(template(readme))
+					.pipe(concat(globs.docs.readme.project.dest))
+					.pipe(conflict(globs.docs.readme.project.dest))
+					.pipe(gulp.dest('./'))
+					.on('end', function (err) {
+						if (err) {
+							gutil.log(gutil.colors.red('Failed to create project readme.'));
+						} else {
+							gutil.log('Project readme created.');
+						}
 
-					done(err, true);
-				});
-		});
+						done(err, true);
+					});
+			});
 	});
 
 	gulp.task('git-init', function (done) {
-		git.init(function (err) {
+		git.branch(function (err) {
 			done(err, true);
+		});
+	});
+
+	gulp.task('git-create-branches', function (done) {
+		git.branch('develop', function (err) {
+			git.checkout('develop', function (err) {
+				done(err, true);
+			});
 		});
 	});
 
@@ -247,8 +256,6 @@ module.exports = function (options) {
 
 		);
 	});
-
-
 
 	function createDefaults() {
 

@@ -31,11 +31,11 @@ module.exports = function (options) {
 
 	var defaults = createDefaults();
 
-	gulp.task('readme', function (done) {
+	gulp.task('asdasd', function (done) {
 
 		var readme = extend({}, defaults, defaults.bower);
 		gutil.log('Preparing README files');
-		prepareReadme(readme, function () {
+		prepareReadme(globs.docs.readme.includes.src, readme, function () {
 			gulp.src(globs.docs.readme.project.src)
 				.pipe(template(readme))
 				.pipe(concat(globs.docs.readme.project.dest))

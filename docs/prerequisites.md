@@ -13,9 +13,3 @@ If you just checked out this project you need some tools to help you run this pr
 - [Slush](http://slushjs.github.io/) - Gulp as a replacement for Yeoman
 
 These tools are installed using `npm`, the node package manager, bear in mind these tools need to be installed globally, for *nixy systems you might want to use `sudo` or take a [look here](http://howtonode.org/introduction-to-npm) for npm without sudo.
-
-```bash
-npm install -g gulp
-npm install -g slush
-npm install -g git+https://github.com/jpwesselink/slush-fast.git
-```

@@ -1,7 +1,7 @@
 'use strict';
 
 var defaults = require('./src/defaults');
-console.log('defaults', defaults);
+var scaffolding = require('./src/scaffolding');
 
 
 var concat = require('gulp-concat'),
@@ -15,30 +15,35 @@ var concat = require('gulp-concat'),
 	template = require('gulp-template');
 
 gulp.task('readme', function (done) {
+	var gitUser = scaffolding.getGitUser();
+	gitUser = gitUser || {};
 
-	var readme = extend({}, defaults, defaults.bower);
+	var readme = extend({
+		authorEmail: gitUser.email || ''
+	}, defaults, defaults.bower);
 	gutil.log('Preparing README files');
-	common.prepareReadme(readme, function () {
-		gulp.src(defaults.globs.docs.readme.generator.src)
-			.pipe(template(readme))
-			.pipe(concat(defaults.globs.docs.readme.generator.dest))
-			.pipe(conflict(defaults.globs.docs.readme.generator.dest))
-			.pipe(gulp.dest('./kak'))
-			.on('end', function (err) {
-				if (err) {
-					gutil.log(gutil.colors.red('Failed to create generator readme.'));
-				} else {
-					gutil.log('Project readme created.');
-				}
+	common.prepareReadme(defaults.globs.docs.readme.includes.src, readme,
+		function () {
+			gulp.src(defaults.globs.docs.readme.generator.src)
+				.pipe(template(readme))
+				.pipe(concat(defaults.globs.docs.readme.generator.dest))
+				.pipe(conflict(defaults.globs.docs.readme.generator.dest))
+				.pipe(gulp.dest('./kak'))
+				.on('end', function (err) {
+					if (err) {
+						gutil.log(gutil.colors.red('Failed to create generator readme.'));
+					} else {
+						gutil.log('Project readme created.');
+					}
 
-				done(err, true);
-			});
-	});
+					done(err, true);
+				});
+		});
 });
 
 
 gulp.task('test', function () {
-	var src = ['slushfile.js', './src/**/*.js'];
+	var src = ['./src/**/*.js'];
 	var testSrc = ['./test/**/*.js'];
 	return gulp.src(src)
 		.pipe(istanbul({

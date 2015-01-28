@@ -4,6 +4,7 @@ var conflict = require('gulp-conflict'),
 	fs = require('fs'),
 	gulp = require('gulp'),
 	gutil = require('gulp-util'),
+	path = require('path'),
 	prettify = require('gulp-jsbeautifier'),
 	rename = require('gulp-rename'),
 	template = require('gulp-template'),
@@ -57,6 +58,11 @@ var defaults = {
 		}
 	}
 };
+
+Object.keys(defaults.paths)
+	.map(function (pathId) {
+		defaults.paths[pathId] = path.normalize(defaults.paths[pathId]);
+	});
 
 defaults.globs = {
 	bootstrap: {
