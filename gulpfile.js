@@ -14,7 +14,6 @@ var bump = require('gulp-bump'),
 	jasmine = require('gulp-jasmine'),
 	seq = require('run-sequence'),
 	scaffolding = require('./src/scaffolding'),
-	tagVersion = require('gulp-tag-version'),
 	template = require('gulp-template');
 
 // Add release tasks
