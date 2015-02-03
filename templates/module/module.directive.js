@@ -1,20 +1,22 @@
 (function () {
 	'use strict';
 
-	/* <%= module.name %>.<%= directive.slug %>.directive.js */
+	/* <%= module.path %>/<%= directive.slug %>.directive.js */
 
 	/**
 	 * @desc
-	 * @example <div <%= directive.slug %>></div>
+	 * @example <div <%= directive.fullNsNameSlug %>></div>
 	 */
 	angular
-		.module('<%= module.fullNs %>')
-		.directive('<%= directive.name %>', <%= directive.upperCaseCamelizedPartName %> );
+		.module('<%= module.prefixedFullNs %>')
+		.directive(
+			'<%= module.camelCasePrefixedFullNs + directive.upperCaseCamelized %>', <%=
+			directive.upperCaseCamelizedPartName %> );
 
 	function <%= directive.upperCaseCamelizedPartName %> () {
 		var directive = {
-			restrict: 'EA',
-			templateUrl: '<%= module.path %>/<%= module.name %>.<%= directive.slug %>.directive.html',
+			restrict: 'A',
+			templateUrl: '<%= module.path %>/<%= directive.slug %>.directive.html',
 			controller: <%= directive.upperCaseCamelizedPartName + 'Controller' %> ,
 			controllerAs: 'vm'
 		};
@@ -24,6 +26,8 @@
 		/* @ngInject */
 		function <%= directive.upperCaseCamelizedPartName + 'Controller' %> () {
 			// Injecting $scope just for comparison
+
+			/* jshint validthis: true */
 			var vm = this;
 		}
 	}

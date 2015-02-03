@@ -1,18 +1,22 @@
 (function () {
 	'use strict';
 
-	/* <%= module.name %>.<%= controller.slug %>.controller.js */
+	/* <%= controller.slug %>.controller.js */
 
 	/**
 	 * @desc
-	 * @example <div ng-controller="<%= controller.upperCaseCamelized %>"></div>
+	 * @example <div ng-controller="<%= controller.fullNsName %> as <%= controller.lowerCaseCamelized %>"></div>
 	 */
 
-	angular.module('<%= module.fullNs %>')
-		.controller('<%= controller.upperCaseCamelized %>', <%= controller.upperCaseCamelized %> );
+	angular.module('<%= module.prefixedFullNs %>')
+		.controller(
+			'<%= controller.fullNsName %>', <%=
+			controller.upperCaseCamelized + 'Controller' %> );
 
-	function <%= controller.upperCaseCamelized %> () {
+	function <%= controller.upperCaseCamelized + 'Controller' %> () {
 
+		/* jshint validthis: true */
+		var vm = this;
 	}
 
 }());

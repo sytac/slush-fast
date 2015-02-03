@@ -1,10 +1,14 @@
-var Q = require('q'),
-	inquirer = require('inquirer'),
+'use strict';
+
+var inquirer = require('inquirer'),
+	Q = require('q'),
+	scaffolding = require('./scaffolding'),
 	wrap = require('./q-utils')
 	.wrap;
 
 var prompts = {
 	// new
+	application: application,
 	moduleName: wrap(_moduleName),
 	controllerName: wrap(_controllerName),
 	providerName: providerName,
@@ -18,6 +22,105 @@ var prompts = {
 module.exports = prompts;
 
 // new
+//
+function application(defaults) {
+	var deferred = Q.defer();
+
+	var prompts = [{
+		name: 'appName',
+		message: 'What is the name of your project?',
+		default: defaults.project.name.full
+	}, {
+		name: 'appDescription',
+		message: 'What is the description?',
+		default: defaults.description
+	}, {
+		name: 'appPrefix',
+		message: 'What is the prefix of your project? (for example: tif., ltc. or prds.)',
+		default: defaults.project.angular.prefix,
+		validate: function (value) {
+			var done = this.async();
+			if (!value) {
+				done('Please provide a prefix');
+			} else {
+				done(true);
+			}
+		},
+		filter: scaffolding.prefixName
+	}, {
+		name: 'bootstrapModule',
+		message: function (answers) {
+			return 'What is the bootstrap module of your project? (for example: ' +
+				answers.appPrefix + '.example, ' + answers.appPrefix +
+				'.toolbar). The \'' + answers.appPrefix +
+				'\' prefix will be added automatically.';
+		},
+		default: defaults.project.angular.bootstrap.module.substring(defaults.project
+			.angular.prefix.length + 1),
+		validate: function (value) {
+			var done = this.async();
+			if (!value) {
+				done('Please provide a bootstrap module name');
+			} else {
+				done(true);
+			}
+		},
+		filter: scaffolding.formatModuleName
+
+		/*
+		}, {
+		type: 'confirm',
+		name: 'install',
+		message: '?'
+		 */
+	}, {
+		name: 'appVersion',
+		message: 'What is the version of your project?',
+		default: defaults.version
+	}, {
+		name: 'authorName',
+		message: 'What is the author name?',
+		default: defaults.authorName
+	}, {
+		name: 'authorEmail',
+		message: 'What is the author email?',
+		default: defaults.authorEmail
+	}, {
+		name: 'userName',
+		message: 'What is the github username?',
+		default: defaults.userName
+	}, {
+		name: 'appRepository',
+		message: 'Repository URL',
+		default: defaults.appRepository
+	}, {
+		type: 'confirm',
+		name: 'private',
+		message: 'Mark as a private package?'
+	}, {
+		type: 'confirm',
+		name: 'install',
+		message: 'Install npm dependencies?'
+	}, {
+		type: 'confirm',
+		name: 'proceed',
+		message: function () {
+			return 'Continue?';
+		}
+	}];
+
+	inquirer.prompt(prompts,
+		function (answers) {
+			if (!answers.proceed) {
+				deferred.reject('Cancelled');
+			} else {
+				deferred.resolve(answers);
+			}
+		});
+
+	return deferred.promise;
+}
+
 function _moduleName(transport) {
 	var module = transport.module;
 	if (!module) {
@@ -109,7 +212,6 @@ function promptForControllerName(transport) {
 }
 
 function providerName(transport) {
-	var current = transport.provider;
 	// existingNamespace
 	var deferred = Q.defer();
 
@@ -120,11 +222,11 @@ function providerName(transport) {
 		name: 'partSubName',
 		message: 'Create a provider for a service or a factory?',
 		choices: ['service', 'factory']
-				}, {
+	}, {
 		type: 'confirm',
 		name: 'confirmed',
 		message: 'Create this provider?'
-				}];
+	}];
 	if (!transport.provider.newName) {
 		prompts.unshift({
 			type: 'input',

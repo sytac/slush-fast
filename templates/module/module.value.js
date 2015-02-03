@@ -1,6 +1,6 @@
 (function () {
 	'use strict';
 
-	angular.module('<%= module.fullNs %>')
-		.value('<%= value.name %>', '');
+	angular.module('<%= module.prefixedFullNs %>')
+		.value('<%= value.fullNsName %>', '');
 }());

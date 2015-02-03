@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	angular.module('<%= module.fullNs %>')
+	angular.module('<%= module.prefixedFullNs %>')
 		.config(config);
 
 	function config($stateProvider, $urlRouterProvider) {
