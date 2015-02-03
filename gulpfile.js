@@ -46,19 +46,15 @@ gulp.task('readme', function (done) {
 		});
 });
 
-
 gulp.task('release', function (done) {
-	seq('readme', 'bump', 'commit', done);
-});
-
-gulp.task('r', function (done) {
 	seq(
+		'readme',
 		'git-switch-to-develop-branch',
 		'git-check-for-changes',
 		'git-bump',
 		'git-add-develop', 'git-commit-develop', 'git-push-develop',
 		'git-checkout-master-branch',
-		'git-merge-develop-into-master', 'git-push-master', done);
+		'git-merge-develop-into-master', 'git-push-master-andtags', done);
 });
 
 gulp.task('git-bump', function () {
@@ -80,8 +76,6 @@ gulp.task('git-commit-develop', function (done) {
 	git.commit('Bump to ' + version, done);
 });
 
-
-
 gulp.task('git-checkout-master-branch', function (done) {
 	git.checkout('master', done);
 });
@@ -93,11 +87,8 @@ gulp.task('git-merge-develop-into-master', function (done) {
 gulp.task('git-push-develop', function (done) {
 	git.push('origin', 'develop', done);
 });
-gulp.task('git-push-master', function (done) {
-	git.push('origin', 'master', done);
-});
 
-gulp.task('git-push-tags', function (done) {
+gulp.task('git-push-master-and-tags', function (done) {
 	git.push('origin', 'master', {
 		args: '--tags'
 	}, done);
