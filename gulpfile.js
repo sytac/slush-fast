@@ -52,7 +52,20 @@ gulp.task('release', function (done) {
 
 gulp.task('r', function (done) {
 	seq('git-switch-to-develop-branch', 'git-check-for-changes', 'bump',
-		'commit', 'git-merge-develop-into-master', done);
+		'commit', 'git-checkout-master-branch', 'git-merge-develop-into-master',
+		'git-push-master', done);
+});
+
+gulp.task('git-checkout-master-branch', function (done) {
+	git.checkout('master', done);
+});
+
+gulp.task('git-merge-develop-into-master', function (done) {
+	git.merge('develop', done);
+});
+
+gulp.task('git-push-master', function (done) {
+	git.push('origin', 'master', done);
 });
 
 gulp.task('git-switch-to-develop-branch', function (done) {
@@ -78,27 +91,7 @@ gulp.task('git-check-for-changes', function (done) {
 	});
 });
 
-gulp.task('git-merge-develop-into-master', function (done) {
-	git.checkout('master', function (err) {
-		if (err) {
-			done(err, true);
-		} else {
-			git.merge('develop', function (err) {
-				if (err) {
-					done(err, true);
-				} else {
-					git.push('origin', 'master', function (err) {
-						if (err) {
-							done(err, true);
-						} else {
-							done();
-						}
-					});
-				}
-			});
-		}
-	});
-});
+
 
 gulp.task('test', function () {
 	var src = ['./src/**/*.js'];
