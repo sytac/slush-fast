@@ -80,8 +80,9 @@ gulp.task('git-add-develop', function () {
 gulp.task('git-commit-develop', function () {
 	var packageJson = require('./package.json');
 	var version = packageJson.version;
+	return gulp.src(['./package.json', './README.md'])
+		.pipe(git.commit('Bump to ' + version));
 
-	git.commit('Bump to ' + version);
 });
 
 gulp.task('git-checkout-master-branch', function (done) {
