@@ -10,17 +10,16 @@ module.exports = function (defaults) {
 
 	var config = require(src + '/config');
 
-
 	var conflict = defaults.require.conflict,
 		gulp = defaults.require.gulp,
 		prettify = defaults.require.prettify,
 		rename = defaults.require.rename,
 		template = defaults.require.template;
+
 	var seq = require('gulp-sequence')
 		.use(gulp);
 
 	var globs = defaults.globs;
-
 
 	gulp.task('create-spa', ['git-init'], function (done) {
 		defaults.configs.generator = {
