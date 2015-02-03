@@ -57,7 +57,7 @@ gulp.task('r', function (done) {
 		'git-check-for-changes',
 		'git-bump',
 		'git-add-and-commit-develop', 'git-checkout-master-branch',
-		'git-merge-develop-into-master', 'git-push-master', done);
+		'git-merge-develop-into-master', 'git-push-tags', done);
 });
 
 gulp.task('git-bump', function () {
