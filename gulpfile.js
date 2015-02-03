@@ -70,7 +70,7 @@ gulp.task('git-bump-package', function () {
 gulp.task('git-tag', function (done) {
 	var packageJson = require('./package.json');
 	var version = packageJson.version;
-	git.tag(version, done);
+	git.tag(version, version, done);
 });
 
 gulp.task('git-add-develop', function () {
