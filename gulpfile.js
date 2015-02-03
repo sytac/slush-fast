@@ -1,10 +1,8 @@
 'use strict';
 
-var defaults = require('./src/defaults');
-var scaffolding = require('./src/scaffolding');
-
 
 var concat = require('gulp-concat'),
+	defaults = require('./src/defaults'),
 	conflict = require('gulp-conflict'),
 	common = require('./src/common')(defaults),
 	extend = require('extend'),
@@ -12,6 +10,8 @@ var concat = require('gulp-concat'),
 	gutil = require('gulp-util'),
 	istanbul = require('gulp-istanbul'),
 	jasmine = require('gulp-jasmine'),
+	seq = require('run-sequence'),
+	scaffolding = require('./src/scaffolding'),
 	template = require('gulp-template');
 
 // Add release tasks
@@ -44,6 +44,10 @@ gulp.task('readme', function (done) {
 		});
 });
 
+
+gulp.task('release', function (done) {
+	seq('readme', 'bump', 'commit', done);
+});
 
 gulp.task('test', function () {
 	var src = ['./src/**/*.js'];
