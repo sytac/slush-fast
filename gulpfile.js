@@ -52,6 +52,7 @@ gulp.task('release', function (done) {
 		'git-switch-to-develop-branch',
 		'git-check-for-changes',
 		'git-bump',
+		'readme',
 		'git-add-develop', 'git-commit-develop', 'git-push-develop',
 		'git-checkout-master-branch',
 		'git-merge-develop-into-master', 'git-push-master-and-tags', done);
@@ -65,7 +66,7 @@ gulp.task('git-bump', function () {
 });
 
 gulp.task('git-add-develop', function () {
-	return gulp.src(['./package.json'])
+	return gulp.src(['./package.json', './README.md'])
 		.pipe(git.add());
 
 });
