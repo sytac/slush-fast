@@ -54,7 +54,7 @@ gulp.task('r', function (done) {
 	seq('git-switch-to-develop-branch', 'git-check-for-changes', 'bump',
 		'commit', 'git-push-develop', 'git-checkout-master-branch',
 		'git-merge-develop-into-master',
-		'git-push-master', done);
+		'git-push-master', 'git-push-tags', done);
 });
 
 gulp.task('git-checkout-master-branch', function (done) {
@@ -70,6 +70,12 @@ gulp.task('git-push-develop', function (done) {
 });
 gulp.task('git-push-master', function (done) {
 	git.push('origin', 'master', done);
+});
+
+gulp.task('git-push-tags', function (done) {
+	git.push('origin', 'master', {
+		args: '--tags'
+	}, done);
 });
 
 gulp.task('git-switch-to-develop-branch', function (done) {
