@@ -82,7 +82,7 @@ gulp.task('git-commit-develop', function (done) {
 	var packageJson = require('./package.json');
 	var version = packageJson.version;
 
-	git.commit('Bump to ' + version, done);
+	git.commit('Bump to ' + version);
 });
 
 gulp.task('git-checkout-master-branch', function (done) {
