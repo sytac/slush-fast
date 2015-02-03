@@ -51,8 +51,7 @@ gulp.task('release', function (done) {
 });
 
 gulp.task('r', function (done) {
-	seq('git-switch-to-develop-branch', 'git-check-for-changes', 'bump',
-		'commit', 'git-push-develop', 'git-checkout-master-branch',
+	seq('git-switch-to-develop-branch', 'git-check-for-changes', 'tag',
 		'git-merge-develop-into-master',
 		'git-push-master', 'git-push-tags', done);
 });
