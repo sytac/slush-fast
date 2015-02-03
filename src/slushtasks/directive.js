@@ -19,7 +19,7 @@ module.exports = function (defaults) {
 	gulp.task('directive', function (done) {
 
 
-		var ns = scaffolding.ns('.');
+		var ns = scaffolding.ns('.', defaults.configs.generator.srcDir);
 		var transport = {
 			module: {
 				prefix: generator.prefix,

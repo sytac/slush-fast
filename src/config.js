@@ -22,10 +22,6 @@ function chooseGeneratorType(defaults) {
 		.then(_moduleType)
 		.then(_usePackageManager)
 		.then(_userDetails)
-		.then(function (defaults) {
-			console.log('test');
-			return defaults;
-		})
 		.then(_moduleName)
 		.then(_install)
 		.then(_finish)
@@ -36,7 +32,10 @@ function _moduleName(defaults) {
 	if (defaults.module) {
 		return scaffolding.moduleName(defaults);
 	} else {
-		return Q.promise(defaults);
+		var deferred = Q.defer();
+		// yeah I know
+		deferred.resolve(defaults);
+		return deferred.promise;
 	}
 }
 

@@ -22,7 +22,7 @@ module.exports = function (defaults) {
 		var transport = {
 			module: {
 				prefix: generator.prefix,
-				ns: scaffolding.ns('.')
+				ns: scaffolding.ns('.', defaults.configs.generator.srcDir)
 					.join('.')
 			}
 		};
