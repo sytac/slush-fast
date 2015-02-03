@@ -1,28 +1,28 @@
 'use strict';
 
-module.exports = function (options) {
-	options = options || require('../defaults');
+module.exports = function (defaults) {
+	defaults = defaults || require('../defaults');
 
-	var bower = options.configs.bower;
-	var src = options.paths.src;
-	var templates = options.paths.templates;
+	var generator = defaults.configs.generator;
+	var src = defaults.paths.src;
+	var templates = defaults.paths.templates;
 	var prompts = require(src + '/prompts');
 
 	var scaffolding = require(src + '/scaffolding');
-	var common = require(src + '/common')(options);
+	var common = require(src + '/common')(defaults);
 
-	var conflict = options.require.conflict,
-		gulp = options.require.gulp,
-		prettify = options.require.prettify,
-		rename = options.require.rename,
-		template = options.require.template;
+	var conflict = defaults.require.conflict,
+		gulp = defaults.require.gulp,
+		prettify = defaults.require.prettify,
+		rename = defaults.require.rename,
+		template = defaults.require.template;
 
 
 	gulp.task('module', function (done) {
-		var ns = scaffolding.ns('.');
+		var ns = scaffolding.ns('.', defaults.configs.generator.srcDir);
 		var transport = {
 			module: {
-				prefix: bower.project.angular.prefix,
+				prefix: generator.prefix,
 				ns: ns.join('.')
 			}
 		};
@@ -36,17 +36,17 @@ module.exports = function (options) {
 			.then(function (transport) {
 				gulp.src([
 						templates + '/module/module.js'
-						/*, templates + '/module/module.scenario.js' */
 					])
 					.pipe(rename(function (path) {
 						path.basename = transport.module.name + '.' + path.basename;
 					}))
 					.pipe(template(transport))
-					.pipe(prettify(options.settings.prettify))
+					.pipe(prettify(defaults.settings.prettify))
 					.pipe(conflict(transport.module.name + '/'))
 					.pipe(gulp.dest(transport.module.name + '/'))
 					.on('finish', function () {
-						common.writeTempFile('js', ns.length)
+						common.writeTempFile('module', defaults.paths.temp.freak +
+								'/js')
 							.on('finish', function () {
 								done();
 							});

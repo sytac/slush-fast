@@ -9,10 +9,19 @@ var conflict = require('gulp-conflict'),
 	rename = require('gulp-rename'),
 	template = require('gulp-template'),
 	scaffolding = require('./scaffolding');
+var generatorConfigResult = scaffolding.findConfig('generator.json', './');
 
+var generatorConfigTemplate = require(__dirname +
+	'/../templates/generator/generator.json');
+var root = path.dirname(generatorConfigResult.file);
 var defaults = {
 	configs: {
-		bower: scaffolding.findBower('../')
+		generatorConfigTemplate: generatorConfigTemplate,
+		generator: generatorConfigResult.config,
+		bower: scaffolding.findBower('./'),
+		meta: {
+			root: root
+		}
 	},
 	require: {
 		fs: fs,
@@ -24,7 +33,6 @@ var defaults = {
 		rename: rename,
 		template: template
 	},
-
 	slush: {
 		npm: scaffolding.findNpm(__dirname + '/.')
 	},
@@ -32,7 +40,7 @@ var defaults = {
 		slushtasks: __dirname + '/slushtasks',
 		src: __dirname + '/src/..',
 		docs: __dirname + '/../docs',
-		templates: __dirname + '/../templates'
+		templates: __dirname + '/../templates',
 	},
 	settings: {
 		prettify: {
@@ -64,7 +72,80 @@ Object.keys(defaults.paths)
 		defaults.paths[pathId] = path.normalize(defaults.paths[pathId]);
 	});
 
+defaults.paths.generators = {
+	spa: defaults.paths.templates + '/generators/spa',
+	module: defaults.paths.templates + '/generators/module',
+	'scaffolding-only': defaults.paths.templates + '/generators/scaffolding-only'
+};
+defaults.paths.temp = {
+	freak: root + '/.tmp/.freak'
+};
+
 defaults.globs = {
+	temp: {
+		freak: defaults.paths.temp.freak + '/**/*'
+	},
+	generators: {
+		spa: {
+			templates: defaults.paths.generators.spa + '/**/*',
+			bootstrap: {
+				src: defaults.paths.generators.spa + '/*/bootstrap.js'
+			},
+			index: {
+				src: defaults.paths.generators.spa + '/*/index.html'
+			},
+			gulpfile: {
+				src: defaults.paths.generators.spa + '/gulpfile.js'
+			},
+			npm: {
+				src: defaults.paths.generators.spa + '/package.json',
+				target: './package.json'
+			},
+			bower: {
+				src: defaults.paths.generators.spa + '/bower.json',
+				target: './bower.json'
+			}
+		},
+		module: {
+			bootstrap: {
+				src: defaults.paths.generators.module + '/*/bootstrap.js'
+			},
+			index: {
+				src: defaults.paths.generators.module + '/*/index.html'
+			},
+			gulpfile: {
+				src: defaults.paths.generators.module + '/gulpfile.js'
+			},
+			npm: {
+				src: defaults.paths.generators.module + '/package.json',
+				target: './package.json'
+			},
+			bower: {
+				src: defaults.paths.generators.module + '/bower.json',
+				target: './bower.json'
+			}
+		},
+		'scaffolding-only': {
+			bootstrap: {
+				src: defaults.paths.generators['scaffolding-only'] + '/*/bootstrap.js'
+			},
+			index: {
+				src: defaults.paths.generators['scaffolding-only'] + '/*/index.html'
+			},
+			gulpfile: {
+				src: defaults.paths.generators['scaffolding-only'] + '/gulpfile.js'
+			},
+			npm: {
+				src: defaults.paths.generators['scaffolding-only'] + '/package.json',
+				target: './package.json'
+			},
+			bower: {
+				src: defaults.paths.generators['scaffolding-only'] + '/bower.json',
+				target: './bower.json'
+			}
+		}
+	},
+
 	bootstrap: {
 		src: defaults.paths.templates + '/application/*/bootstrap.js'
 	},

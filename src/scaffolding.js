@@ -8,6 +8,7 @@ var fs = require('fs'),
 	.wrap;
 
 var scaffolding = {
+	findConfig: findConfig,
 	getHomeDir: getHomeDir,
 	getWorkingDirName: getWorkingDirName,
 	getGitUser: getGitUser,
@@ -28,6 +29,29 @@ var scaffolding = {
 };
 
 module.exports = scaffolding;
+
+function findConfig(configName, dir) {
+
+	var currentDir = path.resolve(dir);
+	var pathParts = currentDir.split('/');
+	var config;
+	var configAbsolute;
+	var foundGit;
+	while (pathParts.length && !config) {
+		configAbsolute = pathParts.join('/') + '/' + configName;
+		if (fs.existsSync(configAbsolute)) {
+			config = require(configAbsolute);
+		} else if (fs.existsSync(pathParts.join('/') + '/' + '.git')) {
+			foundGit = true;
+			console.log('found .git at ', pathParts.join('/'));
+		}
+		pathParts.pop();
+	}
+	return {
+		config: config,
+		file: configAbsolute
+	};
+}
 
 function getHomeDir() {
 	return process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
@@ -73,11 +97,12 @@ function getGitRepositoryUrl(remoteKey) {
 	return repositoryUrl;
 }
 
-function ns(dir) {
-	var srcAppDir = 'src' + path.sep + 'app';
-
+function ns(dir, srcAppDir) {
+	srcAppDir = srcAppDir || 'src' + path.sep + 'app';
+	console.log(path.resolve(srcAppDir));
 	var currentDir = path.resolve(dir);
 	var srcAppDirIndex = currentDir.indexOf(srcAppDir);
+	console.log('srcAppDirIndex', srcAppDirIndex);
 	if (srcAppDirIndex !== -1) {
 		return currentDir.substring(srcAppDirIndex + srcAppDir.length + 1)
 			.split('/');
@@ -101,6 +126,8 @@ function findBower(dir) {
 	}
 	return bower;
 }
+
+
 
 function findNpm(dir) {
 	var npmConfig = 'package.json';

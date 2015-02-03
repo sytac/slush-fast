@@ -1,25 +1,26 @@
 'use strict';
-module.exports = function (options) {
-	options = options || require('../defaults');
+module.exports = function (defaults) {
+	defaults = defaults || require('../defaults');
 
-	var bower = options.configs.bower;
-	var src = options.paths.src;
-	var templates = options.paths.templates;
+	var generator = defaults.configs.generator;
+	var src = defaults.paths.src;
+	var templates = defaults.paths.templates;
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
+	var common = require(src + '/common')(defaults);
 
-	var conflict = options.require.conflict,
-		gulp = options.require.gulp,
-		gutil = options.require.gutil,
-		prettify = options.require.prettify,
-		rename = options.require.rename,
-		template = options.require.template;
+	var conflict = defaults.require.conflict,
+		gulp = defaults.require.gulp,
+		gutil = defaults.require.gutil,
+		prettify = defaults.require.prettify,
+		rename = defaults.require.rename,
+		template = defaults.require.template;
 
 	gulp.task('factory', function (done) {
 
 		var transport = {
 			module: {
-				prefix: bower.project.angular.prefix,
+				prefix: generator.prefix,
 				ns: scaffolding.ns('.')
 					.join('.')
 			},
@@ -39,11 +40,15 @@ module.exports = function (options) {
 						path.basename = path.basename.replace('module', transport.factory.slug);
 					}))
 					.pipe(template(transport))
-					.pipe(prettify(options.prettify))
+					.pipe(prettify(defaults.prettify))
 					.pipe(conflict('./'))
 					.pipe(gulp.dest('./'))
 					.on('finish', function () {
-						done();
+						common.writeTempFile('factory', defaults.paths.temp.freak +
+								'/js')
+							.on('finish', function () {
+								done();
+							});
 					});
 			})
 			.catch(function (err) {

@@ -2,29 +2,85 @@
 
 var _ = require('lodash'),
 	_s = require('underscore.string'),
+	extend = require('extend'),
 	file = require('gulp-file'),
 	path = require('path'),
-	randomString = require('random-string');
+	randomString = require('random-string'),
+	scaffolding = require('./scaffolding');
 
-module.exports = function (options) {
-	options = options || require('./defaults');
-	var fs = options.require.fs,
-		paths = options.paths,
-		globule = options.require.globule,
-		gulp = options.require.gulp;
+module.exports = function (defaults) {
+	defaults = defaults || require('./defaults');
+	var fs = defaults.require.fs,
+		paths = defaults.paths,
+		globule = defaults.require.globule,
+		gulp = defaults.require.gulp;
 
 	var common = {
 		writeTempFile: writeTempFile,
-		prepareReadme: prepareReadme
+		prepareReadme: prepareReadme,
+		createDefaults: createDefaults
 	};
 
 	return common;
 
-	/**
-	 * Reads all md files from the docs directory and puts them into an object
-	 * @param {Object}   answers  The answers object that's being passed to the templates
-	 * @param {Function} callback Async callback
-	 */
+
+
+	function createDefaults() {
+
+			var bower = defaults.configs.bower;
+
+			var templateBower = scaffolding.findBower(defaults.paths.templates +
+				'/application/');
+
+			var workingDirName = scaffolding.getWorkingDirName();
+			var repositoryUrl = scaffolding.getGitRepositoryUrl();
+			var gitUser = scaffolding.getGitUser();
+
+			gitUser = gitUser || {};
+			var bootstrapModule = '';
+
+			var project = bower.project || templateBower.project;
+
+			if (!bower.project) {
+
+				extend(project.name, {
+					full: workingDirName,
+					slug: _s.slugify(workingDirName)
+				});
+			}
+
+			var defaults = {
+				authors: bower.authors,
+				appName: project.name.slug,
+				description: bower.description || '',
+				version: bower.version || '0.0.0',
+				userName: _format(gitUser.name), // TODO: where did this come from? -> || osUserName,
+				authorEmail: gitUser.email || '',
+				mainFile: bower.main || '',
+				appRepository: repositoryUrl ? repositoryUrl : '',
+				bootstrapModule: bootstrapModule,
+				appPrefix: project.angular.prefix,
+				bower: bower.project ? bower : templateBower,
+				slush: defaults.slush,
+				project: project
+			};
+
+			if (gitUser) {
+				if (gitUser.name) {
+					defaults.authorName = gitUser.name;
+				}
+				if (gitUser.email) {
+					defaults.authorEmail = gitUser.email;
+				}
+			}
+			console.log('defaults', defaults);
+			return defaults;
+		}
+		/**
+		 * Reads all md files from the docs directory and puts them into an object
+		 * @param {Object}   answers  The answers object that's being passed to the templates
+		 * @param {Function} callback Async callback
+		 */
 	function prepareReadme(src, answers, callback) {
 		// if answers is not there create it
 		if (!answers) {
@@ -53,7 +109,6 @@ module.exports = function (options) {
 			})
 			.sort(function (a, b) {
 				if (a.depth.length === b.depth.length) {
-					console.log('---', a.depth);
 					return 0;
 				} else if (a.depth.length > b.depth.length) {
 					return -1;
@@ -96,7 +151,8 @@ module.exports = function (options) {
 		return answers;
 	}
 
-	function writeTempFile(name, depth) {
+
+	function writeTempFile(name, dest) {
 		return file(name,
 				'This temporary file is used for triggering fs watchers.\n' +
 				'See https://github.com/floatdrop/gulp-watch/issues/29\n\n' +
@@ -108,8 +164,16 @@ module.exports = function (options) {
 				'\n--------------------\n', {
 					src: true
 				})
-			.pipe(gulp.dest(_s.repeat('../', depth) + '/.freak'));
+			.pipe(gulp.dest(dest));
 
+	}
+
+	function _format(string) {
+		if (string) {
+
+			var username = string.toLowerCase();
+			return username.replace(/\s/g, '');
+		}
 	}
 
 };

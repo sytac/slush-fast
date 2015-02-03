@@ -4,31 +4,30 @@ var _ = require('lodash'),
 	_s = require('underscore.string'),
 	concat = require('gulp-concat'),
 	extend = require('extend'),
-	git = require('gulp-git'),
 	install = require('gulp-install'),
 	jeditor = require('gulp-json-editor'),
 	Q = require('Q');
 
-module.exports = function (options) {
-	options = options || require('../defaults');
-	var src = options.paths.src;
-	var common = require(src + '/common')(options);
+module.exports = function (defaults) {
+	defaults = defaults || require('../defaults');
+	var src = defaults.paths.src;
+	var common = require(src + '/common')(defaults);
 
 	var scaffolding = require(src + '/scaffolding');
 	var prompts = require(src + '/prompts');
-	var conflict = options.require.conflict,
-		fs = options.require.fs,
-		gulp = options.require.gulp,
-		gutil = options.require.gutil,
-		prettify = options.require.prettify,
-		rename = options.require.rename,
-		template = options.require.template;
+	var conflict = defaults.require.conflict,
+		fs = defaults.require.fs,
+		gulp = defaults.require.gulp,
+		gutil = defaults.require.gutil,
+		prettify = defaults.require.prettify,
+		rename = defaults.require.rename,
+		template = defaults.require.template;
 	var seq = require('gulp-sequence')
 		.use(gulp);
 
-	var globs = options.globs;
+	var globs = defaults.globs;
 
-	var defaults = createDefaults();
+	var defaults = common.createDefaults();
 
 	gulp.task('readme', function (done) {
 
@@ -53,22 +52,9 @@ module.exports = function (options) {
 			});
 	});
 
-	gulp.task('git-init', function (done) {
-		git.branch(function (err) {
-			done(err, true);
-		});
-	});
-
-	gulp.task('git-create-branches', function (done) {
-		git.branch('develop', function (err) {
-			git.checkout('develop', function (err) {
-				done(err, true);
-			});
-		});
-	});
-
 	gulp.task('create-project', ['git-init'], function (done) {
 		// prompt for app specific values
+		console.log('d2', defaults, 'd2');
 		prompts.application(defaults)
 			.then(function (answers) {
 				extend(defaults, {
@@ -142,7 +128,7 @@ module.exports = function (options) {
 					return '!' + glob;
 				});
 
-		return gulp.src([options.paths.templates + '/application/**/*'].concat(
+		return gulp.src([defaults.paths.templates + '/application/**/*'].concat(
 				butNot))
 			.pipe(template(defaults))
 			.pipe(rename(function (file) {
@@ -164,14 +150,14 @@ module.exports = function (options) {
 	gulp.task('create-module', function () {
 
 		return gulp.src([
-				options.paths.templates + '/module/module.js'
+				defaults.paths.templates + '/module/module.js'
 				/*, templates + '/module/module.scenario.js' */
 			])
 			.pipe(rename(function (path) {
 				path.basename = defaults.module.name + '.' + path.basename;
 			}))
 			.pipe(template(defaults))
-			.pipe(prettify(options.prettify))
+			.pipe(prettify(defaults.prettify))
 			.pipe(conflict('./src/app/' + defaults.module.name +
 				'/'))
 			.pipe(gulp.dest('./src/app/' + defaults.module.name +
@@ -256,59 +242,4 @@ module.exports = function (options) {
 
 		);
 	});
-
-	function createDefaults() {
-
-		var bower = options.configs.bower;
-
-		var templateBower = scaffolding.findBower(options.paths.templates +
-			'/application/');
-
-		var workingDirName = scaffolding.getWorkingDirName();
-		var repositoryUrl = scaffolding.getGitRepositoryUrl();
-		var gitUser = scaffolding.getGitUser();
-
-		gitUser = gitUser || {};
-		var bootstrapModule = '';
-		var project = bower.project || templateBower.project;
-		extend(project.name, {
-			full: workingDirName,
-			slug: _s.slugify(workingDirName)
-		});
-
-		var defaults = {
-			authors: bower.authors,
-			appName: project.name.slug,
-			description: bower.description || '',
-			version: bower.version || '0.0.0',
-			userName: format(gitUser.name), // TODO: where did this come from? -> || osUserName,
-			authorEmail: gitUser.email || '',
-			mainFile: bower.main || '',
-			appRepository: repositoryUrl ? repositoryUrl : '',
-			bootstrapModule: bootstrapModule,
-			appPrefix: project.angular.prefix,
-			bower: bower,
-			slush: options.slush,
-			project: project
-		};
-
-		if (gitUser) {
-			if (gitUser.name) {
-				defaults.authorName = gitUser.name;
-			}
-			if (gitUser.email) {
-				defaults.authorEmail = gitUser.email;
-			}
-		}
-
-		return defaults;
-	}
 };
-
-function format(string) {
-	if (string) {
-
-		var username = string.toLowerCase();
-		return username.replace(/\s/g, '');
-	}
-}

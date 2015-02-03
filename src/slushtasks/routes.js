@@ -1,24 +1,25 @@
 'use strict';
 
-module.exports = function (options) {
-	options = options || require('../defaults');
+module.exports = function (defaults) {
+	defaults = defaults || require('../defaults');
 
-	var bower = options.configs.bower;
-	var src = options.paths.src;
-	var templates = options.paths.templates;
+	var generator = defaults.configs.generator;
+	var src = defaults.paths.src;
+	var templates = defaults.paths.templates;
 	var scaffolding = require(src + '/scaffolding');
+	var common = require(src + '/common')(defaults);
 
-	var conflict = options.require.conflict,
-		gulp = options.require.gulp,
-		prettify = options.require.prettify,
-		rename = options.require.rename,
-		template = options.require.template;
+	var conflict = defaults.require.conflict,
+		gulp = defaults.require.gulp,
+		prettify = defaults.require.prettify,
+		rename = defaults.require.rename,
+		template = defaults.require.template;
 
 	gulp.task('routes', function (done) {
 		// transport will be handed along all thennables
 		var transport = {
 			module: {
-				prefix: bower.project.angular.prefix,
+				prefix: generator.prefix,
 				ns: scaffolding.ns('.')
 					.join('.')
 			}
@@ -30,11 +31,15 @@ module.exports = function (options) {
 						path.basename = path.basename.replace('module', transport.module.name);
 					}))
 					.pipe(template(transport))
-					.pipe(prettify(options.settings.prettify))
+					.pipe(prettify(defaults.settings.prettify))
 					.pipe(conflict('./'))
 					.pipe(gulp.dest('./'))
 					.on('finish', function () {
-						done();
+						common.writeTempFile('routes', defaults.paths.temp.freak +
+								'/js')
+							.on('finish', function () {
+								done();
+							});
 					});
 			});
 	});

@@ -6,7 +6,7 @@ exports.config = {
 	],
 	capabilities: {
 		browserName: 'chrome',
-		'chromeOptions': {
+		'chromedefaults': {
 			args: ['--test-type']
 		}
 	},

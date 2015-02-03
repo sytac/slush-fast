@@ -1,0 +1,13 @@
+
+Project type: <% if (generator.type === 'spa') { %>Single page application
+<% } else if (generator.type === 'scaffolding-only'){ %>Scaffolding only
+<% } else if( generator.type === 'module'){ %>Module<% } %>
+Name: <%= generator.name.full %>
+Name slug: <%= generator.name.slug %>
+Description: <%= generator.description %>
+<% if(generator.prefix) { %>Prefix: <%= generator.prefix %><% } %>
+<% if(generator.bootstrap) { %>Bootstrap module: <%= generator.bootstrap.module %>
+Bootstrap element: <%= generator.bootstrap.element %>
+<% } %>
+Use bower: <%= meta.useBower %>
+Use npm: <%= meta.useNpm %>

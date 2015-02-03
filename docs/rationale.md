@@ -1,24 +1,22 @@
 Scaffolding rationale
 =====================
 
-- Create a module
-- [Git](http://git-scm.com/)
-- [Node.js](http://nodejs.org/)
-- [Gulp.js](http://gulpjs.com/)
-- [Slush](http://slushjs.github.io/)
-
 Appendices
 ==========
 
-bower.json addendum
+generator.json addendum
 -------------------
 ```
 "project": {
+	"type" : "{scaffolding-only|spa|directive|module}",
 	"name" : {
 		"long": "Application name",
 		"slug": "application-name",
+	},
+	"root" : "/src/app",
+	"angular" : {
+		"prefix" : "afkl"
 	}
-	"angular": {
 ```
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,18 +27,6 @@ bower.json addendum
 					"module": "bootstrap-module",
 					"element": "bootstrap-module-app"
 				}
-    },
-    "includes": {
-        "fromUrl": {
-            "js": {
-                "identifier": "http://foo.bar.com/foo.js",
-        "identifier-2": "http://foo.bar.com/foo-2.js"
-            },
-            "css": {
-                "identifier": "http://foo.bar.com/styles.css",
-                "identifier-2": "http://foo.bar.com/styles-too.css"
-            }
-        }
     }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

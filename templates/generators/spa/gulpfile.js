@@ -43,6 +43,8 @@ var angularFilesort = require('gulp-angular-filesort'),
 	uglify = require('gulp-uglify'),
 	watch = require('gulp-watch');
 
+var generator = require('./generator.json');
+
 
 /**
  * [settings Settings]
@@ -64,7 +66,7 @@ var settings = {
  */
 var paths = {
 	js: {
-		src: 'src/app',
+		src: generator.srcDir,
 		dev: 'target/dev/app',
 		dist: './target/dist/app'
 	},
@@ -119,7 +121,7 @@ var globs = {
 
 
 // pass arguments
-var cliOptions = {
+var clidefaults = {
 	string: ['host', 'skip-downloads'],
 	default: {
 		host: 'localhost',
@@ -128,51 +130,36 @@ var cliOptions = {
 };
 
 // Spike 'em with argv
-settings = extend(settings, minimist(process.argv.slice(2), cliOptions));
+settings = extend(settings, minimist(process.argv.slice(2), clidefaults));
 
-var project = {},
-	devServer = connect(),
+var devServer = connect(),
 	coverageServer = connect(),
 	jasmineServer = connect(),
 	bower = require('./bower.json');
 
-if (bower && bower.project) {
-	project = bower.project;
+if (generator) {
 
-	if (!project.angular) {
-		throw new Error('project.angular entry in bower.json missing');
-	}
 
-	if (!project.name) {
-		throw new Error('project.name entry in bower.json missing');
+	if (!generator.name) {
+		throw new Error('generator.name entry in generator.json missing');
 	}
 
-	if (!project.name.full) {
-		throw new Error('project.name.full entry in bower.json missing');
+	if (!generator.name.full) {
+		throw new Error('generator.name.full entry in generator.json missing');
 	}
-	if (!project.name.slug) {
-		throw new Error('project.name.slug entry in bower.json missing');
+	if (!generator.name.slug) {
+		throw new Error('generator.name.slug entry in generator.json missing');
 	}
-	if (!project.angular.bootstrap) {
-		throw new Error('project.angular.bootstrap entry in bower.json missing');
+	if (!generator.bootstrap) {
+		throw new Error('generator.bootstrap entry in generator.json missing');
 	}
-	if (!project.angular.bootstrap.module) {
+	if (!generator.bootstrap.module) {
 		throw new Error(
-			'project.angular.bootstrap.module entry in bower.json missing');
+			'generator.bootstrap.module entry in generator.json missing');
 	}
 
-	if (!project.includes) {
-		project.includes = {};
-	}
-	if (!project.includes.fromUrl) {
-		project.includes.fromUrl = {};
-	}
-
-	if (!project.includes.fromUrl.css) {
-		project.includes.fromUrl.css = {};
-	}
-	if (!project.includes.fromUrl.js) {
-		project.includes.fromUrl.js = {};
+	if (!generator.excludes) {
+		generator.excludes = {};
 	}
 }
 
@@ -306,15 +293,6 @@ gulp.task('karma', function (done) {
 			devDependencies: true
 		});
 		var bowerFiles = bowerDependencies.js;
-		/*
-
-		var bowerFiles = []
-		.concat.apply([], Object.keys(bowerDependencies)
-		.map(function (packageName) {
-		return bowerDependencies[packageName].main;
-	})
-);
-*/
 
 
 		// Why first exclude conf and run files and later include em?
@@ -377,7 +355,9 @@ gulp.task('dev-jshint', function () {
 
 gulp.task('dev-bootstrap', function () {
 	return gulp.src(globs.bootstrap.src)
-		.pipe(template(project))
+		.pipe(template({
+			generator: generator
+		}))
 		.pipe(gulp.dest(paths.bootstrap.dev));
 });
 
@@ -414,10 +394,10 @@ gulp.task('dev-partials', function () {
 			quotes: true,
 			loose: true
 		}))
-		.pipe(templateCache(project.angular.bootstrap.module + '.templates.js', {
-			module: project.angular.bootstrap.module
+		.pipe(templateCache(generator.bootstrap.module + '.templates.js', {
+			module: generator.bootstrap.module
 		}))
-		.pipe(gulp.dest('./target/dev/app/' + project.angular.bootstrap.module));
+		.pipe(gulp.dest('./target/dev/app/' + generator.bootstrap.module));
 });
 
 gulp.task('dev-scss', function () {
@@ -481,7 +461,8 @@ gulp.task('dev-css-template', function () {
 });
 
 gulp.task('assemble-index', function () {
-	var data = extend({}, project, {
+	var data = extend({}, {
+		generator: generator,
 		inject: {}
 	});
 	globule.find('./.tmp/*.tmpl')
@@ -505,7 +486,8 @@ gulp.task('assemble-index', function () {
 });
 
 gulp.task('watch-js', function () {
-	watch([globs.js.src, globs.spec.src, './src/app/.freak/js'], {
+	console.log('wathcing ', globs.js.src);
+	watch([globs.js.src, globs.spec.src, './.tmp/.freak/**/*'], {
 		debounceDelay: 1000
 	}, function (files, done) {
 		seq('clean-jshint', 'dev-jshint', 'dev-js', 'dev-js-template',
@@ -603,8 +585,8 @@ gulp.task('dist-templates', function () {
 			quotes: true,
 			loose: true
 		}))
-		.pipe(templateCache(project.angular.bootstrap.module + '.templates.js', {
-			module: project.angular.bootstrap.module
+		.pipe(templateCache(generator.bootstrap.module + '.templates.js', {
+			module: generator.bootstrap.module
 		}))
 		.pipe(gulp.dest(paths.templates.app.dist));
 });
@@ -614,7 +596,7 @@ gulp.task('dist-js', function () {
 		.pipe(ngAnnotate(settings.ngAnnotate))
 		.pipe(angularFilesort())
 		.pipe(uglify(settings.uglify))
-		.pipe(concat(project.angular.bootstrap.module + '.js'))
+		.pipe(concat(generator.bootstrap.module + '.js'))
 		.pipe(gulp.dest(paths.js.dist));
 });
 

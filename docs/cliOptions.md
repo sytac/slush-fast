@@ -1,6 +1,6 @@
-## Command line options
+## Command line defaults
 
-For now the following options are available given that you use gulp directly. This will require you to have gulp installed.
+For now the following defaults are available given that you use gulp directly. This will require you to have gulp installed.
 
 Use `gulp dev` in lieu of `npm run dev`
 

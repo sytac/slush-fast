@@ -1069,7 +1069,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
   }
   ```
 
-    Note: There are many naming options for directives, especially since they can be used in narrow or wide scopes. Choose one that makes the directive and it's file name distinct and clear. Some examples are below, but see the naming section for more recommendations.
+    Note: There are many naming defaults for directives, especially since they can be used in narrow or wide scopes. Choose one that makes the directive and it's file name distinct and clear. Some examples are below, but see the naming section for more recommendations.
 
 ### Manipulate DOM in a Directive
 ###### [Style [Y072](#style-y072)]
@@ -1645,7 +1645,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
 
     *Why?*: Provides a consistent way handle all routing errors.
 
-    *Why?*: Potentially provides a better user experience if a routing error occurs and you route them to a friendly screen with more details or  recovery options.
+    *Why?*: Potentially provides a better user experience if a routing error occurs and you route them to a friendly screen with more details or  recovery defaults.
 
     ```javascript
     /* recommended */
@@ -1696,7 +1696,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
 
     ```javascript
     /**
-     * common options 
+     * common defaults 
      */
 
     // Controllers
@@ -2126,7 +2126,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
 
     *Why?*: Intra-App features such as shared data services become easy to locate and share from within `app.core` (choose your favorite name for this module).
 
-    Note: This is a strategy for consistency. There are many good options here. Choose one that is consistent, follows AngularJS's dependency rules, and is easy to maintain and scale.
+    Note: This is a strategy for consistency. There are many good defaults here. Choose one that is consistent, follows AngularJS's dependency rules, and is easy to maintain and scale.
 
     > My structures vary slightly between projects but they all follow these guidelines for structure and modularity. The implementation may vary depending on the features and the team. In other words, don't get hung up on an exact like-for-like structure but do justify your structure using consistency, maintainability, and efficiency in mind. 
 
@@ -2155,8 +2155,8 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
       exceptionHandlerProvider.configure(config.appErrorPrefix);
       configureStateHelper();
 
-      toastr.options.timeOut = 4000;
-      toastr.options.positionClass = 'toast-bottom-right';
+      toastr.defaults.timeOut = 4000;
+      toastr.defaults.positionClass = 'toast-bottom-right';
 
       ////////////////
 
@@ -2387,10 +2387,10 @@ Unit testing helps maintain clean code, as such I included some of my recommenda
 
 ## JS Hint
 
-### Use an Options File
+### Use an defaults File
 ###### [Style [Y230](#style-y230)]
 
-  - Use JS Hint for linting your JavaScript and be sure to customize the JS Hint options file and include in source control. See the [JS Hint docs](http://www.jshint.com/docs/) for details on the options.
+  - Use JS Hint for linting your JavaScript and be sure to customize the JS Hint defaults file and include in source control. See the [JS Hint docs](http://www.jshint.com/docs/) for details on the defaults.
 
     *Why?*: Provides a first alert prior to committing any code to source control.
 

@@ -2,7 +2,7 @@
 
 ### At the command line
 
-To view the available gulp task and task options type
+To view the available gulp task and task defaults type
 
 ```
 gulp help
