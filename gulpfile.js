@@ -52,7 +52,8 @@ gulp.task('release', function (done) {
 
 gulp.task('r', function (done) {
 	seq('git-switch-to-develop-branch', 'git-check-for-changes', 'bump',
-		'commit', 'git-checkout-master-branch', 'git-merge-develop-into-master',
+		'commit', 'git-push-develop', 'git-checkout-master-branch',
+		'git-merge-develop-into-master',
 		'git-push-master', done);
 });
 
@@ -64,6 +65,9 @@ gulp.task('git-merge-develop-into-master', function (done) {
 	git.merge('develop', done);
 });
 
+gulp.task('git-push-develop', function (done) {
+	git.push('origin', 'develop', done);
+});
 gulp.task('git-push-master', function (done) {
 	git.push('origin', 'master', done);
 });
