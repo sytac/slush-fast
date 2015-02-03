@@ -1,7 +1,8 @@
 'use strict';
 
 
-var concat = require('gulp-concat'),
+var bump = require('gulp-bump'),
+	concat = require('gulp-concat'),
 	defaults = require('./src/defaults'),
 	conflict = require('gulp-conflict'),
 	common = require('./src/common')(defaults),
@@ -51,18 +52,25 @@ gulp.task('release', function (done) {
 		'readme',
 		'git-switch-to-develop-branch',
 		'git-check-for-changes',
-		'git-bump',
+		'git-bump-package',
 		'readme',
-		'git-add-develop', 'git-commit-develop', 'git-push-develop',
+		'git-add-develop', 'git-commit-develop', 'git-push-develop', 'git-tag',
 		'git-checkout-master-branch',
 		'git-merge-develop-into-master', 'git-push-master-and-tags', done);
 });
 
-gulp.task('git-bump', function () {
+gulp.task('git-bump-package', function () {
 	return gulp.src(['./package.json'])
-		.pipe(tagVersion({
-			prefix: ''
-		}));
+		.pipe(bump({
+			type: 'patch'
+		}))
+		.pipe(gulp.dest('.'));
+});
+
+gulp.task('git-tag', function (done) {
+	var packageJson = require('./package.json');
+	var version = packageJson.version;
+	git.tag(version, done);
 });
 
 gulp.task('git-add-develop', function () {
