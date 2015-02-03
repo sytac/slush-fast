@@ -56,7 +56,8 @@ gulp.task('r', function (done) {
 		'git-switch-to-develop-branch',
 		'git-check-for-changes',
 		'git-bump',
-		'git-add-and-commit-develop', 'git-checkout-master-branch',
+		'git-add-and-commit-develop', 'git-push-develop',
+		'git-checkout-master-branch',
 		'git-merge-develop-into-master', 'git-push-master', done);
 });
 
@@ -73,8 +74,7 @@ gulp.task('git-add-and-commit-develop', function () {
 
 	return gulp.src(['./package.json'])
 		.pipe(git.add())
-		.pipe(git.commit('Bump to ' + version))
-		.pipe(git.push('origin', 'develop'));
+		.pipe(git.commit('Bump to ' + version));
 
 });
 
