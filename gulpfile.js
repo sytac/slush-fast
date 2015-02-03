@@ -6,6 +6,7 @@ var concat = require('gulp-concat'),
 	conflict = require('gulp-conflict'),
 	common = require('./src/common')(defaults),
 	extend = require('extend'),
+	git = require('gulp-git'),
 	gulp = require('gulp'),
 	gutil = require('gulp-util'),
 	istanbul = require('gulp-istanbul'),
@@ -47,6 +48,56 @@ gulp.task('readme', function (done) {
 
 gulp.task('release', function (done) {
 	seq('readme', 'bump', 'commit', done);
+});
+
+gulp.task('r', function (done) {
+	seq('git-switch-to-develop-branch', 'git-check-for-changes', 'bump',
+		'commit', 'git-merge-develop-into-master', done);
+});
+
+gulp.task('git-switch-to-develop-branch', function (done) {
+	git.checkout('develop', function (err) {
+		gutil.log('You are now on branch develop');
+		done(err, true);
+	});
+});
+
+gulp.task('git-check-for-changes', function (done) {
+	git.status({
+		args: '--porcelain'
+	}, function (err, stdout) {
+		if (err) {
+			done(err, true);
+		} else {
+			if (stdout.length) {
+				gutil.log('You have outstanding changes. Please commit these first');
+			} else {
+				done();
+			}
+		}
+	});
+});
+
+gulp.task('git-merge-develop-into-master', function (done) {
+	git.checkout('master', function (err) {
+		if (err) {
+			done(err, true);
+		} else {
+			git.merge('develop', function (err) {
+				if (err) {
+					done(err, true);
+				} else {
+					git.push('origin', 'master', function (err) {
+						if (err) {
+							done(err, true);
+						} else {
+							done();
+						}
+					});
+				}
+			});
+		}
+	});
 });
 
 gulp.task('test', function () {
