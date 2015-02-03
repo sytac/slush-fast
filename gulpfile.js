@@ -13,6 +13,7 @@ var concat = require('gulp-concat'),
 	jasmine = require('gulp-jasmine'),
 	seq = require('run-sequence'),
 	scaffolding = require('./src/scaffolding'),
+	tagVersion = require('gulp-tag-version'),
 	template = require('gulp-template');
 
 // Add release tasks
@@ -51,9 +52,29 @@ gulp.task('release', function (done) {
 });
 
 gulp.task('r', function (done) {
-	seq('git-switch-to-develop-branch', 'git-check-for-changes', 'tag',
+	seq(
+		'git-switch-to-develop-branch',
+		'git-check-for-changes', 'git-bump',
+		'git-add-and-commit-develop',
 		'git-merge-develop-into-master',
 		'git-push-master', 'git-push-tags', done);
+});
+
+gulp.task('git-bump', function () {
+	return gulp.src(['./package.json'])
+		.pipe(tagVersion({
+			prefix: ''
+		}));
+});
+
+gulp.task('git-add-and-commit-develop', function () {
+	var packageJson = require('./package.json');
+	var version = packageJson.version;
+
+	return gulp.src(['./package.json'])
+		.pipe(git.add())
+		.pipe(git.commit('Bump to ' + version));
+
 });
 
 gulp.task('git-checkout-master-branch', function (done) {
