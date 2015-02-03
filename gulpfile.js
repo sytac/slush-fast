@@ -77,7 +77,7 @@ gulp.task('git-add-develop', function () {
 		.pipe(git.add());
 });
 
-gulp.task('git-commit-develop', function (done) {
+gulp.task('git-commit-develop', function () {
 	var packageJson = require('./package.json');
 	var version = packageJson.version;
 
