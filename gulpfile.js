@@ -1,7 +1,8 @@
 'use strict';
 
 
-var concat = require('gulp-concat'),
+var bump = require('gulp-bump'),
+	concat = require('gulp-concat'),
 	defaults = require('./src/defaults'),
 	conflict = require('gulp-conflict'),
 	common = require('./src/common')(defaults),
@@ -46,31 +47,34 @@ gulp.task('readme', function (done) {
 		});
 });
 
-
 gulp.task('release', function (done) {
-	seq('readme', 'bump', 'commit', done);
-});
-
-gulp.task('r', function (done) {
 	seq(
+		'readme',
 		'git-switch-to-develop-branch',
 		'git-check-for-changes',
-		'git-bump',
-		'git-add-develop', 'git-commit-develop', 'git-push-develop',
+		'git-bump-package',
+		'readme',
+		'git-add-develop', 'git-commit-develop', 'git-push-develop', 'git-tag',
 		'git-checkout-master-branch',
-		'git-merge-develop-into-master', 'git-push-master', done);
-
+		'git-merge-develop-into-master', 'git-push-master-and-tags', done);
 });
 
-gulp.task('git-bump', function () {
+gulp.task('git-bump-package', function () {
 	return gulp.src(['./package.json'])
-		.pipe(tagVersion({
-			prefix: ''
-		}));
+		.pipe(bump({
+			type: 'patch'
+		}))
+		.pipe(gulp.dest('.'));
+});
+
+gulp.task('git-tag', function (done) {
+	var packageJson = require('./package.json');
+	var version = packageJson.version;
+	git.tag(version, done);
 });
 
 gulp.task('git-add-develop', function () {
-	return gulp.src(['./package.json'])
+	return gulp.src(['./package.json', './README.md'])
 		.pipe(git.add());
 
 });
@@ -80,8 +84,6 @@ gulp.task('git-commit-develop', function (done) {
 
 	git.commit('Bump to ' + version, done);
 });
-
-
 
 gulp.task('git-checkout-master-branch', function (done) {
 	git.checkout('master', done);
@@ -94,11 +96,8 @@ gulp.task('git-merge-develop-into-master', function (done) {
 gulp.task('git-push-develop', function (done) {
 	git.push('origin', 'develop', done);
 });
-gulp.task('git-push-master', function (done) {
-	git.push('origin', 'master', done);
-});
 
-gulp.task('git-push-tags', function (done) {
+gulp.task('git-push-master-and-tags', function (done) {
 	git.push('origin', 'master', {
 		args: '--tags'
 	}, done);
