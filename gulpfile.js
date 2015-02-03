@@ -28,7 +28,7 @@ gulp.task('readme', function (done) {
 				.pipe(template(readme))
 				.pipe(concat(defaults.globs.docs.readme.generator.dest))
 				.pipe(conflict(defaults.globs.docs.readme.generator.dest))
-				.pipe(gulp.dest('./kak'))
+				.pipe(gulp.dest('./'))
 				.on('end', function (err) {
 					if (err) {
 						gutil.log(gutil.colors.red('Failed to create generator readme.'));
