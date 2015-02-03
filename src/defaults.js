@@ -16,6 +16,24 @@ var generatorConfigTemplate = require(__dirname +
 var root = path.dirname(generatorConfigResult.file);
 var defaults = {
 	configs: {
+		bowerDefaults: {
+			'angular': {
+				static: 'http://www.klm.com/ams/frontend/js/angular/angular-afkl.js',
+				fromRepo: '~1.3.11'
+			},
+			'core-en': {
+				static: 'http://www.klm.com/ams/frontend/css/core-en.css'
+			},
+			'requirejs': {
+				static: 'http://core.static-afkl.com/ams/frontend/require-afkl.js'
+			},
+			'freak-core': {
+				static: 'http://www.klm.com/ams/frontend/js/g-core-v2.js'
+			},
+			'freak-local': {
+				static: 'http://apps.static-afkl.com/travel/nl_en/static/js/local.js'
+			}
+		},
 		generatorConfigTemplate: generatorConfigTemplate,
 		generator: generatorConfigResult.config,
 		bower: scaffolding.findBower('./'),

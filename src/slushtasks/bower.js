@@ -13,6 +13,7 @@ module.exports = function (defaults) {
 
 	gulp.task('create-bower', function (done) {
 		var generatorConfig = defaults.configs.generator;
+
 		if (!generatorConfig) {
 			gutil.log('defaults.configs.generator missing, skipping');
 			done();
@@ -25,6 +26,20 @@ module.exports = function (defaults) {
 			var bowerSrc = globs.generators[type].bower[hasBower ? 'target' :
 				'src'];
 
+			var freakDependencies = {
+				'angular': 'http://www.klm.com/ams/frontend/js/angular/angular-afkl.js',
+				'core-en': 'http://www.klm.com/ams/frontend/css/core-en.css',
+				'requirejs': 'http://core.static-afkl.com/ams/frontend/require-afkl.js',
+				'freak-core': 'http://www.klm.com/ams/frontend/js/g-core-v2.js',
+				'freak-local': 'http://apps.static-afkl.com/travel/nl_en/static/js/local.js'
+			};
+
+			var regularDependencies = {
+				'angular': '~1.3.11'
+			};
+
+			var dependencies = generatorConfig.bowerAddFreakDeps ? freakDependencies :
+				regularDependencies;
 
 			gulp.src(bowerSrc)
 				.pipe(jeditor(function (json) {
@@ -36,7 +51,8 @@ module.exports = function (defaults) {
 							name: meta.userName,
 							email: meta.authorEmail
 						}], // array or object, in our case an array
-						repository: meta.repositoryUrl
+						repository: meta.repositoryUrl,
+						dependencies: dependencies
 					});
 
 					return json;

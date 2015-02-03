@@ -192,6 +192,14 @@ function _moduleType(defaults) {
 			when: function () {
 				return !generatorConfig.bootstrap;
 			}
+		}, {
+			name: 'bowerAddFreakDeps',
+			message: function () {
+				return 'Would you like to add Freak Angular Dependencies? ' +
+					'Type Y for static domain, type N for Angular from bower repository';
+			},
+			type: 'confirm',
+			default: true
 		}],
 		'scaffolding-only': [{
 			name: 'srcDir',
