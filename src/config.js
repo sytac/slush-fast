@@ -28,16 +28,6 @@ function chooseGeneratorType(defaults) {
 		.then(_writeOut);
 }
 
-function _moduleName(defaults) {
-	if (defaults.module) {
-		return scaffolding.moduleName(defaults);
-	} else {
-		var deferred = Q.defer();
-		// yeah I know
-		deferred.resolve(defaults);
-		return deferred.promise;
-	}
-}
 
 function _start(defaults) {
 	var deferred = Q.defer();
@@ -148,7 +138,23 @@ function _moduleType(defaults) {
 	var deferred = Q.defer();
 	var _answers = {};
 
+	var srcDirs = {
+		'spa': 'src/app',
+		'scaffolding-only': 'src',
+		'module': 'src'
+	};
+
 	var generatorConfig = defaults.configs.generator;
+
+	var srcDir = srcDirs[generatorConfig.type];
+	if (srcDir) {
+		generatorConfig.srcDir = srcDir;
+	} else {
+		deferred.reject('No src dir config found for generator type: ' +
+			generatorConfig.type);
+	}
+
+
 	var moduleTypesPrompts = {
 		'spa': [{
 			name: '_bootstrap',
@@ -187,23 +193,14 @@ function _moduleType(defaults) {
 				return !generatorConfig.bootstrap;
 			}
 		}],
-		'scaffolding-only': [],
+		'scaffolding-only': [{
+			name: 'srcDir',
+			message: 'Choose src directory',
+			default: generatorConfig.srcDir
+		}],
 		'module': []
 	};
 
-	var srcDirs = {
-		'spa': 'src/app',
-		'scaffolding-only': 'src',
-		'module': 'src'
-	};
-
-	var srcDir = srcDirs[generatorConfig.type];
-	if (srcDir) {
-		generatorConfig.srcDir = srcDir;
-	} else {
-		deferred.reject('No src dir config found for generator type: ' +
-			generatorConfig.type);
-	}
 
 	var prompts = moduleTypesPrompts[generatorConfig.type];
 	if (prompts && prompts.length) {
@@ -262,6 +259,18 @@ function _userDetails(defaults) {
 
 	return deferred.promise;
 }
+
+function _moduleName(defaults) {
+	if (defaults.module) {
+		return scaffolding.moduleName(defaults);
+	} else {
+		var deferred = Q.defer();
+		// yeah I know
+		deferred.resolve(defaults);
+		return deferred.promise;
+	}
+}
+
 
 function _usePackageManager(defaults) {
 	var deferred = Q.defer();
@@ -354,7 +363,6 @@ function _finish(defaults) {
 				answers = _cleanAnswers(answers);
 				defaults.configs.generator = extend({}, defaults.configs.generator,
 					answers);
-				gutil.log('defaults.configs.generator', defaults.configs.generator);
 				deferred.resolve(defaults);
 			}
 		});
