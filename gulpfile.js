@@ -14,6 +14,9 @@ var concat = require('gulp-concat'),
 	jasmine = require('gulp-jasmine'),
 	template = require('gulp-template');
 
+// Add release tasks
+require('gulp-release-tasks')(gulp);
+
 gulp.task('readme', function (done) {
 	var gitUser = scaffolding.getGitUser();
 	gitUser = gitUser || {};
