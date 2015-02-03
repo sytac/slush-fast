@@ -49,7 +49,6 @@ gulp.task('readme', function (done) {
 
 gulp.task('release', function (done) {
 	seq(
-		'readme',
 		'git-switch-to-develop-branch',
 		'git-check-for-changes',
 		'git-bump-package',
@@ -76,8 +75,8 @@ gulp.task('git-tag', function (done) {
 gulp.task('git-add-develop', function () {
 	return gulp.src(['./package.json', './README.md'])
 		.pipe(git.add());
-
 });
+
 gulp.task('git-commit-develop', function (done) {
 	var packageJson = require('./package.json');
 	var version = packageJson.version;
