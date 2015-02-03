@@ -35,21 +35,20 @@ gulp.task('readme', function (done) {
 				.pipe(concat(defaults.globs.docs.readme.generator.dest))
 				.pipe(conflict(defaults.globs.docs.readme.generator.dest))
 				.pipe(gulp.dest('./'))
-				.on('end', function (err) {
+				.on('finish', function (err) {
 					if (err) {
 						gutil.log(gutil.colors.red('Failed to create generator readme.'));
+						done(err, true);
 					} else {
 						gutil.log('Project readme created.');
+						done();
 					}
-
-					done(err, true);
 				});
 		});
 });
 
 gulp.task('release', function (done) {
 	seq(
-		'readme',
 		'git-switch-to-develop-branch',
 		'git-check-for-changes',
 		'git-bump-package',
@@ -76,13 +75,14 @@ gulp.task('git-tag', function (done) {
 gulp.task('git-add-develop', function () {
 	return gulp.src(['./package.json', './README.md'])
 		.pipe(git.add());
-
 });
-gulp.task('git-commit-develop', function (done) {
+
+gulp.task('git-commit-develop', function () {
 	var packageJson = require('./package.json');
 	var version = packageJson.version;
+	return gulp.src(['./package.json', './README.md'])
+		.pipe(git.commit('Bump to ' + version));
 
-	git.commit('Bump to ' + version, done);
 });
 
 gulp.task('git-checkout-master-branch', function (done) {
