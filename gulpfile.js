@@ -38,11 +38,11 @@ gulp.task('readme', function (done) {
 				.on('end', function (err) {
 					if (err) {
 						gutil.log(gutil.colors.red('Failed to create generator readme.'));
+						done(err, true);
 					} else {
 						gutil.log('Project readme created.');
+						done();
 					}
-
-					done(err, true);
 				});
 		});
 });
