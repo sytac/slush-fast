@@ -4,7 +4,7 @@
 	"description": "afkl freak angular scaffolding tool.",
 	"repository": {
 		"type": "git",
-		"url": "https://x078301@stash.eden.klm.com/scm/~x078301/slush-fast.git"
+		"url": "https://stash.eden.klm.com/scm/fe/freak-angular-scaffolding-tool.git"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
