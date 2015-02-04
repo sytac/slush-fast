@@ -9,7 +9,7 @@ var conflict = require('gulp-conflict'),
 	rename = require('gulp-rename'),
 	template = require('gulp-template'),
 	scaffolding = require('./scaffolding');
-var generatorConfigResult = scaffolding.findConfig('generator.json', './');
+var generatorConfigResult = scaffolding.findConfig('generator.json', '.');
 
 var generatorConfigTemplate = require(__dirname +
 	'/../templates/generator/generator.json');
