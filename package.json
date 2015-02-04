@@ -9,7 +9,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "JP Wesselink <jpwesselink@gmail.com>",
+  "contributors" : [{
+     "name": "JP Wesselink",
+     "email": "jpwesselink@gmail.com"
+  }, {
+     "name": "Gregory Cowan",
+     "email": "g.cowan@amnzero.nl"
+  }],
   "license": "Commercial",
   "devDependencies": {
     "gulp-istanbul": "^0.5.0",
