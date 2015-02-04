@@ -47,9 +47,9 @@ $ slush fast:module {optional name}
 ```
 
 This will create a module in `src/app/{name}` called `{name}.module.js`. If module name is not given as a command line parameter you will be prompted for one.
-The namespace for this module is the same as the name: {name}
+The namespace for this module is the prefix concatenated with name: {prefix}.{name}
 
-For example, calling
+For example, for a given prefix 'afkl', calling
 
 ```
 $ slush fast:module foo
@@ -57,7 +57,7 @@ $ slush fast:module foo
 
 will create a directory `foo` containing a file `foo.module.js`. The module definition will look like this:
 ```
-angular.module('foo', []);
+angular.module('afkl.foo', []);
 ```
 
 
@@ -82,7 +82,7 @@ will create a directory `src/app/foo/bar` containing a file `bar.module.js` and 
 So far, so good, nothing fancy here. However, the namespace for this module is inherited from the parent module:
 
 ```
-angular.module('foo.bar', []);
+angular.module('afkl.foo.bar', []);
 ```
 
 This way you can easily scale features while mainting unique namespaces to prevent collisions.
@@ -109,7 +109,7 @@ $ slush fast:config
 will create a file `src/app/foo/foo.config.js` containing a definition like this:
 
 ```
-angular.module('foo')
+angular.module('afkl.foo')
   .config( .... )
 ```
 
@@ -135,7 +135,7 @@ $ slush fast:run
 will create a file `src/app/foo/foo.run.js` containing a definition like this:
 
 ```
-angular.module('foo')
+angular.module('afkl.foo')
   .run( .... )
 ```
 
@@ -156,10 +156,10 @@ For example, calling this following inside `src/app/foo`
 $ slush fast:controller barbar
 ```
 
-will create a file `src/app/foo/foo.barbar.controller.js` containing a definition like this:
+will create a file `src/app/foo/barbar.controller.js` containing a definition like this:
 
 ```
-angular.module('foo')
+angular.module('afkl.foo')
   .controller('BarBar',  .... )
 ```
 
@@ -182,12 +182,12 @@ For example, calling this following inside `src/app/foo`
 $ slush fast:directive blinken lights
 ```
 
-This will create the following files: `foo.blinken-lights.directive.js`, `foo.blinken-lights.directive.html` and `foo.blinken-lights.directive.spec.js`
-The `src/app/foo/foo.blinken-lights.directive.js` file contains the following definition:
+This will create the following files: `blinken-lights.directive.js`, `blinken-lights.directive.html` and `foo.blinken-lights.directive.spec.js`
+The `src/app/foo/blinken-lights.directive.js` file contains the following definition:
 
 ```
-angular.module('foo')
-  .directive('blinkenLights',  .... )
+angular.module('afkl.foo')
+  .directive('afklFooBlinkenLights',  .... )
 ```
 
 
@@ -208,12 +208,13 @@ For example, calling this following inside `src/app/foo`
 $ slush fast:provider unf
 ```
 
-This will create the following files: `foo.unf.provider.js` and `foo.unf.provider.spec.js`
-The `src/app/foo/foo.unf.provider.js` file contains the following definition:
+This will prompt for `service` or `factory` and create the following files: `unf.provider.js`, `tests/unf.provider.spec.js` and either `unf.service.spec.js` or `unf.factory.spec.js`.
+
+The `src/app/foo/unf.provider.js` file contains the following definition:
 
 ```
-angular.module('foo')
-        .provider('unf', .... )
+angular.module('afkl.foo')
+        .provider('afklFooUnf', .... )
 ```
 #### Value
 
@@ -222,6 +223,8 @@ Inside the current module directory you can run the following command:
 ```
 $ slush fast:value {optional name}
 ```
+
+
 #### Constant
 
 Inside the current module directory you can run the following command:
@@ -229,6 +232,8 @@ Inside the current module directory you can run the following command:
 ```
 $ slush fast:constant {optional name}
 ```
+
+
 #### Service
 
 Inside the current module directory you can run the following command:
@@ -236,6 +241,7 @@ Inside the current module directory you can run the following command:
 ```
 $ slush fast:service {optional name}
 ```
+
 #### Factory
 
 Inside the current module directory you can run the following command:
