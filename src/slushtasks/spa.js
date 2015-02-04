@@ -1,8 +1,7 @@
 'use strict';
 
 var install = require('gulp-install');
-
-var tap = require('gulp-tap');
+var path = require('path');
 
 module.exports = function (defaults) {
 	defaults = defaults || require('../defaults');
@@ -68,9 +67,9 @@ module.exports = function (defaults) {
 			.pipe(template(defaults))
 			.pipe(prettify(defaults.settings.prettify))
 			.pipe(conflict('./src/app/' + defaults.module.name +
-				'/'))
+				path.sep))
 			.pipe(gulp.dest('./src/app/' + defaults.module.name +
-				'/'));
+				path.sep));
 	});
 
 	gulp.task('copy-spa-special-files', function () {

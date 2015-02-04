@@ -1,5 +1,5 @@
 'use strict';
-
+var path = require('path');
 module.exports = function (defaults) {
 	defaults = defaults || require('../defaults');
 
@@ -42,8 +42,8 @@ module.exports = function (defaults) {
 					}))
 					.pipe(template(transport))
 					.pipe(prettify(defaults.settings.prettify))
-					.pipe(conflict(transport.module.name + '/'))
-					.pipe(gulp.dest(transport.module.name + '/'))
+					.pipe(conflict(transport.module.name + path.sep))
+					.pipe(gulp.dest(transport.module.name + path.sep))
 					.on('finish', function () {
 						common.writeTempFile('module', defaults.paths.temp.freak +
 								'/js')

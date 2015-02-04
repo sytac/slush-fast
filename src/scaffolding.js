@@ -33,17 +33,17 @@ module.exports = scaffolding;
 function findConfig(configName, dir) {
 
 	var currentDir = path.resolve(dir);
-	var pathParts = currentDir.split('/');
+	var pathParts = currentDir.split(path.sep);
 	var config;
 	var configAbsolute;
 	var foundGit;
 	while (pathParts.length && !config) {
-		configAbsolute = pathParts.join('/') + '/' + configName;
+		configAbsolute = pathParts.join(path.sep) + path.sep + configName;
 		if (fs.existsSync(configAbsolute)) {
 			config = require(configAbsolute);
-		} else if (fs.existsSync(pathParts.join('/') + '/' + '.git')) {
+		} else if (fs.existsSync(pathParts.join(path.sep) + path.sep + '.git')) {
 			foundGit = true;
-			console.log('found .git at ', pathParts.join('/'));
+			console.log('found .git at ', pathParts.join(path.sep));
 		}
 		pathParts.pop();
 	}
@@ -59,7 +59,7 @@ function getHomeDir() {
 
 function getWorkingDirName() {
 	return process.cwd()
-		.split('/')
+		.split(path.sep)
 		.pop()
 		.split('\\')
 		.pop();
@@ -99,15 +99,17 @@ function getGitRepositoryUrl(remoteKey) {
 
 function ns(dir, srcAppDir) {
 	srcAppDir = srcAppDir || 'src' + path.sep + 'app';
-	console.log(path.resolve(srcAppDir));
+	// replace srcAppDir with local path separator
+	srcAppDir = srcAppDir.replace(/\\|\//g, path.sep) || 'src' + path.sep + 'app';
 	var currentDir = path.resolve(dir);
 	var srcAppDirIndex = currentDir.indexOf(srcAppDir);
 	console.log('srcAppDirIndex', srcAppDirIndex);
 	if (srcAppDirIndex !== -1) {
 		return currentDir.substring(srcAppDirIndex + srcAppDir.length + 1)
-			.split('/');
+			.split(path.sep);
 	} else {
-		throw new Error('Couldn\'t find src/app, you\'re not a in a source folder');
+		throw new Error('Couldn\'t find ' + srcAppDir +
+			', you\'re not a in a source folder');
 	}
 }
 
@@ -115,7 +117,7 @@ function findBower(dir) {
 	var bowerConfig = 'bower.json';
 
 	var currentDir = path.resolve(dir);
-	var pathParts = currentDir.split('/');
+	var pathParts = currentDir.split(path.sep);
 	var bower = {};
 	while (pathParts.length && !bower.name) {
 		var bowerConfigAbsolute = pathParts.join('/') + '/' + bowerConfig;
@@ -193,7 +195,7 @@ function _moduleName(transport) {
 		//	console.log('module.prefixedFullNs', module.prefixedFullNs);
 		//	console.log('module.camelCasePrefixedFullNs', module.camelCasePrefixedFullNs);
 		module.path = 'app/' + module.fullNs.split('.')
-			.join('/');
+			.join(path.sep);
 
 		//	module.name = module.prefix + module.name;
 	}
