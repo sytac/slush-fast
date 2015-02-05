@@ -161,6 +161,8 @@ if (generator) {
 	if (!generator.excludes) {
 		generator.excludes = {};
 	}
+} else {
+	throw new Error('Missing generator.json file');
 }
 
 
