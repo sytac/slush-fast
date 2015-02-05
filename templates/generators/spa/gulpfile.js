@@ -27,6 +27,7 @@ var angularFilesort = require('gulp-angular-filesort'),
 	karma = require('gulp-karma'),
 	minifyHtml = require('gulp-minify-html'),
 	minimist = require('minimist'),
+	modRewrite = require('connect-modrewrite'),
 	ngAnnotate = require('gulp-ng-annotate'),
 	rimraf = require('rimraf'),
 	path = require('path'),
@@ -539,7 +540,15 @@ gulp.task('watch-index-parts', function () {
 gulp.task('dev-server', devServer.server({
 	root: ['target/dev', 'bower_components', 'test/mock/', '.cache'],
 	port: 8887,
-	livereload: false
+	livereload: false,
+	middleware: function () {
+		return [
+			modRewrite([
+				'^/ams/(.*)$ http://www.klm.com/ams/$1 [P]',
+				'^/nls/(.*)$ http://www.klm.com/nls/$1 [P]'
+			])
+		];
+	}
 }));
 
 gulp.task('dev-browsersync', function () {
