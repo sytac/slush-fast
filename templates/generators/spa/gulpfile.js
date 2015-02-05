@@ -40,6 +40,7 @@ var _ = require('lodash'),
 	seq = require('gulp-sequence')
 	.use(gulp),
 	symlink = require('gulp-symlink'),
+	tap = require('gulp-tap'),
 	template = require('gulp-template'),
 	templateCache = require('gulp-angular-templatecache'),
 	uglify = require('gulp-uglify'),
@@ -398,17 +399,21 @@ gulp.task('dev-bower-css-template', function () {
 });
 
 gulp.task('dev-partials', function () {
-
-	return gulp.src(globs.templates.app.src)
-		.pipe(minifyHtml({
-			empty: true,
-			quotes: true,
-			loose: true
-		}))
-		.pipe(templateCache(generator.bootstrap.module + '.templates.js', {
-			module: generator.bootstrap.module
-		}))
-		.pipe(gulp.dest('./target/dev/app/' + generator.bootstrap.module));
+	return gulp.src('./src/app/*')
+		.pipe(tap(function (file) {
+			var modulePath = path.basename(file.path);
+			var moduleName = generator.prefix + '.' + modulePath;
+			return gulp.src('./src/app/' + modulePath + '/*.html')
+				.pipe(minifyHtml({
+					empty: true,
+					quotes: true,
+					loose: true
+				}))
+				.pipe(templateCache(modulePath + '.templates.js', {
+					module: moduleName
+				}))
+				.pipe(gulp.dest('./target/dev/app/' + modulePath));
+		}));
 });
 
 gulp.task('dev-scss', function () {
