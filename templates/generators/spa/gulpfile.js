@@ -122,7 +122,7 @@ var globs = {
 
 
 // pass arguments
-var clidefaults = {
+var cliOptions = {
 	string: ['host', 'skip-downloads'],
 	default: {
 		host: 'localhost',
@@ -131,7 +131,7 @@ var clidefaults = {
 };
 
 // Spike 'em with argv
-settings = extend(settings, minimist(process.argv.slice(2), clidefaults));
+settings = extend(settings, minimist(process.argv.slice(2), cliOptions));
 
 var devServer = connect(),
 	coverageServer = connect(),
