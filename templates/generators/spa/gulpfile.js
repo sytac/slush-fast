@@ -123,11 +123,12 @@ var globs = {
 
 // pass arguments
 var cliOptions = {
-	string: ['host'],
+	string: ['host', 'rewrite-host'],
 	default: {
 		host: 'localhost'
 	}
 };
+
 
 // Spike 'em with argv
 settings = extend(settings, minimist(process.argv.slice(2), cliOptions));
