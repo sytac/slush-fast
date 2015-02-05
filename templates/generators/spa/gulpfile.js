@@ -7,7 +7,8 @@
 // request, contact the maintainer or file a bug.
 'use strict';
 
-var angularFilesort = require('gulp-angular-filesort'),
+var _ = require('lodash'),
+	angularFilesort = require('gulp-angular-filesort'),
 	concat = require('gulp-concat'),
 	csslint = require('gulp-csslint'),
 	del = require('del'),
@@ -45,7 +46,7 @@ var angularFilesort = require('gulp-angular-filesort'),
 	watch = require('gulp-watch');
 
 var generator = require('./generator.json');
-
+var rewrites = [];
 
 /**
  * [settings Settings]
@@ -160,6 +161,20 @@ if (generator) {
 
 	if (!generator.excludes) {
 		generator.excludes = {};
+	}
+
+	if (generator.server) {
+		if (generator.server.rewrites && generator.server.rewrites.templates) {
+			var rewriteCliOptions = {};
+			if (settings['rewrite-host']) {
+				rewriteCliOptions.host = settings['rewrite-host'];
+			}
+			var rewriteDefaults = extend({}, (generator.server.rewrites.defaults || {}),
+				rewriteCliOptions);
+			rewrites = generator.server.rewrites.templates.map(function (template) {
+				return _.template(template)(rewriteDefaults);
+			});
+		}
 	}
 } else {
 	throw new Error('Missing generator.json file');
@@ -537,10 +552,7 @@ gulp.task('dev-server', devServer.server({
 	livereload: false,
 	middleware: function () {
 		return [
-			modRewrite([
-				'^/ams/(.*)$ http://www.klm.com/ams/$1 [P]',
-				'^/nls/(.*)$ http://www.klm.com/nls/$1 [P]'
-			])
+			modRewrite(rewrites)
 		];
 	}
 }));
