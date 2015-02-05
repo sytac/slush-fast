@@ -1,3 +1,5 @@
+'use strict';
+
 describe(
 	'<%= directive.fullNsName %> (directive of <%= module.prefixedFullNs %>)',
 	function () {
