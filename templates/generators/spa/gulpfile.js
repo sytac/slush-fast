@@ -479,7 +479,6 @@ gulp.task('assemble-index', function () {
 });
 
 gulp.task('watch-js', function () {
-	console.log('wathcing ', globs.js.src);
 	watch([globs.js.src, globs.spec.src, './.tmp/.freak/**/*'], {
 		debounceDelay: 1000
 	}, function (files, done) {
