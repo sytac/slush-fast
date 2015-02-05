@@ -144,6 +144,22 @@ function _moduleType(defaults) {
 		'module': 'src'
 	};
 
+	var defaultGeneratorOptions = {
+		'spa': {
+			server: {
+				rewrites: {
+					defaults: {
+						host: 'www.klm.com'
+					},
+					templates: [
+						'^/ams/(.*)$ https://<%=host%>/ams/$1 [P]',
+						'^/nls/(.*)$ https://<%=host%>/nls/$1 [P]'
+					]
+				}
+			}
+		}
+	};
+
 	var generatorConfig = defaults.configs.generator;
 
 	var srcDir = srcDirs[generatorConfig.type];
@@ -211,6 +227,11 @@ function _moduleType(defaults) {
 
 
 	var prompts = moduleTypesPrompts[generatorConfig.type];
+
+	if (defaultGeneratorOptions[generatorConfig.type]) {
+		defaults.configs.generator = extend({}, defaults.configs.generator,
+			defaultGeneratorOptions[generatorConfig.type]);
+	}
 	if (prompts && prompts.length) {
 		inquirer.prompt(prompts, function (answers) {
 			answers = _cleanAnswers(answers);
