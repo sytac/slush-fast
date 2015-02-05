@@ -123,10 +123,9 @@ var globs = {
 
 // pass arguments
 var cliOptions = {
-	string: ['host', 'skip-downloads'],
+	string: ['host'],
 	default: {
-		host: 'localhost',
-		'skip-downloads': false
+		host: 'localhost'
 	}
 };
 
