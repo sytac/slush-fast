@@ -135,8 +135,7 @@ settings = extend(settings, minimist(process.argv.slice(2), clidefaults));
 
 var devServer = connect(),
 	coverageServer = connect(),
-	jasmineServer = connect(),
-	bower = require('./bower.json');
+	jasmineServer = connect();
 
 if (generator) {
 
