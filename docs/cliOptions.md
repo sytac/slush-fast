@@ -4,12 +4,12 @@ For now the following defaults are available given that you use gulp directly. T
 
 Use `gulp dev` in lieu of `npm run dev`
 
-- `--host` - Sets the host domain for local servers. Defaults to `localhost`. 
+- `--host` - Sets the host domain for local servers. Defaults to `localhost`.
 ```
 gulp dev --host=local.klm.com
 ```
 
-- `--skip-downloads` - Keeps `.cache` directory and skips downloads of static assets. Defaults to `false`.
+- `--rewrite-host` - By default all requests to `/ams` and `/nls` are rewritten to `https://www.klm.com`. You can override this behaviour by setting the host manually. Defaults to `www.klm.com`.
 ```
-gulp dev --skip-downloads
+gulp dev --rewrite-host=www.ite1.klm.com
 ```

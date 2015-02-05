@@ -14,6 +14,6 @@
 <%= readme.ci %>
 <%= readme.project.bootstrap %>
 <%= readme.packaging %>
-<%= readme.clidefaults %>
+<%= readme.cliOptions %>
 
 <%= readme.logos %>
