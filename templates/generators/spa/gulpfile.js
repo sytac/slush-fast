@@ -204,8 +204,7 @@ gulp.task('dev', function (done) {
 	})
 	.help = {
 		'': 'Run the CI environment',
-		'--host=localhost': 'Set host domain for local servers, defaults to localhost',
-		'--skip-downloads': 'Skip download of static assets, prevents clearing of static download cache'
+		'--host=localhost': 'Set host domain for local servers, defaults to localhost'
 	};
 
 gulp.task('package', function (done) {
@@ -258,14 +257,9 @@ gulp.task('clean', function (done) {
 	.help = 'Clean ./target directory';
 
 gulp.task('clean-caches', function (done) {
-		if (settings['skip-downloads'] === false) {
-			rimraf('./.cache', function () {
-				done();
-			});
-		} else {
-			gutil.log('Skipping cleaning of .cache directory.');
+		rimraf('./.cache', function () {
 			done();
-		}
+		});
 	})
 	.help = 'Clean caches';
 
