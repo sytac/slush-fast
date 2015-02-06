@@ -16,7 +16,7 @@
 	function <%= directive.upperCaseCamelizedPartName %> () {
 		var directive = {
 			restrict: 'A',
-			templateUrl: '<%= module.path %>/<%= directive.slug %>.directive.html',
+			templateUrl: '<%= directive.slug %>.directive.html',
 			controller: <%= directive.upperCaseCamelizedPartName + 'Controller' %> ,
 			controllerAs: 'vm'
 		};
