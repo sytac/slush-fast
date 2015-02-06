@@ -12,6 +12,7 @@ var _ = require('lodash'),
 	concat = require('gulp-concat'),
 	csslint = require('gulp-csslint'),
 	del = require('del'),
+	es = require('event-stream'),
 	singleConnect = require('gulp-connect'),
 	bowerFiles = require('main-bower-files'),
 	browserSync = require('browser-sync'),
@@ -399,22 +400,25 @@ gulp.task('dev-bower-css-template', function () {
 });
 
 gulp.task('dev-partials', function () {
-	return gulp.src('./src/app/*')
-		.pipe(tap(function (file) {
-			var modulePath = path.basename(file.path);
-			var moduleName = generator.prefix + '.' + modulePath;
-			return gulp.src('./src/app/' + modulePath + '/*.html')
+	var streams = globule.find('./src/app/*')
+		.map(function (file) {
+			var moduleDirName = path.basename(file);
+			var moduleName = generator.prefix + '.' + moduleDirName;
+
+			return gulp.src('./src/app/' + moduleDirName + '/*.html')
 				.pipe(minifyHtml({
 					empty: true,
 					quotes: true,
 					loose: true
 				}))
-				.pipe(templateCache(modulePath + '.templates.js', {
+				.pipe(templateCache(moduleDirName + '.templates.js', {
 					module: moduleName
 				}))
-				.pipe(gulp.dest('./target/dev/app/' + modulePath));
-		}));
+				.pipe(gulp.dest('./target/dev/app/' + moduleDirName));
+		});
+	return es.merge.apply(null, streams);
 });
+
 
 gulp.task('dev-scss', function () {
 	return gulp.src(globs.scss.src)
