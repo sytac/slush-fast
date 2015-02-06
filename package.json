@@ -2,6 +2,9 @@
 	"name": "slush-fast",
 	"version": "1.1.0",
 	"description": "afkl freak angular scaffolding tool.",
+	"publishConfig": {
+                "registry" : "https://mvnproxy.eden.klm.com/content/repositories/npm-internal/"
+        },
 	"repository": {
 		"type": "git",
 		"url": "https://stash.eden.klm.com/scm/fe/freak-angular-scaffolding-tool.git"
