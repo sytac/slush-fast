@@ -26,7 +26,9 @@ module.exports = function (defaults) {
 					gutil.log('Let\'s create a', generatorConfig.type, 'project.');
 					var f = {
 						'spa': spa.create,
-						'scaffolding-only': _scaffoldingOnlyGenerator,
+						'scaffolding-only': function (done) {
+							done();
+						},
 						'module': _moduleGenerator
 					};
 					var generator = f[generatorConfig.type];
@@ -53,12 +55,6 @@ module.exports = function (defaults) {
 	});
 
 	function _moduleGenerator(done) {
-		// we have a name
-
-		done();
-	}
-
-	function _scaffoldingOnlyGenerator(done) {
 		// we have a name
 
 		done();
