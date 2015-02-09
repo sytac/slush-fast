@@ -8,6 +8,8 @@
 <%= readme.common.generated %>
 
 <%= readme.prerequisites %>
+<%= readme.common.privateNpm %>
+<%= readme.common.registryCli %>
 <%= readme.help %>
 <%= readme.features %>
 <%= readme.project.installation %>

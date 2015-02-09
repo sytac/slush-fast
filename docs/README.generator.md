@@ -1,11 +1,10 @@
 # Slush Freak Angular Scaffolding Tools
 
 <%= readme.common.generated %>
-
-Angular >1.2 scaffolding tools built on top of [slush](http://slushjs.github.io/), which is a [gulp](http://gulpjs.com/) based streaming scaffolding system.
-
 <%= readme.generator.features %>
 <%= readme.prerequisites %>
+<%= readme.common.privateNpm %>
+<%= readme.common.registryCli %>
 <%= readme.project.installation %>
 <%= readme.generator.installation %>
 <%= readme.generator.usage %>
