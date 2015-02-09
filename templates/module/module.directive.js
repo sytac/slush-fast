@@ -28,7 +28,7 @@
 			// Injecting $scope just for comparison
 
 			/* jshint validthis: true */
-			var vm = this;
+			// var vm = this;
 		}
 	}
 }());
