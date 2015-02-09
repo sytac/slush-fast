@@ -195,8 +195,8 @@ function _moduleType(defaults) {
 						.join('-'))
 				});
 
+				// Piggy back on defaults
 				_.extend(defaults, {
-
 					module: {
 						prefix: scaffolding.prefixName(generatorConfig.prefix),
 						ns: '',
@@ -235,12 +235,12 @@ function _moduleType(defaults) {
 	if (prompts && prompts.length) {
 		inquirer.prompt(prompts, function (answers) {
 			answers = _cleanAnswers(answers);
-			defaults.configs.generator = extend({}, defaults.configs.generator,
+			defaults.configs.generator = extend({}, generatorConfig,
 				answers);
 			deferred.resolve(defaults);
 		});
 	} else if (!prompts.length) {
-		defaults.configs.generator = extend({}, defaults.configs.generator);
+		defaults.configs.generator = extend({}, generatorConfig);
 		deferred.resolve(defaults);
 	} else {
 		deferred.reject('No prompts found for module type ' + generatorConfig.type);
