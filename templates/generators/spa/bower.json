@@ -35,18 +35,5 @@
 	},
 	"resolutions": {
 		"angular": "e-tag:4b90a9c-2"
-	},
-	"project": {
-		"name": {
-			"full": "Your project",
-			"slug": "your-project"
-		},
-		"angular": {
-			"prefix": "afkl",
-			"bootstrap": {
-				"module": "afkl.your-module",
-				"element": "afkl-your-module-app"
-			}
-		}
 	}
 }

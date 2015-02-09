@@ -70,24 +70,5 @@
 		"wiredep": "^2.0.1"
 	},
 	"main": "./dist/index.js",
-	"afkl": {
-		"appName": "The application name",
-		"appNameSlug": "the-application-name",
-		"description": "A nice description of what this package does",
-		"angular": {
-			"bootstrap": {
-				"module": "application.bootstrap-module",
-				"element": "application-bootstrap-module-element"
-			}
-		},
-		"includeScripts": {
-			"js": {
-
-			},
-			"css": {
-
-			}
-		}
-	},
 	"dependencies": {}
 }
