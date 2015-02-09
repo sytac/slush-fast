@@ -57,7 +57,7 @@ var defaults = {
 	paths: {
 		slushtasks: __dirname + '/slushtasks',
 		src: __dirname + '/src/..',
-		docs: __dirname + '/../docs',
+		docs: __dirname + '/../templates/docs',
 		templates: __dirname + '/../templates',
 	},
 	settings: {

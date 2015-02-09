@@ -1,5 +1,0 @@
-## Packaging
-
-```
-gulp package
-```
