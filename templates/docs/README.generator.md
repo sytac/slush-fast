@@ -20,13 +20,7 @@ In CI mode four local servers will be spawned:
 
 
 ```
-npm run dev
-```
-
-Since this command will run gulp from the node_modules directory you can also start this task directly like so:
-
-```
-node_modules/gulp/bin/gulp.js dev
+gulp dev
 ```
 
 
