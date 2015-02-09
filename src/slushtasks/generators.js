@@ -52,12 +52,6 @@ module.exports = function (defaults) {
 			});
 	});
 
-	function _spaGenerator(done) {
-		// we have a name
-
-		done();
-	}
-
 	function _moduleGenerator(done) {
 		// we have a name
 
