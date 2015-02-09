@@ -1,3 +1,5 @@
+'use strict';
+
 describe(
 	'<%= directive.fullNsName %> (directive of <%= module.prefixedFullNs %>)',
 	function () {
@@ -16,10 +18,5 @@ describe(
 			$el = angular.element(html);
 			$compile($el)($scope);
 			$scope.$digest();
-		}));
-
-		it('exposes a .vm reference on the scope', inject(function () {
-			expect($scope.vm)
-				.toBeDefined();
 		}));
 	});

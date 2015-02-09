@@ -125,6 +125,11 @@ function _start(defaults) {
 					useBower: true,
 					usePackageManager: true
 				});
+			} else if (['scaffolding-only'].indexOf(defaults.configs.generator.type) !==
+				-1) {
+				defaults.configs.meta = extend({}, defaults.configs.meta, {
+					usePackageManager: false
+				});
 			}
 		}
 
@@ -142,6 +147,22 @@ function _moduleType(defaults) {
 		'spa': 'src/app',
 		'scaffolding-only': 'src',
 		'module': 'src'
+	};
+
+	var defaultGeneratorOptions = {
+		'spa': {
+			server: {
+				rewrites: {
+					defaults: {
+						host: 'www.klm.com'
+					},
+					templates: [
+						'^/ams/(.*)$ https://<%=host%>/ams/$1 [P]',
+						'^/nls/(.*)$ https://<%=host%>/nls/$1 [P]'
+					]
+				}
+			}
+		}
 	};
 
 	var generatorConfig = defaults.configs.generator;
@@ -179,8 +200,8 @@ function _moduleType(defaults) {
 						.join('-'))
 				});
 
+				// Piggy back on defaults
 				_.extend(defaults, {
-
 					module: {
 						prefix: scaffolding.prefixName(generatorConfig.prefix),
 						ns: '',
@@ -211,15 +232,20 @@ function _moduleType(defaults) {
 
 
 	var prompts = moduleTypesPrompts[generatorConfig.type];
+
+	if (defaultGeneratorOptions[generatorConfig.type]) {
+		defaults.configs.generator = extend({}, defaults.configs.generator,
+			defaultGeneratorOptions[generatorConfig.type]);
+	}
 	if (prompts && prompts.length) {
 		inquirer.prompt(prompts, function (answers) {
 			answers = _cleanAnswers(answers);
-			defaults.configs.generator = extend({}, defaults.configs.generator,
+			defaults.configs.generator = extend({}, generatorConfig,
 				answers);
 			deferred.resolve(defaults);
 		});
 	} else if (!prompts.length) {
-		defaults.configs.generator = extend({}, defaults.configs.generator);
+		defaults.configs.generator = extend({}, generatorConfig);
 		deferred.resolve(defaults);
 	} else {
 		deferred.reject('No prompts found for module type ' + generatorConfig.type);
@@ -282,7 +308,8 @@ function _moduleName(defaults) {
 
 function _usePackageManager(defaults) {
 	var deferred = Q.defer();
-	if (defaults.isNew) {
+	if (defaults.isNew && (defaults.meta && defaults.meta.usePackageManager !==
+			false)) {
 		var meta = defaults.configs.meta || {};
 		var prompts = [];
 		if (!meta.useBower) {

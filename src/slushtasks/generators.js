@@ -6,10 +6,12 @@ module.exports = function (defaults) {
 	var src = defaults.paths.src;
 	var config = require(src + '/config');
 	var spa = require(defaults.paths.slushtasks + '/spa')(defaults);
+	var scaffoldingOnly = require(defaults.paths.slushtasks + '/scaffoldingOnly')
+		(defaults);
 	var gulp = defaults.require.gulp,
 		gutil = defaults.require.gutil;
 
-	gulp.task('choose-generator-type', function (done) {
+	gulp.task('choose-generator-type', ['git-init'], function (done) {
 		// Do we have a generator.json file?
 		if (defaults.configs.generator) {
 			gutil.log('The generator.json file is already in place');
@@ -26,7 +28,7 @@ module.exports = function (defaults) {
 					gutil.log('Let\'s create a', generatorConfig.type, 'project.');
 					var f = {
 						'spa': spa.create,
-						'scaffolding-only': _scaffoldingOnlyGenerator,
+						'scaffolding-only': scaffoldingOnly.create,
 						'module': _moduleGenerator
 					};
 					var generator = f[generatorConfig.type];
@@ -52,19 +54,7 @@ module.exports = function (defaults) {
 			});
 	});
 
-	function _spaGenerator(done) {
-		// we have a name
-
-		done();
-	}
-
 	function _moduleGenerator(done) {
-		// we have a name
-
-		done();
-	}
-
-	function _scaffoldingOnlyGenerator(done) {
 		// we have a name
 
 		done();

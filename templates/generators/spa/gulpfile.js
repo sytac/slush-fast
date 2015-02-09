@@ -7,10 +7,12 @@
 // request, contact the maintainer or file a bug.
 'use strict';
 
-var angularFilesort = require('gulp-angular-filesort'),
+var _ = require('lodash'),
+	angularFilesort = require('gulp-angular-filesort'),
 	concat = require('gulp-concat'),
 	csslint = require('gulp-csslint'),
 	del = require('del'),
+	es = require('event-stream'),
 	singleConnect = require('gulp-connect'),
 	bowerFiles = require('main-bower-files'),
 	browserSync = require('browser-sync'),
@@ -27,6 +29,7 @@ var angularFilesort = require('gulp-angular-filesort'),
 	karma = require('gulp-karma'),
 	minifyHtml = require('gulp-minify-html'),
 	minimist = require('minimist'),
+	modRewrite = require('connect-modrewrite'),
 	ngAnnotate = require('gulp-ng-annotate'),
 	rimraf = require('rimraf'),
 	path = require('path'),
@@ -38,13 +41,14 @@ var angularFilesort = require('gulp-angular-filesort'),
 	seq = require('gulp-sequence')
 	.use(gulp),
 	symlink = require('gulp-symlink'),
+	tap = require('gulp-tap'),
 	template = require('gulp-template'),
 	templateCache = require('gulp-angular-templatecache'),
 	uglify = require('gulp-uglify'),
 	watch = require('gulp-watch');
 
 var generator = require('./generator.json');
-
+var rewrites = [];
 
 /**
  * [settings Settings]
@@ -121,21 +125,20 @@ var globs = {
 
 
 // pass arguments
-var clidefaults = {
-	string: ['host', 'skip-downloads'],
+var cliOptions = {
+	string: ['host', 'rewrite-host'],
 	default: {
-		host: 'localhost',
-		'skip-downloads': false
+		host: 'localhost'
 	}
 };
 
+
 // Spike 'em with argv
-settings = extend(settings, minimist(process.argv.slice(2), clidefaults));
+settings = extend(settings, minimist(process.argv.slice(2), cliOptions));
 
 var devServer = connect(),
 	coverageServer = connect(),
-	jasmineServer = connect(),
-	bower = require('./bower.json');
+	jasmineServer = connect();
 
 if (generator) {
 
@@ -161,6 +164,22 @@ if (generator) {
 	if (!generator.excludes) {
 		generator.excludes = {};
 	}
+
+	if (generator.server) {
+		if (generator.server.rewrites && generator.server.rewrites.templates) {
+			var rewriteCliOptions = {};
+			if (settings['rewrite-host']) {
+				rewriteCliOptions.host = settings['rewrite-host'];
+			}
+			var rewriteDefaults = extend({}, (generator.server.rewrites.defaults || {}),
+				rewriteCliOptions);
+			rewrites = generator.server.rewrites.templates.map(function (template) {
+				return _.template(template)(rewriteDefaults);
+			});
+		}
+	}
+} else {
+	throw new Error('Missing generator.json file');
 }
 
 
@@ -205,8 +224,7 @@ gulp.task('dev', function (done) {
 	})
 	.help = {
 		'': 'Run the CI environment',
-		'--host=localhost': 'Set host domain for local servers, defaults to localhost',
-		'--skip-downloads': 'Skip download of static assets, prevents clearing of static download cache'
+		'--host=localhost': 'Set host domain for local servers, defaults to localhost'
 	};
 
 gulp.task('package', function (done) {
@@ -259,14 +277,9 @@ gulp.task('clean', function (done) {
 	.help = 'Clean ./target directory';
 
 gulp.task('clean-caches', function (done) {
-		if (settings['skip-downloads'] === false) {
-			rimraf('./.cache', function () {
-				done();
-			});
-		} else {
-			gutil.log('Skipping cleaning of .cache directory.');
+		rimraf('./.cache', function () {
 			done();
-		}
+		});
 	})
 	.help = 'Clean caches';
 
@@ -387,18 +400,25 @@ gulp.task('dev-bower-css-template', function () {
 });
 
 gulp.task('dev-partials', function () {
+	var streams = globule.find('./src/app/*')
+		.map(function (file) {
+			var moduleDirName = path.basename(file);
+			var moduleName = generator.prefix + '.' + moduleDirName;
 
-	return gulp.src(globs.templates.app.src)
-		.pipe(minifyHtml({
-			empty: true,
-			quotes: true,
-			loose: true
-		}))
-		.pipe(templateCache(generator.bootstrap.module + '.templates.js', {
-			module: generator.bootstrap.module
-		}))
-		.pipe(gulp.dest('./target/dev/app/' + generator.bootstrap.module));
+			return gulp.src('./src/app/' + moduleDirName + '/*.html')
+				.pipe(minifyHtml({
+					empty: true,
+					quotes: true,
+					loose: true
+				}))
+				.pipe(templateCache(moduleDirName + '.templates.js', {
+					module: moduleName
+				}))
+				.pipe(gulp.dest('./target/dev/app/' + moduleDirName));
+		});
+	return es.merge.apply(null, streams);
 });
+
 
 gulp.task('dev-scss', function () {
 	return gulp.src(globs.scss.src)
@@ -486,7 +506,6 @@ gulp.task('assemble-index', function () {
 });
 
 gulp.task('watch-js', function () {
-	console.log('wathcing ', globs.js.src);
 	watch([globs.js.src, globs.spec.src, './.tmp/.freak/**/*'], {
 		debounceDelay: 1000
 	}, function (files, done) {
@@ -539,7 +558,12 @@ gulp.task('watch-index-parts', function () {
 gulp.task('dev-server', devServer.server({
 	root: ['target/dev', 'bower_components', 'test/mock/', '.cache'],
 	port: 8887,
-	livereload: false
+	livereload: false,
+	middleware: function () {
+		return [
+			modRewrite(rewrites)
+		];
+	}
 }));
 
 gulp.task('dev-browsersync', function () {

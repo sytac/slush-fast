@@ -10,7 +10,8 @@ module.exports = function (defaults) {
 	defaults = defaults || require('../defaults');
 	var gulp = defaults.require.gulp;
 	var globs = defaults.globs;
-	gulp.task('create-npm', function (done) {
+
+	gulp.task('update-npm', function (done) {
 		if (typeof defaults.configs.meta.useNpm !== 'undefined' && defaults.configs
 			.meta.useNpm === false) {
 			done();
@@ -18,6 +19,10 @@ module.exports = function (defaults) {
 			var generatorConfig = defaults.configs.generator;
 			if (!generatorConfig) {
 				gutil.log('defaults.configs.generator missing, skipping');
+				done();
+			} else if (defaults.configs.meta && defaults.configs.meta.usePackageManager ===
+				false) {
+				gutil.log('Skipping npm');
 				done();
 			} else {
 				var type = generatorConfig.type;

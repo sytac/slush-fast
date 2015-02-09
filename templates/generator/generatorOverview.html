@@ -6,6 +6,7 @@ Name: <%= generator.name.full %>
 Name slug: <%= generator.name.slug %>
 Description: <%= generator.description %>
 <% if(generator.prefix) { %>Prefix: <%= generator.prefix %><% } %>
+<% if(generator.srcDir) { %>Source directory: <%= generator.srcDir %><% } %>
 <% if(generator.bootstrap) { %>Bootstrap module: <%= generator.bootstrap.module %>
 Bootstrap element: <%= generator.bootstrap.element %>
 <% } %>
