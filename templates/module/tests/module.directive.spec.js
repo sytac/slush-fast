@@ -19,9 +19,4 @@ describe(
 			$compile($el)($scope);
 			$scope.$digest();
 		}));
-
-		it('exposes a .vm reference on the scope', inject(function () {
-			expect($scope.vm)
-				.toBeDefined();
-		}));
 	});
