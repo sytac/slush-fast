@@ -6,6 +6,8 @@ module.exports = function (defaults) {
 	var src = defaults.paths.src;
 	var config = require(src + '/config');
 	var spa = require(defaults.paths.slushtasks + '/spa')(defaults);
+	var scaffoldingOnly = require(defaults.paths.slushtasks + '/scaffoldingOnly')
+		(defaults);
 	var gulp = defaults.require.gulp,
 		gutil = defaults.require.gutil;
 
@@ -26,9 +28,7 @@ module.exports = function (defaults) {
 					gutil.log('Let\'s create a', generatorConfig.type, 'project.');
 					var f = {
 						'spa': spa.create,
-						'scaffolding-only': function (done) {
-							done();
-						},
+						'scaffolding-only': scaffoldingOnly.create,
 						'module': _moduleGenerator
 					};
 					var generator = f[generatorConfig.type];
