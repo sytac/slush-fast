@@ -20,6 +20,10 @@ module.exports = function (defaults) {
 			if (!generatorConfig) {
 				gutil.log('defaults.configs.generator missing, skipping');
 				done();
+			} else if (defaults.configs.meta && defaults.configs.meta.usePackageManager ===
+				false) {
+				gutil.log('Skipping npm');
+				done();
 			} else {
 				var type = generatorConfig.type;
 				var hasNpm = fs.existsSync(globs.generators[type].npm.target);

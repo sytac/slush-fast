@@ -125,6 +125,11 @@ function _start(defaults) {
 					useBower: true,
 					usePackageManager: true
 				});
+			} else if (['scaffolding-only'].indexOf(defaults.configs.generator.type) !==
+				-1) {
+				defaults.configs.meta = extend({}, defaults.configs.meta, {
+					usePackageManager: false
+				});
 			}
 		}
 
@@ -303,7 +308,8 @@ function _moduleName(defaults) {
 
 function _usePackageManager(defaults) {
 	var deferred = Q.defer();
-	if (defaults.isNew) {
+	if (defaults.isNew && (defaults.meta && defaults.meta.usePackageManager !==
+			false)) {
 		var meta = defaults.configs.meta || {};
 		var prompts = [];
 		if (!meta.useBower) {
