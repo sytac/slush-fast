@@ -11,7 +11,8 @@ module.exports = function (defaults) {
 	var gulp = defaults.require.gulp;
 	var globs = defaults.globs;
 
-	gulp.task('create-bower', function (done) {
+
+	gulp.task('update-bower', function (done) {
 		var generatorConfig = defaults.configs.generator;
 
 		if (!generatorConfig) {

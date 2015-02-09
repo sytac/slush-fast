@@ -94,7 +94,7 @@ module.exports = function (defaults) {
 	function create(done) {
 		seq(
 			[
-				'create-bower',
+				'update-bower',
 				'update-npm'
 			], [
 				'copy-spa-files',

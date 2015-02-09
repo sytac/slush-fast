@@ -45,7 +45,7 @@ module.exports = function (defaults) {
 		console.log('def', defaults.configs.generator, defaults.configs.meta);
 		seq(
 			[
-				'create-bower',
+				'update-bower',
 				'update-npm'
 			],
 			'install-so-npm-modules',
