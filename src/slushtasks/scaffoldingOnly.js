@@ -46,7 +46,7 @@ module.exports = function (defaults) {
 		seq(
 			[
 				'create-bower',
-				'create-npm'
+				'update-npm'
 			],
 			'install-so-npm-modules',
 			done);

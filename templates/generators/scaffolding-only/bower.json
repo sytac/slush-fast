@@ -1,0 +1,39 @@
+{
+	"name": "the-slugged-application-name",
+	"version": "0.0.0",
+	"description": "",
+	"main": "./dist/module.js",
+	"keywords": [
+		"afkl",
+		"freak",
+		"angularjs"
+	],
+	"license": "MIT",
+	"private": true,
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"vendor",
+		"test"
+	],
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/something.git"
+	},
+	"dependencies": {
+		"angular": "http://www.klm.com/ams/frontend/js/angular/angular-afkl.js",
+		"core-en": "http://www.klm.com/ams/frontend/css/core-en.css",
+		"requirejs": "http://core.static-afkl.com/ams/frontend/require-afkl.js",
+		"freak-core": "http://www.klm.com/ams/frontend/js/g-core-v2.js",
+		"freak-local": "http://apps.static-afkl.com/travel/nl_en/static/js/local.js"
+	},
+	"devDependencies": {
+		"angular-mocks": "~1.2.x"
+	},
+	"overrides": {
+
+	},
+	"resolutions": {
+		"angular": "e-tag:4b90a9c-2"
+	}
+}
