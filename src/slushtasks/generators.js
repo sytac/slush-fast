@@ -9,7 +9,7 @@ module.exports = function (defaults) {
 	var gulp = defaults.require.gulp,
 		gutil = defaults.require.gutil;
 
-	gulp.task('choose-generator-type', function (done) {
+	gulp.task('choose-generator-type', ['git-init'], function (done) {
 		// Do we have a generator.json file?
 		if (defaults.configs.generator) {
 			gutil.log('The generator.json file is already in place');
