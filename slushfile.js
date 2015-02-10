@@ -10,13 +10,13 @@ var figlet = require('figlet'),
 require('gulp-release-tasks')(gulp);
 
 // Display idiotic imagery
-gutil.log('\nFreak Angular Scaffolding Tool\n' + ('FAST'.split(' ')
+gutil.log(['', 'Freak Angular Scaffolding Tool', ('FAST'.split(' ')
 	.map(function (word) {
 		return figlet.textSync(word, {
 			font: 'Colossal'
 		});
 	})
-	.join('\n')));
+	.join('\n')), 'version: ' + defaults.slush.npm.version].join('\n'));
 
 // Load all task files
 globule.find(defaults.paths.slushtasks + '/*')
