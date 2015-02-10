@@ -9,7 +9,7 @@
 ### Running in CI mode
 
 ```
-gulp dev
+gulp serve
 ```
 
 In CI mode four local servers will be spawned:

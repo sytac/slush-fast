@@ -191,7 +191,7 @@ gulp.task('help', function () {
 // kicks off local coverage and dev servers
 // will both open in new browser window
 
-gulp.task('dev', function (done) {
+gulp.task('serve', function (done) {
 		seq(
 			'clean', 'clean-caches', [
 				'dev-bootstrap',
