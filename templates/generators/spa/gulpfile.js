@@ -571,7 +571,7 @@ gulp.task('dev-server', devServer.server({
 gulp.task('dev-browsersync', function () {
 	browserSync({
 		host: settings.host,
-		port: 3000,
+		port: 3001,
 		files: 'target/dev/**',
 		proxy: settings.host + ':8887',
 		open: false
