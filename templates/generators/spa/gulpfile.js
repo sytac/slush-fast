@@ -230,7 +230,9 @@ gulp.task('dev', function (done) {
 gulp.task('package', function (done) {
 		// clean dist
 		// include bootstrap?
-		seq('dist-templates', 'dist-js', 'dist-bootstrap', 'dist-js-with-bootstrap',
+		seq('dist-partials', 'dist-js', 'dist-modules', 'dist-all-modules',
+			'dist-bootstrap',
+			'dist-all-modules-with-bootstrap',
 			done);
 	})
 	.help = 'Package for production';
@@ -615,28 +617,74 @@ gulp.task('dist-templates', function () {
 		.pipe(gulp.dest(paths.templates.app.dist));
 });
 
+gulp.task('dist-partials', function () {
+	var streams = globule.find('./src/app/*')
+		.map(function (file) {
+			var moduleDirName = path.basename(file);
+			var moduleName = generator.prefix + '.' + moduleDirName;
+
+			return gulp.src('./src/app/' + moduleDirName + '/*.html')
+				.pipe(minifyHtml({
+					empty: true,
+					quotes: true,
+					loose: true
+				}))
+				.pipe(templateCache(moduleDirName + '.templates.js', {
+					module: moduleName
+				}))
+				.pipe(gulp.dest('./target/dist/app/' + moduleDirName));
+		});
+	return es.merge.apply(null, streams);
+});
+
 gulp.task('dist-js', function () {
 	return gulp.src(globs.js.src)
 		.pipe(ngAnnotate(settings.ngAnnotate))
 		.pipe(angularFilesort())
-		.pipe(uglify(settings.uglify))
-		.pipe(concat(generator.bootstrap.module + '.js'))
 		.pipe(gulp.dest(paths.js.dist));
+});
+
+gulp.task('dist-modules', function () {
+	var streams = globule.find(paths.js.dist + '/*')
+		.filter(function (file) {
+			return fs.lstatSync(file)
+				.isDirectory();
+		})
+		.map(function (file) {
+
+			var moduleDirName = path.basename(file);
+			var moduleName = generator.prefix + '.' + moduleDirName;
+
+			return gulp.src(paths.js.dist + '/' + moduleDirName + '/*.js')
+				.pipe(angularFilesort())
+				.pipe(uglify(settings.uglify))
+				.pipe(concat(moduleName + '.js'))
+				.pipe(gulp.dest('./target/dist/modules'));
+
+		});
+	return es.merge.apply(null, streams);
+});
+
+gulp.task('dist-all-modules', function () {
+	return gulp.src('./target/dist/modules/*')
+		.pipe(angularFilesort())
+		.pipe(concat('modules.js'))
+		.pipe(gulp.dest('./target/dist'));
 });
 
 gulp.task('dist-bootstrap', function () {
 	return gulp.src(globs.bootstrap.src)
+		.pipe(template({
+			generator: generator
+		}))
 		.pipe(uglify(settings.uglify))
 		.pipe(gulp.dest(paths.bootstrap.dist));
 });
 
-gulp.task('dist-js-with-bootstrap', function () {
-	return gulp.src([globs.js.src, globs.bootstrap.src])
-		.pipe(ngAnnotate(settings.ngAnnotate))
-		.pipe(angularFilesort())
-		.pipe(uglify(settings.uglify))
-		.pipe(concat('app.js'))
-		.pipe(gulp.dest(paths.js.dist));
+gulp.task('dist-all-modules-with-bootstrap', function () {
+	return gulp.src('./target/dist/*.js')
+		.pipe(concat('modules-bootstrapped.js'))
+		.pipe(gulp.dest('./target/dist'));
 });
 
 
