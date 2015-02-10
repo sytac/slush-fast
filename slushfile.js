@@ -13,7 +13,7 @@ require('gulp-release-tasks')(gulp);
 gutil.log('\nFreak Angular Scaffolding Tool\n' + ('FAST'.split(' ')
 	.map(function (word) {
 		return figlet.textSync(word, {
-			font: 'colossal'
+			font: 'Colossal'
 		});
 	})
 	.join('\n')));
