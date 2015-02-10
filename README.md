@@ -16,17 +16,17 @@
   - Unit tests with Karma and Jasmine
   - Istanbul code coverage reports
   - Jasmine unit test reports
-  - End-to-end testing with Protractor
+  - TODO: End-to-end testing with Protractor
   - Front end dependency management using Bower
-  - Packaging for production including source maps
-  - Optional namespace prefixing
+  - Packaging for production (TODO: including source maps)
+  - Namespace prefixing
 
 ### TL;DR
   - Creates Angular projects
   - Scaffolds Angular modules and components
   - Gulp
   - Karma with Jasmine
-  - Protractor
+  - TODO: Protractor
   - Jshint
   - ScssHint
   - BrowserSync
@@ -83,11 +83,11 @@ slush fast
 You will be prompted for input on project type, name, etc. Upon finishing the generator will create a project layout for you.
 
 
-
-
-
-
 ### Running in CI mode
+
+```
+gulp serve
+```
 
 In CI mode four local servers will be spawned:
 - [http://localhost:3001](http://localhost:3001) Development server with [BrowserSync](http://www.browsersync.io/)
@@ -96,10 +96,20 @@ In CI mode four local servers will be spawned:
 - [http://localhost:8886](http://localhost:8886) Jasmine report
 
 
+### Packaging for production
+
 ```
-gulp dev
+gulp package
 ```
 
+Packaging provides the following:
+
+- Per module
+- All modules
+- Bootstrap script
+- All modules with bootstrap scripts
+
+### Per module
 
 ## Modules
 

@@ -44,7 +44,8 @@ function _start(defaults) {
 	}
 
 	var _answers = {};
-	var generatorTypes = ['scaffolding-only', 'spa', 'module'];
+	var generatorTypes = ['spa', 'scaffolding-only'];
+	//var generatorTypes = ['scaffolding-only', 'spa', 'module'];
 	var moduleTypes = ['directive', 'filter', 'service', 'factory', 'provider',
 		'module-only'
 	];
