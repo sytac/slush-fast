@@ -6,11 +6,11 @@
 <%= readme.generator.installation %>
 <%= readme.generator.usage %>
 
-
-
-
-
 ### Running in CI mode
+
+```
+gulp dev
+```
 
 In CI mode four local servers will be spawned:
 - [http://localhost:3001](http://localhost:3001) Development server with [BrowserSync](http://www.browsersync.io/)
@@ -19,10 +19,20 @@ In CI mode four local servers will be spawned:
 - [http://localhost:8886](http://localhost:8886) Jasmine report
 
 
+### Packaging for production
+
 ```
-gulp dev
+gulp package
 ```
 
+Packaging provides the following:
+
+- Per module
+- All modules
+- Bootstrap script
+- All modules with bootstrap scripts
+
+### Per module
 
 ## Modules
 
