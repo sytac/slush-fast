@@ -595,7 +595,7 @@ gulp.task('dev-jasmine-server', jasmineServer.server({
 gulp.task('dev-coverage-browsersync', function () {
 	browserSync({
 		host: settings.host,
-		port: 3001,
+		port: 3010,
 		files: 'target/reports/karma-coverage/lcov-report/**/*',
 		proxy: settings.host + ':8888',
 		reloadDelay: 2000,
