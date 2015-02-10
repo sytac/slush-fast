@@ -38,13 +38,14 @@
 - [Git](http://git-scm.com/)
 - [Ruby Programming Language](https://www.ruby-lang.org/) and [Sass: Syntactically Awesome Style Sheets](http://sass-lang.com/)
 - [node.js and npm, its package manager](http://nodejs.org/)
+- For generation of single page apps, [Bower](http://bower.io/)
 
 ## Installation
 
 Install the development tools you need for scaffolding, bear in mind these tools need to be installed globally, for *nixy systems you might want to use `sudo` or take a [look here](http://howtonode.org/introduction-to-npm) for npm without sudo.
 
 ```
-$ npm install -g slush gulp
+$ npm install -g slush gulp bower
 
 ```
 
