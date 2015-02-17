@@ -216,6 +216,14 @@ The `src/app/foo/unf.provider.js` file contains the following definition:
 angular.module('afkl.foo')
         .provider('afklFooUnf', .... )
 ```
+#### Filter
+
+Inside the current module directory you can run the following command:
+
+```
+$ slush fast:filter {optional name}
+```
+
 #### Value
 
 Inside the current module directory you can run the following command:
