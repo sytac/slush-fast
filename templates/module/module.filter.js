@@ -5,7 +5,7 @@
 
 	/**
 	 * @desc
-	 * @example <div ng-filter="<%= filter.fullNsName %> as <%= filter.lowerCaseCamelized %>"></div>
+	 * @example <span>{{'some value' | <%= filter.fullNsName %> }}</span>
 	 */
 
 	angular.module('<%= module.prefixedFullNs %>')
@@ -17,8 +17,8 @@
 
 		return filter;
 
-		function filter() {
-
+		function filter(value) {
+			return '--' + value + '--';
 		}
 	}
 
