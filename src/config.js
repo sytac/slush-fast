@@ -241,7 +241,8 @@ function _moduleType(defaults) {
 	if (prompts && prompts.length) {
 		inquirer.prompt(prompts, function (answers) {
 			answers = _cleanAnswers(answers);
-			defaults.configs.generator = extend({}, generatorConfig,
+			defaults.configs.generator = extend({}, defaults.configs.generator,
+				generatorConfig,
 				answers);
 			deferred.resolve(defaults);
 		});

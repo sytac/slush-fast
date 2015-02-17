@@ -11,6 +11,7 @@ var prompts = {
 	application: application,
 	moduleName: wrap(_moduleName),
 	controllerName: wrap(_controllerName),
+	filterName: wrap(_filterName),
 	providerName: providerName,
 	directiveName: wrap(_directiveName),
 	serviceName: wrap(_serviceName),
@@ -181,6 +182,19 @@ function _controllerName(transport) {
 	}
 }
 
+function _filterName(transport) {
+	var filter = transport.filter;
+	if (!filter) {
+		throw new Error('transport.filter expected');
+	} else {
+		if (filter.newName) {
+			return Q(transport);
+		} else {
+			return promptForFilterName(transport);
+		}
+	}
+}
+
 function promptForControllerName(transport) {
 	// existingNamespace
 	var deferred = Q.defer();
@@ -204,6 +218,36 @@ function promptForControllerName(transport) {
 			} else {
 
 				transport.controller.newName = answers.controllerName;
+				deferred.resolve(transport);
+			}
+		});
+
+	return deferred.promise;
+}
+
+function promptForFilterName(transport) {
+	// existingNamespace
+	var deferred = Q.defer();
+
+	var createFilterMessage =
+		'Filter name (for example \'fooBar\' or \'snafu\' or \'uppercase\')';
+
+	inquirer.prompt([{
+			type: 'input',
+			name: 'filterName',
+			message: createFilterMessage
+		}, {
+			type: 'confirm',
+			name: 'confirmed',
+			message: 'Create this filter?'
+		}],
+		function (answers) {
+
+			if (!answers.confirmed) {
+				deferred.reject('Cancelled');
+			} else {
+
+				transport.filter.newName = answers.filterName;
 				deferred.resolve(transport);
 			}
 		});

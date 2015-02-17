@@ -20,6 +20,7 @@ var scaffolding = {
 	moduleName: wrap(_moduleName),
 	formatModuleName: _formatModuleName,
 	controllerName: wrap(_partNameFactory('controller', 'Controller')),
+	filterName: wrap(_partNameFactory('filter', 'Filter')),
 	providerName: wrap(_partNameFactory('provider', 'Provider')),
 	directiveName: wrap(_partNameFactory('directive', 'Directive')),
 	serviceName: wrap(_partNameFactory('service', 'Service')),
