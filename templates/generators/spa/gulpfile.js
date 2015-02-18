@@ -31,6 +31,7 @@ var _ = require('lodash'),
 	minimist = require('minimist'),
 	modRewrite = require('connect-modrewrite'),
 	ngAnnotate = require('gulp-ng-annotate'),
+	rename = require('gulp-rename'),
 	rimraf = require('rimraf'),
 	path = require('path'),
 	plumber = require('gulp-plumber'),
@@ -230,7 +231,8 @@ gulp.task('serve', function (done) {
 gulp.task('package', function (done) {
 		// clean dist
 		// include bootstrap?
-		seq('dist-partials', 'dist-js', 'dist-modules', 'dist-all-modules',
+		seq('clean-dist', 'dist-partials', 'dist-js', 'dist-modules',
+			'dist-all-modules',
 			'dist-bootstrap',
 			'dist-all-modules-with-bootstrap',
 			done);
@@ -292,6 +294,9 @@ gulp.task('clean-reports', function (done) {
 	})
 	.help = 'Clean reports';
 
+gulp.task('clean-dist', function (done) {
+	rimraf('./dist', done);
+});
 
 gulp.task('clean-jshint', function (done) {
 		del('./target/jshint*', function () {
@@ -645,25 +650,32 @@ gulp.task('dist-js', function () {
 });
 
 gulp.task('dist-modules', function () {
-	var streams = globule.find(paths.js.dist + '/*')
-		.filter(function (file) {
-			return fs.lstatSync(file)
-				.isDirectory();
-		})
-		.map(function (file) {
 
-			var moduleDirName = path.basename(file);
-			var moduleName = generator.prefix + '.' + moduleDirName;
-
-			return gulp.src(paths.js.dist + '/' + moduleDirName + '/*.js')
-				.pipe(angularFilesort())
-				.pipe(uglify(settings.uglify))
-				.pipe(concat(moduleName + '.js'))
-				.pipe(gulp.dest('./target/dist/modules'));
-
-		});
-	return es.merge.apply(null, streams);
-});
+		var streams = globule.find(paths.js.dist + '/*')
+			.map(function (file) {
+				var moduleName = path.basename(file);
+				var jsStream = gulp.src(paths.js.dist + '/' + moduleName + '/*.js')
+					.pipe(ngAnnotate(settings.ngAnnotate))
+					.pipe(angularFilesort())
+					.pipe(concat(generator.prefix + '.' + moduleName +
+						'.js'))
+					.pipe(gulp.dest('./dist/modules'))
+					.pipe(uglify(settings.uglify))
+					.pipe(rename(function (path) {
+						path.basename = path.basename + '-min';
+					}))
+					.pipe(gulp.dest('./dist/modules'));
+				var cssStream = gulp.src('./src/app/' + moduleName + '/*.scss')
+					.pipe(sass())
+					.pipe(rename(function (path) {
+						path.basename = generator.prefix + '.' + moduleName + '.' + path.basename;
+					}))
+					.pipe(gulp.dest('./dist/modules'));
+				return es.merge.apply(null, [jsStream, cssStream]);
+			});
+		return es.merge.apply(null, streams);
+	})
+	.help = 'Package for production';
 
 gulp.task('dist-all-modules', function () {
 	return gulp.src('./target/dist/modules/*')
