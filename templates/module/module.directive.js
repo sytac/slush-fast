@@ -10,7 +10,7 @@
 	angular
 		.module('<%= module.prefixedFullNs %>')
 		.directive(
-			'<%= module.camelCasePrefixedFullNs + directive.upperCaseCamelized %>', <%=
+			'<%= directive.fullNsName %>', <%=
 			directive.upperCaseCamelizedPartName %> );
 
 	function <%= directive.upperCaseCamelizedPartName %> () {

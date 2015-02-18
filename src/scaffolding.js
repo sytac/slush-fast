@@ -129,7 +129,6 @@ function ns(dir, srcAppDir) {
 			}
 		}
 
-
 		return moduleNames;
 	} else {
 		throw new Error('Couldn\'t find ' + srcAppDir +
@@ -238,12 +237,21 @@ function _formatModuleName(name) {
 
 function _partNameFactory(partName, partPostfix) {
 	return function (transport) {
+		console.log('transport.module', transport.module);
 		var part = transport[partName];
 		if (!part) {
 			throw new Error('Expected transport.' + partName);
 		}
+		var skipPrefix = false;
+		if (part.newName === '.') {
+			skipPrefix = true;
+			part.newName = transport.module.camelCasePrefixedFullNs;
+			part.slug = _s.trim(_s.dasherize(transport.module.fullNs),
+				'-');
+		} else {
+			part.slug = _s.trim(_s.dasherize(part.newName), '-');
+		}
 
-		part.slug = _s.trim(_s.dasherize(part.newName), '-');
 		part.partPostfix = partPostfix;
 		part.upperCaseCamelizedPartSubName = part.partSubName ? _ucfirst(part.partSubName) :
 			part.partSubName = part.partSubName ? part.partSubName : '';
@@ -253,7 +261,8 @@ function _partNameFactory(partName, partPostfix) {
 		part.lowerCaseCamelized = _lcfirst(part.name);
 		part.camelizedPartName = part.name + partPostfix;
 		part.upperCaseCamelizedPartName = _ucfirst(part.camelizedPartName);
-		part.fullNsName = transport.module.camelCasePrefixedFullNs + _ucfirst(part.name);
+		part.fullNsName = transport.module.camelCasePrefixedFullNs + (skipPrefix ?
+			'' : part.upperCaseCamelized);
 		part.fullNsNamePartName = transport.module.camelCasePrefixedFullNs + part.upperCaseCamelizedPartName;
 		part.fullNsNameSlug = _s.dasherize(part.fullNsName);
 		return transport;
