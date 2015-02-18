@@ -90,6 +90,59 @@ This way you can easily scale features while mainting unique namespaces to preve
 
 ### Module parts
 
+Modules come in a lot of flavours: an application module differs from a single purpose module that only holds a service, directive or filter. For the latter case you can name your module part simply `.`, which will name the module part exactly the same as your module name. Confusing? Let's have an example:
+
+```bash
+$ slush fast:module foo
+$ cd foo
+$ slush fast:directive .
+$ ls -la
+total 24
+drwxr-xr-x  6 jp  staff  204 Feb 18 13:09 .
+drwxr-xr-x  5 jp  staff  170 Feb 18 13:08 ..
+-rw-r--r--  1 jp  staff   26 Feb 18 13:09 foo.directive.html
+-rw-r--r--  1 jp  staff  712 Feb 18 13:09 foo.directive.js
+-rw-r--r--  1 jp  staff   87 Feb 18 13:08 foo.module.js
+drwxr-xr-x  3 jp  staff  102 Feb 18 13:09 tests
+
+```
+
+Module `foo` looks like this:
+
+```bash
+$ more foo.module.js
+(function() {
+  'use strict';
+
+  angular.module('afkl.foo', ['ui.router']);
+
+}());
+```
+
+And our foo directive looks like this:
+
+```bash
+$ more foo.directive.js
+(function() {
+  'use strict';
+
+  /* app/foo/foo.directive.js */
+
+  /**
+  * @desc
+  * @example <div afkl-foo></div>
+  */
+  angular
+  .module('afkl.foo')
+  .directive(
+  'afklFoo', AfklFooDirective);
+
+  ...
+```
+
+TL;DR - Use `.` as name to create a module part with the same name as the module.
+
+
 #### Config
 
 Inside the current module directory you can run the following command:
