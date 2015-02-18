@@ -237,7 +237,6 @@ function _formatModuleName(name) {
 
 function _partNameFactory(partName, partPostfix) {
 	return function (transport) {
-		console.log('transport.module', transport.module);
 		var part = transport[partName];
 		if (!part) {
 			throw new Error('Expected transport.' + partName);
