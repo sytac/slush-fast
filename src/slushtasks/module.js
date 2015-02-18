@@ -31,14 +31,18 @@ module.exports = function (defaults) {
 			transport.module.newNs = gulp.args.join(' ');
 		}
 
+		var templateFileName = generator.type === 'spa' ? 'module-spa.js' :
+			'module.js';
+
 		prompts.moduleName(transport)
 			.then(scaffolding.moduleName)
 			.then(function (transport) {
+
 				gulp.src([
-						templates + '/module/module.js'
+						templates + '/module/' + templateFileName
 					])
 					.pipe(rename(function (path) {
-						path.basename = transport.module.name + '.' + path.basename;
+						path.basename = transport.module.name + '.module';
 					}))
 					.pipe(template(transport))
 					.pipe(prettify(defaults.settings.prettify))

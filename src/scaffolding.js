@@ -104,10 +104,33 @@ function ns(dir, srcAppDir) {
 	srcAppDir = srcAppDir.replace(/\\|\//g, path.sep) || 'src' + path.sep + 'app';
 	var currentDir = path.resolve(dir);
 	var srcAppDirIndex = currentDir.indexOf(srcAppDir);
-	console.log('srcAppDirIndex', srcAppDirIndex);
 	if (srcAppDirIndex !== -1) {
-		return currentDir.substring(srcAppDirIndex + srcAppDir.length + 1)
-			.split(path.sep);
+
+		var left = currentDir.substring(0, srcAppDirIndex + srcAppDir.length);
+		var right = currentDir.substring(srcAppDirIndex + srcAppDir.length + 1);
+		var possibles = right.split(path.sep);
+		var moduleNames = [];
+
+
+		// Let's see if we can find some modules here
+
+		if (possibles.length) {
+			while (possibles.length) {
+				// The current path where we will try to find a module
+				var currentModuleName = possibles[possibles.length - 1];
+				var currentPath = left + path.sep + possibles.join(path.sep);
+				var currentModule = currentPath + path.sep + currentModuleName +
+					'.module.js';
+				if (fs.existsSync(currentModule)) {
+					moduleNames.unshift(currentModuleName);
+				}
+				// let's pop the last part and move on
+				possibles.pop();
+			}
+		}
+
+
+		return moduleNames;
 	} else {
 		throw new Error('Couldn\'t find ' + srcAppDir +
 			', you\'re not a in a source folder');
@@ -207,9 +230,10 @@ function _moduleName(transport) {
 }
 
 function _formatModuleName(name) {
-	return _s.slugify(name.replace(/\s+/g, ' ')
-			.replace(/\.+/g, ' '))
-		.replace(/\-+/g, '-');
+	return _s.dasherize(_s.trim(name)
+		.replace(/([A-Z])/g, '-$1')
+		.replace(/[-_\s]+/g, '-')
+		.toLowerCase());
 }
 
 function _partNameFactory(partName, partPostfix) {

@@ -35,6 +35,9 @@ module.exports = function (defaults) {
 				'requirejs': 'http://core.static-afkl.com/ams/frontend/require-afkl.js',
 				'freak-core': 'http://www.klm.com/ams/frontend/js/g-core-v2.js',
 				'freak-local': 'http://apps.static-afkl.com/travel/nl_en/static/js/local.js'
+					/* ,
+					'ui-router' : ''
+					*/
 			};
 
 			var regularDependencies = {
