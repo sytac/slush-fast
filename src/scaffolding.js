@@ -101,7 +101,7 @@ function getGitRepositoryUrl(remoteKey) {
 function ns(dir, srcAppDir) {
 	srcAppDir = srcAppDir || 'src' + path.sep + 'app';
 	// replace srcAppDir with local path separator
-	srcAppDir = srcAppDir.replace(/\\|\//g, path.sep) || 'src' + path.sep + 'app';
+	srcAppDir = srcAppDir.replace(/\\|\//g, path.sep);
 	var currentDir = path.resolve(dir);
 	var srcAppDirIndex = currentDir.indexOf(srcAppDir);
 	if (srcAppDirIndex !== -1) {
@@ -143,7 +143,7 @@ function findBower(dir) {
 	var pathParts = currentDir.split(path.sep);
 	var bower = {};
 	while (pathParts.length && !bower.name) {
-		var bowerConfigAbsolute = pathParts.join('/') + '/' + bowerConfig;
+		var bowerConfigAbsolute = pathParts.join(path.sep) + path.sep + bowerConfig;
 		if (fs.existsSync(bowerConfigAbsolute)) {
 			bower = require(bowerConfigAbsolute);
 		}
@@ -158,10 +158,10 @@ function findNpm(dir) {
 	var npmConfig = 'package.json';
 
 	var currentDir = path.resolve(dir);
-	var pathParts = currentDir.split('/');
+	var pathParts = currentDir.split(path.sep);
 	var npm = {};
 	while (pathParts.length && !npm.name) {
-		var npmConfigAbsolute = pathParts.join('/') + '/' + npmConfig;
+		var npmConfigAbsolute = pathParts.join(path.sep) + path.sep + npmConfig;
 		if (fs.existsSync(npmConfigAbsolute)) {
 			npm = require(npmConfigAbsolute);
 		}
@@ -217,6 +217,7 @@ function _moduleName(transport) {
 			.join('-'));
 		//	console.log('module.prefixedFullNs', module.prefixedFullNs);
 		//	console.log('module.camelCasePrefixedFullNs', module.camelCasePrefixedFullNs);
+        // TODO: hardcoded app/ path here -- is this ok?
 		module.path = 'app/' + module.fullNs.split('.')
 			.join(path.sep);
 
