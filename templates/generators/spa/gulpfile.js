@@ -303,7 +303,8 @@ gulp.task('clean-reports', function (done) {
 	.help = 'Clean reports';
 
 gulp.task('clean-dist', function (done) {
-	rimraf('./dist', done);
+	rimraf('./dist', function () {
+        rimraf('./target/dist', done);
 });
 
 gulp.task('clean-jshint', function (done) {
@@ -468,12 +469,12 @@ gulp.task('dev-bower-css-template', function () {
 });
 
 gulp.task('dev-partials', function () {
-	var streams = globule.find('./src/app/*')
+	var streams = globule.find('./' + generator.srcDir + '/*')
 		.map(function (file) {
 			var moduleDirName = path.basename(file);
 			var moduleName = generator.prefix + '.' + moduleDirName;
 
-			return gulp.src('./src/app/' + moduleDirName + '/*.html')
+			return gulp.src('./' + generator.srcDir + '/' + moduleDirName + '/*.html')
 				.pipe(minifyHtml({
 					empty: true,
 					quotes: true,
@@ -602,7 +603,7 @@ gulp.task('watch-bootstrap', function () {
 });
 
 gulp.task('watch-partials', function () {
-	watch([globs.templates.app.src, './src/app/.freak/partials'], function (
+	watch([globs.templates.app.src, './' + generator.srcDir + '/.freak/partials'], function (
 		files,
 		done) {
 		seq('dev-partials', 'dev-js-template', done);
@@ -684,12 +685,12 @@ gulp.task('dist-templates', function () {
 });
 
 gulp.task('dist-partials', function () {
-	var streams = globule.find('./src/app/*')
+	var streams = globule.find('./' + generator.srcDir + '/*')
 		.map(function (file) {
 			var moduleDirName = path.basename(file);
 			var moduleName = generator.prefix + '.' + moduleDirName;
 
-			return gulp.src('./src/app/' + moduleDirName + '/*.html')
+			return gulp.src('./' + generator.srcDir + '/' + moduleDirName + '/*.html')
 				.pipe(minifyHtml({
 					empty: true,
 					quotes: true,
@@ -731,7 +732,7 @@ gulp.task('dist-modules', function () {
 		var streams = globule.find(paths.js.dist + '/**/*.module.js')
 			.map(function (file) {
 				var srcDir = path.dirname(file);
-				var moduleName = srcDir
+				var moduleName = path.resolve(srcDir)
 					.split(path.sep)
 					.pop();
 				var jsStream = gulp.src(srcDir + '/*.js')
@@ -754,7 +755,7 @@ gulp.task('dist-modules', function () {
 					}))
 					.pipe(sourcemaps.write())
 					.pipe(gulp.dest('./dist/modules/minified-sourcemapped'));
-				var cssStream = gulp.src('./src/app/**/' + moduleName + '/*.scss')
+				var cssStream = gulp.src('./' + generator.srcDir + '/**/' + moduleName + '/*.scss')
 					.pipe(sourcemaps.init())
 					.pipe(sass())
 					.pipe(rename(function (path) {
