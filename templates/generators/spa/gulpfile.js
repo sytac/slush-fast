@@ -50,7 +50,8 @@ var _ = require('lodash'),
 	uglify = require('gulp-uglify'),
 	watch = require('gulp-watch');
 
-var generator = require('./generator.json');
+var generator = sanitizeGeneratorJson(require('./generator.json'));
+
 var rewrites = [];
 
 /**
@@ -303,8 +304,9 @@ gulp.task('clean-reports', function (done) {
 	.help = 'Clean reports';
 
 gulp.task('clean-dist', function (done) {
-	rimraf('./dist', function () {
+	rimraf('./' + generator.distDir, function () {
         rimraf('./target/dist', done);
+    });
 });
 
 gulp.task('clean-jshint', function (done) {
@@ -333,36 +335,36 @@ gulp.task('dist-vendor', function () {
 			path.dirname = '.';
 		}))
 		.pipe(concat('dependencies.js'))
-		.pipe(gulp.dest('./dist/vendor/packaged'))
+		.pipe(gulp.dest('./' + generator.distDir + '/vendor/packaged'))
 		.pipe(sourcemaps.init())
 		.pipe(uglify(settings.uglify))
 		.pipe(rename({
 			suffix: '-min'
 		}))
-		.pipe(gulp.dest('./dist/vendor/minified'))
+		.pipe(gulp.dest('./' + generator.distDir + '/vendor/minified'))
 		.pipe(sourcemaps.write())
 		.pipe(rename({
 			suffix: '-mapped'
 		}))
-		.pipe(gulp.dest('./dist/vendor/minified-sourcemapped'));
+		.pipe(gulp.dest('./' + generator.distDir + '/vendor/minified-sourcemapped'));
 
 	var cssDepsStream = gulp.src(cssDeps)
 		.pipe(rename(function (path) {
 			path.dirname = '.';
 		}))
 		.pipe(concat('dependencies.css'))
-		.pipe(gulp.dest('./dist/vendor/packaged'))
+		.pipe(gulp.dest('./' + generator.distDir + '/vendor/packaged'))
 		.pipe(sourcemaps.init())
 		.pipe(cssmin())
 		.pipe(rename({
 			suffix: '-min'
 		}))
-		.pipe(gulp.dest('./dist/vendor/minified'))
+		.pipe(gulp.dest('./' + generator.distDir + '/vendor/minified'))
 		.pipe(sourcemaps.write())
 		.pipe(rename({
 			suffix: '-mapped'
 		}))
-		.pipe(gulp.dest('./dist/vendor/minified-sourcemapped'));
+		.pipe(gulp.dest('./' + generator.distDir + '/vendor/minified-sourcemapped'));
 	return es.merge(jsDepsStream, cssDepsStream);
 });
 
@@ -744,17 +746,18 @@ gulp.task('dist-modules', function () {
 					.pipe(rename(function (path) {
 						path.dirname = '.';
 					}))
-					.pipe(gulp.dest('./dist/modules/packaged'))
+					.pipe(gulp.dest('./' + generator.distDir + '/modules/packaged'))
 					.pipe(uglify(settings.uglify))
 					.pipe(rename({
 						suffix: '-min'
 					}))
-					.pipe(gulp.dest('./dist/modules/minified'))
+					.pipe(gulp.dest('./' + generator.distDir + '/modules/minified'))
 					.pipe(rename({
 						suffix: '-mapped'
 					}))
 					.pipe(sourcemaps.write())
-					.pipe(gulp.dest('./dist/modules/minified-sourcemapped'));
+					.pipe(gulp.dest('./' + generator.distDir + '/modules/minified-sourcemapped'));
+
 				var cssStream = gulp.src('./' + generator.srcDir + '/**/' + moduleName + '/*.scss')
 					.pipe(sourcemaps.init())
 					.pipe(sass())
@@ -762,17 +765,17 @@ gulp.task('dist-modules', function () {
 						path.dirname = '.';
 						path.basename = generator.prefix + '.' + moduleName + '.' + path.basename;
 					}))
-					.pipe(gulp.dest('./dist/modules/packaged'))
+					.pipe(gulp.dest('./' + generator.distDir + '/modules/packaged'))
 					.pipe(cssmin())
 					.pipe(rename({
 						suffix: '-min'
 					}))
-					.pipe(gulp.dest('./dist/modules/minified'))
+					.pipe(gulp.dest('./' + generator.distDir + '/modules/minified'))
 					.pipe(rename({
 						suffix: '-mapped'
 					}))
 					.pipe(sourcemaps.write())
-					.pipe(gulp.dest('./dist/modules/minified-sourcemapped'));
+					.pipe(gulp.dest('./' + generator.distDir + '/modules/minified-sourcemapped'));
 				return es.merge.apply(null, [jsStream, cssStream]);
 			});
 		return es.merge.apply(null, streams);
@@ -782,15 +785,15 @@ gulp.task('dist-modules', function () {
 
 
 gulp.task('dist-all-modules', function () {
-	return gulp.src('./dist/modules/minified/*.js')
+	return gulp.src('./' + generator.distDir + '/modules/minified/*.js')
 		.pipe(angularFilesort())
 		.pipe(concat('minified.js'))
-		.pipe(gulp.dest('./dist'));
+		.pipe(gulp.dest('./' + generator.distDir));
 });
 gulp.task('dist-all-css', function () {
-	return gulp.src('./dist/modules/minified/*.css')
+	return gulp.src('./' + generator.distDir + '/modules/minified/*.css')
 		.pipe(concat('minified.css'))
-		.pipe(gulp.dest('./dist'));
+		.pipe(gulp.dest('./' + generator.distDir));
 });
 
 gulp.task('dist-bootstrap', function () {
@@ -811,3 +814,24 @@ gulp.task('dist-all-modules-with-bootstrap', function () {
 
 ///////////////////////
 ///
+
+
+/**
+ * Function to confirm and correct the contents of generator.json
+ *
+ * @param generator object with properties read from generator.json
+ * @returns generator
+ */
+function sanitizeGeneratorJson (generator) {
+
+    // confirm presence of distDir
+    if (typeof generator.distDir === 'undefined') {
+        // backwards compatibility: update generator.json to default dist dir
+        console.log('Property distDir missing in generator.json, adding default with value \'dist\'');
+        generator.distDir = 'dist';
+        fs.writeFileSync('./generator.json', JSON.stringify(generator, null, 4));
+    }
+
+    return generator;
+
+}
