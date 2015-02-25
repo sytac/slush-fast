@@ -152,6 +152,7 @@ function _moduleType(defaults) {
 
 	var defaultGeneratorOptions = {
 		'spa': {
+            distDir: 'dist',
 			server: {
 				rewrites: {
 					defaults: {

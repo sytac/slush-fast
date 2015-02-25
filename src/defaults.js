@@ -58,7 +58,7 @@ var defaults = {
 		slushtasks: __dirname + '/slushtasks',
 		src: __dirname + '/src/..',
 		docs: __dirname + '/../templates/docs',
-		templates: __dirname + '/../templates',
+		templates: __dirname + '/../templates'
 	},
 	settings: {
 		prettify: {
