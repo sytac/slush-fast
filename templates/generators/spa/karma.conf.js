@@ -5,6 +5,7 @@ module.exports = function (config) {
 	config.set({
 		files: [],
 
+        // TODO: angular.js should only be excluded when using FREAK lib
 		exclude: ['**/angular.js', '**/bootstrap.js',
 			'**/*scenario.js'
 		],

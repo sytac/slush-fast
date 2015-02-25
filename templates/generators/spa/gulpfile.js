@@ -377,10 +377,10 @@ gulp.task('karma', function (done) {
 		// Why first exclude conf and run files and later include em?
 		// Because it affects the loading order of files for the karma preprocessor
 		var files = bowerFiles
-			.concat(['./src/**/!(*bootstrap|config|run|scenario).js',
+			.concat(['./' + generator.srcDir + '/**/!(*bootstrap|config|run|scenario).js',
 				'./target/dev/app/**/*templates.js',
-				'./src/**/*config.js', './src/**/*run.js',
-				'./src/**/*spec.js'
+				'./' + generator.srcDir + '/**/*config.js', './src/**/*run.js',
+				'./' + generator.srcDir + '/**/*spec.js'
 			]);
 
 		gulp.src(files)
