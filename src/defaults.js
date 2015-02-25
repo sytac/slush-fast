@@ -35,9 +35,7 @@ var defaults = {
 			}
 		},
 		generatorConfigTemplate: generatorConfigTemplate,
-		generator: generatorConfigResult.config || {
-            distDir: 'dist'
-        },
+		generator: generatorConfigResult.config,
 		bower: scaffolding.findBower('./'),
 		meta: {
 			root: root
