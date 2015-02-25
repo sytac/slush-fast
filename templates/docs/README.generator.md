@@ -18,6 +18,7 @@ In CI mode four local servers will be spawned:
 - [http://localhost:8888](http://localhost:8888) Karma coverage report
 - [http://localhost:8886](http://localhost:8886) Jasmine report
 
+<%= readme.generator.apiMocking %>
 
 ### Packaging for production
 
