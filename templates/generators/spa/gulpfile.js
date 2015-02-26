@@ -14,10 +14,11 @@ var _ = require('lodash'),
 	cssmin = require('gulp-cssmin'),
 	del = require('del'),
 	es = require('event-stream'),
-	singleConnect = require('gulp-connect'),
 	bowerFiles = require('main-bower-files'),
 	browserSync = require('browser-sync'),
-	connect = require('gulp-connect-multi'),
+	connect = require('connect'),
+	serveStatic = require('serve-static'),
+	serveIndex = require('serve-index'),
 	extend = require('extend'),
 	fs = require('fs'),
 	ghelp = require('gulp-showhelp'),
@@ -59,6 +60,32 @@ var rewrites = [];
  * @type {Object}
  */
 var settings = {
+    servers: {
+        protractor: {
+            host: 'localhost',
+            port: 8885
+        },
+        jasmine: {
+            host: 'localhost',
+            port: 8886
+        },
+        dev: {
+            host: 'localhost',
+            port: 8887
+        },
+        coverage: {
+            host: 'localhost',
+            port: 8888
+        },
+        browserSync: {
+            host: 'localhost',
+            port: 3001
+        },
+        coverageBrowserSync: {
+            host: 'localhost',
+            port: 3010
+        }
+    },
 	staticAssetTypes: ['js', 'css'],
 	uglify: {
 		preserveComments: 'some'
@@ -142,9 +169,9 @@ var cliOptions = {
 // Spike 'em with argv
 settings = extend(settings, minimist(process.argv.slice(2), cliOptions));
 
-var devServer = connect(),
-	coverageServer = connect(),
-	jasmineServer = connect();
+var protractorServer;
+var coverageServer;
+var jasmineServer;
 
 if (generator) {
 
@@ -260,17 +287,26 @@ gulp.task('dev-protractor', [
 				throw err;
 			})
 			.on('end', function () {
-				singleConnect.serverClose();
-				cb();
+				protractorServer.close(function () {
+                    console.log('Protractor server closed');
+                    cb();
+			    });
 			});
 	})
 	.help = 'Run e2e tests with protractor';
 
-gulp.task('dev-protractor-server', function () {
-	singleConnect.server({
-		root: ['target/dev', 'bower_components', 'test/mock/'],
-		port: 8885
-	});
+gulp.task('dev-protractor-server', function (done) {
+
+    var server = connect();
+    server.use(serveStatic('target/dev'));
+    server.use(serveStatic('bower_components'));
+    server.use(serveStatic('test/mock'));
+
+    protractorServer = server.listen(settings.servers.protractor.port, settings.servers.protractor.host, function () {
+        console.log('Protractor running on ' + settings.servers.protractor.host + ':' + settings.servers.protractor.port);
+        done();
+    });
+
 });
 
 // runs tests and copies reports for usage in bamboo
@@ -626,47 +662,65 @@ gulp.task('watch-index-parts', function () {
 	});
 });
 
-gulp.task('dev-server', devServer.server({
-	root: ['target/dev', 'bower_components', 'test/mock/', '.cache'],
-	port: 8887,
-	livereload: false,
-	middleware: function () {
-		return [
-			modRewrite(rewrites)
-		];
-	}
-}));
+gulp.task('dev-server', function (done) {
+
+    var server = connect();
+
+    server.use(modRewrite(rewrites));
+
+    server.use(serveStatic('target/dev'));
+    server.use(serveStatic('bower_components'));
+    server.use(serveStatic('test/mock'));
+    server.use(serveStatic('.cache'));
+
+    server.listen(settings.servers.dev.port, settings.servers.dev.host, function () {
+        console.log('dev running on ' + settings.servers.dev.host + ':' + settings.servers.dev.port);
+        done();
+    });
+
+});
 
 gulp.task('dev-browsersync', function () {
 	browserSync({
-		host: settings.host,
-		port: 3001,
+		host: settings.servers.browserSync.host,
+		port: settings.servers.browserSync.port,
 		files: 'target/dev/**',
-		proxy: settings.host + ':8887',
+		proxy: settings.servers.dev.host + ':' + settings.servers.dev.port,
 		open: false
 	});
 });
 
-gulp.task('dev-coverage-server', coverageServer.server({
-	root: ['target/reports/karma-coverage/lcov-report'],
-	host: settings.host,
-	port: 8888,
-	livereload: false
-}));
+gulp.task('dev-coverage-server', function (done) {
 
-gulp.task('dev-jasmine-server', jasmineServer.server({
-	root: ['target/reports/jasmine'],
-	host: settings.host,
-	port: 8886,
-	livereload: false
-}));
+    var server = connect();
+    server.use(serveStatic('target/reports/karma-coverage/lcov-report'));
+
+    coverageServer = server.listen(settings.servers.coverage.port, settings.servers.coverage.host, function () {
+        console.log('Coverage running on ' + settings.servers.coverage.host + ':' + settings.servers.coverage.port);
+        done();
+    });
+
+});
+
+gulp.task('dev-jasmine-server', function (done) {
+
+    var server = connect();
+    server.use(serveStatic('target/reports/jasmine'));
+    server.use(serveIndex('target/reports/jasmine'));
+
+    jasmineServer = server.listen(settings.servers.jasmine.port, settings.servers.jasmine.host, function () {
+        console.log('Jasmine running on ' + settings.servers.jasmine.host + ':' + settings.servers.jasmine.port);
+        done();
+    });
+
+});
 
 gulp.task('dev-coverage-browsersync', function () {
 	browserSync({
-		host: settings.host,
-		port: 3010,
+		host: settings.servers.coverageBrowserSync.host,
+		port: settings.servers.coverageBrowserSync.port,
 		files: 'target/reports/karma-coverage/lcov-report/**/*',
-		proxy: settings.host + ':8888',
+		proxy: settings.servers.coverage.host + ':' + settings.servers.coverage.port,
 		reloadDelay: 2000,
 		open: false
 	});
