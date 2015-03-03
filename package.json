@@ -1,6 +1,6 @@
 {
 	"name": "slush-fast",
-	"version": "3.1.1",
+	"version": "3.1.2",
 	"description": "afkl freak angular scaffolding tool.",
 	"publishConfig": {
 		"registry": "https://mvnproxy.eden.klm.com/content/repositories/npm-internal/"
