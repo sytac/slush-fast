@@ -795,8 +795,9 @@ gulp.task('dist-modules', function() {
         var moduleName = path.resolve(srcDir)
           .split(path.sep)
           .pop();
-        var jsStream = gulp.src(srcDir + '/*.js', './target/dist/app/' +
-            moduleName + '/' + moduleName + '.templates.js')
+        var jsStream = gulp.src([srcDir + '/*.js', './target/dist/app/' +
+            moduleName + '/' + moduleName + '.templates.js'
+          ])
           .pipe(ngAnnotate(settings.ngAnnotate))
           .pipe(sourcemaps.init())
           .pipe(angularFilesort())
