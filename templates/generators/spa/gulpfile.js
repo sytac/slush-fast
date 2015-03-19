@@ -845,8 +845,6 @@ gulp.task('dist-modules', function() {
   })
   .help = 'Package for production';
 
-
-
 gulp.task('dist-all-modules', function() {
   return gulp.src('./' + generator.distDir + '/modules/minified/*.js')
     .pipe(angularFilesort())
