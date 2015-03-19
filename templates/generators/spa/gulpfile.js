@@ -788,12 +788,7 @@ gulp.task('dist-js', function() {
 });
 
 gulp.task('dist-modules', function() {
-    /*
-		var streams = globule.find(paths.js.dist + '/*')
-		.map(function (file) {
-		var moduleName = path.basename(file);
-		var jsStream = gulp.src(paths.js.dist + '/' + moduleName + '/*.js')
-		*/
+
     var streams = globule.find(paths.js.dist + '/**/*.module.js')
       .map(function(file) {
         var srcDir = path.dirname(file);
