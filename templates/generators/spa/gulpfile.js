@@ -787,17 +787,6 @@ gulp.task('dist-js', function() {
     .pipe(gulp.dest(paths.js.dist));
 });
 
-gulp.task('d', function() {
-  console.log(globule.find(paths.js.dist + '/**/*.module.js')
-    .map(function(file) {
-      var moduleName = path.dirname(file)
-        .split(path.sep)
-        .pop();
-      var srcDir = path.dirname(file);
-
-      return moduleName + ' - ' + path.basename(file) + ' - ' + srcDir;
-    }));
-});
 gulp.task('dist-modules', function() {
     /*
 		var streams = globule.find(paths.js.dist + '/*')
